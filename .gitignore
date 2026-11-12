@@ -1,0 +1,9 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Machine-specific Codex MCP configuration
+/.codex/config.toml
+
+# Local export artifacts
+/builds/

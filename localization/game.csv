@@ -1,0 +1,75 @@
+keys,zh_CN,en_US
+UI_MENU_KICKER,五层魔塔 · 一次冒险,A FIVE-FLOOR ROGUELITE
+UI_MENU_TAG,一场关于剑与魔法的短途冒险,A short adventure of sword and spell
+UI_MENU_START,开始游戏,START GAME
+UI_MENU_QUIT,退出游戏,QUIT GAME
+UI_MENU_LANGUAGE,语言 / LANGUAGE,LANGUAGE / 语言
+UI_MENU_CONTROLS,"{move} 移动   ·   鼠标瞄准
+{attack} 剑击   ·   {magic} 魔法
+{interact} 阅读记录   ·   {next} 跳过阅读","{move} move   ·   Mouse aim
+{attack} sword   ·   {magic} magic
+{interact} read   ·   {next} skip reading"
+UI_MOUSE_LEFT,鼠标左键,Left mouse
+UI_MOUSE_RIGHT,鼠标右键,Right mouse
+UI_MOUSE_MIDDLE,鼠标中键,Middle mouse
+UI_FLOOR,第 {floor} / 5 层,FLOOR {floor} / 5
+UI_ENEMIES,敌人  {count},ENEMIES  {count}
+UI_WAVE,波次  {wave} / {total},WAVE  {wave} / {total}
+UI_HEALTH,生命  {hp} / {max},HEALTH  {hp} / {max}
+UI_MAGIC,魔法,MAGIC
+UI_MAGIC_READY,已就绪,READY
+UI_MAGIC_WAIT,{time} 秒,{time}s
+UI_INVENTORY_EMPTY,尚无装备,NO UPGRADES YET
+UI_INVENTORY,装备：{items},UPGRADES: {items}
+UI_SAFE,战斗结束  ·  {next} 进入奖励选择,FLOOR CLEARED  ·  {next} to choose an upgrade
+UI_READ_NEAR,{interact} 阅读记录,{interact} READ THE NOTE
+UI_LORE_CLOSE,{interact} / {close} 关闭,{interact} / {close} close
+UI_REWARD_TITLE,选择一件遗物,CHOOSE A RELIC
+UI_REWARD_SUBTITLE,每件装备会立即生效，并可与其他强化叠加。,Your choice takes effect immediately and stacks with other upgrades.
+UI_REWARD_CHOOSE,选择,CHOOSE
+UI_VICTORY,守塔者已倒下,THE KEEPER FALLS
+UI_DEFEAT,旅途暂时结束,YOUR JOURNEY ENDS
+UI_VICTORY_SUB,塔中的灯，仍在燃烧。,The tower's light still burns.
+UI_DEFEAT_SUB,带着经验，再次踏入魔塔。,Carry what you learned into the tower again.
+UI_RESULT_FLOOR,到达层数,FLOOR REACHED
+UI_RESULT_KILLS,击败敌人,ENEMIES DEFEATED
+UI_RESULT_TIME,本局用时,RUN TIME
+UI_RESULT_ITEMS,获得的装备,RELICS COLLECTED
+UI_RESULT_NONE,无,None
+UI_RESTART,重新开始,PLAY AGAIN
+UI_BACK_MENU,返回主菜单,MAIN MENU
+UI_TRANSITION,第 {floor} 层,FLOOR {floor}
+UI_TRANSITION_LABEL,向上前进,ASCEND THE TOWER
+TRANSITION_TIP_01,剑击和魔法弹都朝鼠标所指的方向发出。,Your sword and magic projectiles aim toward the mouse cursor.
+TRANSITION_TIP_02,第 1 至第 4 层结束后，从三件装备中选择一件。,"After floors 1 through 4, choose one of three upgrades."
+TRANSITION_TIP_03,塔中的遗物，仍保留着曾经到访者的痕迹。,Relics in the tower still bear traces of those who came before.
+TRANSITION_TIP_04,哥布林攻击前会停下并发出预警。,Goblins stop and telegraph their attacks before striking.
+TRANSITION_TIP_05,同一种装备可以重复获得，效果会叠加。,The same upgrade can appear again; its effects stack.
+LORE_F1_TITLE,古旧书页,A Fragment of History
+LORE_F1_BODY,古塔建成时，守塔人点亮了一盏灯。许多年后，灯仍亮着，却再无人记得最初是谁将它点燃。,"When the old tower was built, its keepers lit a lamp. Years later, it still burns, though no one remembers who first lit it."
+LORE_F3_TITLE,冒险者手记,An Adventurer's Note
+LORE_F3_BODY,第三层的回声比我快一步。我在墙边歇了一会儿，才明白独自前行，并不意味着没有人曾走过这条路。,"On the third floor, my echo ran ahead of me. I rested by the wall and realized that walking alone doesn't mean no one has walked this way before."
+ITEM_U01_NAME,锋利长剑,Sharpened Longsword
+ITEM_U01_EFFECT,剑击伤害 +{value},Sword damage +{value}
+ITEM_U01_LORE,剑刃上的细小缺口，是每一次挥砍留下的记号。,Tiny nicks along the blade mark every swing.
+ITEM_U02_NAME,疾风手套,Swiftwind Gloves
+ITEM_U02_EFFECT,剑击冷却降低 {value}%,Sword cooldown reduced by {value}%
+ITEM_U02_LORE,轻薄的手套让持剑的手如风般敏捷。,These light gloves let a sword hand move as swiftly as the wind.
+ITEM_U03_NAME,烈焰法杖,Flame Staff
+ITEM_U03_EFFECT,魔法弹伤害 +{value},Magic damage +{value}
+ITEM_U03_LORE,杖尖残留的温度，像一团不肯熄灭的余烬。,"Warmth lingers at the tip, like an ember that refuses to die."
+ITEM_U04_NAME,奥术戒指,Arcane Ring
+ITEM_U04_EFFECT,魔法冷却降低 {value}%,Magic cooldown reduced by {value}%
+ITEM_U04_LORE,戒面刻着一圈细密符文，微光随呼吸起伏。,"Fine runes circle the ring, their glow rising and falling with each breath."
+ITEM_U05_NAME,幸运徽章,Lucky Emblem
+ITEM_U05_EFFECT,暴击率 +{value} 个百分点,Critical chance +{value} percentage points
+ITEM_U05_LORE,磨损的徽章被无数次攥紧，仿佛能为旅人留住好运。,"Worn smooth by countless anxious grips, this emblem seems to hold a traveler's luck."
+ITEM_U06_NAME,吸血剑刃,Lifedrinker Blade
+ITEM_U06_EFFECT,剑击击杀恢复 {value} HP,Sword kills restore {value} HP
+ITEM_U06_LORE,暗红的纹路沿刃脊延伸，仿佛仍在脉动。,"Dark red lines run along the blade, as if they still pulse."
+ITEM_U07_NAME,骑士铠甲,Knight's Armor
+ITEM_U07_EFFECT,最大 HP +{value}，恢复 {value} HP,Max HP +{value}; restore {value} HP
+ITEM_U07_LORE,铠甲上布满修补痕迹，却依旧可靠。,"Repairs cover this armor, but it remains dependable."
+ITEM_U08_NAME,迅捷长靴,Swift Boots
+ITEM_U08_EFFECT,移动速度 +{value}%,Movement speed +{value}%
+ITEM_U08_LORE,鞋底的磨痕，记录着一位旅人走过的漫长道路。,The worn soles tell of the long road a traveler once walked.
