@@ -33,6 +33,6 @@ Project TOWER · v0.3 · [GDD 第 3 章](../../GDD.md#combat-and-enemies)
 | 骷髅法师 Skeleton Mage | 保持中距离，太近时退后，太远时靠近。发射单枚敌弹，迫使玩家横向走位。 |
 | 守塔精英 Elite Skeleton | 在 F5 发射三枚散射弹。v0.3 增加方向预警和出弹前摇，玩家可在预警阶段选择走位路线。 |
 
-表中数值为五层初始配置的调试起点。B 根据试玩调整配置，C 回归行为、可回避性和反馈。精英预警必须先于弹体实际生成，方向与弹道一致。
+表中数值为五层初始配置的调试起点。Engineer 根据试玩调整配置，QA 回归行为、可回避性和反馈。精英预警必须先于弹体实际生成，方向与弹道一致。
 
-敌人数值调整时，B 同步核对 [`data/game_data.gd`](../../../data/game_data.gd) 中的 `ENEMIES` 配置。
+敌人数值调整时，Engineer 同步核对 [`data/game_data.gd`](../../../data/game_data.gd) 中的 `ENEMIES` 配置。

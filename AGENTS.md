@@ -31,6 +31,10 @@ Use UTF-8 and LF line endings, as specified by `.editorconfig` and `.gitattribut
 
 Keep gameplay values in `data/game_data.gd` rather than duplicating them in UI copy. Player-facing text should use stable IDs in the translation CSV; update both languages, matching placeholders, and localization context when changing text. Preserve the bundled font's license and include appropriate licenses for any new third-party assets.
 
+## Art and Audio Integration
+
+When building a feature that will receive art or audio assets, reuse or add the scene resource slot or audio event it needs. Run the feature with a working placeholder driven by the same gameplay state or event the final asset will use. Keep gameplay timing and hit detection in gameplay code. Record the scene node or event ID, the relevant asset specs, and how to trigger it in-game in the feature notes or handoff list. See the [art and audio handoff guide](docs/design/v0.3/art-and-audio.md).
+
 ## Testing Guidelines
 
 Run the headless import and integration test after relevant changes. Manually run affected gameplay or UI flows when practical, especially for input, visual layout, audio, and localization changes. The automated floor progression uses test-driven events and does not replace a complete human playthrough. Record material platform, export, and playtest limitations in `docs/QA.md`; Windows real-device testing and the target session length remain unverified.

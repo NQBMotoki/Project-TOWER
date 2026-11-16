@@ -23,7 +23,7 @@ Project TOWER · v0.3 · [GDD 第 6 章](../../GDD.md#ui-and-localization)
 
 [`localization/game.csv`](../../../localization/game.csv) 使用 UTF-8，含 `keys`、`zh_CN`、`en_US` 三列。所有玩家可见文本使用稳定 ID，并通过 Godot 导入两份翻译资源。装备名称、效果和短句各用独立 ID，数值来自配置和预览计算。同一条文本的变量名在两种语言中一致。缺项回退简体中文并记录，双语均缺失时显示可读的兜底提示。
 
-[`docs/localization/`](../../localization/) 保存术语与字符串上下文。新增预览或提示时，B 更新双语和上下文，C 核对术语、占位符、字体、换行及目标包内显示。两端游戏包包含双语资源、Noto Sans SC 字体及其许可证。楼层记录正文见[《五层关卡与叙事》文档的第 4.2 节](floors-and-narrative.md#optional-reading)，遗物与过渡短文见本文[附录](#bilingual-narrative)。
+[`docs/localization/`](../../localization/) 保存术语与字符串上下文。新增预览或提示时，Engineer 更新双语和上下文，QA 核对术语、占位符、字体、换行及目标包内显示。两端游戏包包含双语资源、Noto Sans SC 字体及其许可证。楼层记录正文见[《五层关卡与叙事》文档的第 4.2 节](floors-and-narrative.md#optional-reading)，遗物与过渡短文见本文[附录](#bilingual-narrative)。
 
 <a name="bilingual-narrative"></a>
 
