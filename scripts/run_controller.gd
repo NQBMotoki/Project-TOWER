@@ -20,6 +20,7 @@ var floor_number := 1
 var kills := 0
 var elapsed := 0.0
 var transition_remaining := 0.0
+var wait_for_input := false
 var enemy_count := 0
 var wave := 0
 var total_waves := 0
@@ -47,7 +48,7 @@ func _process(delta: float) -> void:
 		elapsed += delta
 	if state == State.TRANSITION:
 		transition_remaining -= delta
-		if transition_remaining <= 0.0:
+		if transition_remaining <= 0.0 and not wait_for_input:
 			_begin_combat()
 	if state in [State.COMBAT, State.SAFE] and is_instance_valid(player):
 		var near := false
@@ -56,6 +57,12 @@ func _process(delta: float) -> void:
 		ui.update_hud(player, floor_number, enemy_count, wave, total_waves, state == State.SAFE and not epilogue_open, near)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if state == State.TRANSITION:
+		if wait_for_input and transition_remaining <= 0.0 and not event.is_echo():
+			if event.is_action_pressed("next") or event.is_action_pressed("interact") or event.is_action_pressed("close"):
+				_begin_combat()
+				get_viewport().set_input_as_handled()
+		return
 	if state != State.SAFE or event.is_echo():
 		return
 	if lore_open:
@@ -106,6 +113,7 @@ func start_run() -> void:
 	elapsed = 0.0
 	lore_open = false
 	epilogue_open = false
+	wait_for_input = false
 	current_choices.clear()
 	player = PlayerScene.instantiate()
 	player.position = Vector2(640, 365)
@@ -125,11 +133,15 @@ func _start_transition() -> void:
 	arena.queue_redraw()
 	transition_remaining = 2.1
 	var door_key := "LORE_F5_DOOR" if floor_number == 5 else ""
-	ui.show_transition(floor_number, door_key)
+	# The Floor 5 inscription is the only place the player can read it, so that
+	# transition holds until the player continues instead of auto-advancing.
+	wait_for_input = floor_number == 5
+	ui.show_transition(floor_number, door_key, wait_for_input)
 
 func _begin_combat() -> void:
 	if state != State.TRANSITION:
 		return
+	wait_for_input = false
 	state = State.COMBAT
 	player.can_move = true
 	player.can_attack = true

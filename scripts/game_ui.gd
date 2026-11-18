@@ -43,6 +43,7 @@ var lore_close: Label
 var transition_floor: Label
 var transition_tip: Label
 var transition_note: Label
+var transition_hint: Label
 var transition_heading: Label
 
 func setup(service: Node) -> void:
@@ -107,6 +108,7 @@ func _build_ui() -> void:
 	_color(transition, Rect2(450, 386, 380, 2), Color("77654b"))
 	transition_tip = _label(transition, Vector2(300, 410), Vector2(680, 85), 17, MUTED, HORIZONTAL_ALIGNMENT_CENTER, true)
 	transition_note = _label(transition, Vector2(300, 504), Vector2(680, 64), 14, Color("c2a06a"), HORIZONTAL_ALIGNMENT_CENTER, true)
+	transition_hint = _label(transition, Vector2(300, 582), Vector2(680, 28), 14, Color("9c8a6a"), HORIZONTAL_ALIGNMENT_CENTER)
 
 	reward = _layer("Reward")
 	lore = _layer("Lore")
@@ -214,13 +216,15 @@ func show_hud() -> void:
 	_hide_all()
 	hud.show()
 
-func show_transition(floor_number: int, door_key := "") -> void:
+func show_transition(floor_number: int, door_key := "", waiting := false) -> void:
 	_hide_all()
 	transition_heading.text = loc.text("UI_TRANSITION_LABEL")
 	transition_floor.text = loc.text("UI_TRANSITION", {"floor": floor_number})
 	transition_tip.text = loc.text(str(GameData.FLOOR_TIPS.get(floor_number, "TRANSITION_TIP_01")))
 	transition_note.text = "" if door_key == "" else loc.text(door_key)
 	transition_note.visible = door_key != ""
+	transition_hint.text = loc.text("UI_TRANSITION_CONTINUE", {"next": loc.binding("next")}) if waiting else ""
+	transition_hint.visible = waiting
 	transition.show()
 
 func update_hud(player: Node, floor_number: int, enemies: int, wave: int, total: int, safe: bool, near: bool) -> void:

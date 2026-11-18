@@ -40,6 +40,7 @@ UI_RESTART,重新开始,PLAY AGAIN
 UI_BACK_MENU,返回主菜单,MAIN MENU
 UI_TRANSITION,第 {floor} 层,FLOOR {floor}
 UI_TRANSITION_LABEL,向上前进,ASCEND THE TOWER
+UI_TRANSITION_CONTINUE,按 {next} 继续,Press {next} to continue
 TRANSITION_TIP_01,剑击和魔法弹都朝鼠标所指的方向发出。,Your sword and magic projectiles aim toward the mouse cursor.
 TRANSITION_TIP_02,第 1 至第 4 层结束后，从三件装备中选择一件。,"After floors 1 through 4, choose one of three upgrades."
 TRANSITION_TIP_03,塔中的遗物，仍保留着曾经到访者的痕迹。,Relics in the tower still bear traces of those who came before.

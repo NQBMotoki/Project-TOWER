@@ -40,6 +40,7 @@
 | UI_BACK_MENU | 菜单 / HUD / 结算界面 | 控件内显示；无变量 | 初稿，待人工审校 |
 | UI_TRANSITION | 层间过渡 | 控件内显示；{floor} | 初稿，待人工审校 |
 | UI_TRANSITION_LABEL | 层间过渡 | 控件内显示；无变量 | 初稿，待人工审校 |
+| UI_TRANSITION_CONTINUE | 层间过渡（F5 停等） | 控件内显示；{next} | v0.4 新增，待人工审校 |
 | TRANSITION_TIP_01 | 层间过渡 | 控件内显示；无变量 | 兜底提示，v0.4 起按层提示优先 |
 | TRANSITION_TIP_02 | 层间过渡 | 控件内显示；无变量 | 兜底提示，v0.4 起按层提示优先 |
 | TRANSITION_TIP_03 | 层间过渡 | 控件内显示；无变量 | 兜底提示，v0.4 起按层提示优先 |

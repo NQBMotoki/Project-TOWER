@@ -12,7 +12,7 @@ var phase_timer := 0.0
 var lunge_timer := 0.0
 var lunge_dir := Vector2.RIGHT
 var creep_speed := 38.0
-var lunge_range := 150.0
+var lunge_reach := 104.0
 var coil_time := 0.75
 var lunge_speed := 400.0
 var lunge_time := 0.2
@@ -23,12 +23,14 @@ var clock := 0.0
 func _ready() -> void:
 	super._ready()
 	creep_speed = float(config.get("creep_speed", creep_speed))
-	lunge_range = float(config.get("lunge_range", lunge_range))
 	coil_time = float(config.get("coil_time", coil_time))
 	lunge_speed = float(config.get("lunge_speed", lunge_speed))
 	lunge_time = float(config.get("lunge_time", lunge_time))
 	recover_time = float(config.get("recover", recover_time))
 	lunge_cooldown = float(config.get("lunge_cooldown", lunge_cooldown))
+	# The coil trigger and the drawn wedge both use the distance the lunge can
+	# really cover, so the warning never promises a hit the lunge cannot land.
+	lunge_reach = lunge_speed * lunge_time + CONTACT_RANGE
 
 func _behavior(delta: float) -> void:
 	clock += delta
@@ -48,7 +50,7 @@ func _behavior(delta: float) -> void:
 		body_scale = Vector2(1.0 + breath, 1.0 - breath)
 		if distance > CONTACT_RANGE * 0.7:
 			position += to_player.normalized() * creep_speed * delta
-		if spawn_delay <= 0.0 and lunge_timer <= 0.0 and distance > CONTACT_RANGE and distance <= lunge_range:
+		if spawn_delay <= 0.0 and lunge_timer <= 0.0 and distance > CONTACT_RANGE and distance <= lunge_reach:
 			lunge_dir = to_player.normalized()
 			phase = PHASE_COIL
 			phase_timer = coil_time
@@ -84,6 +86,6 @@ func _draw() -> void:
 		var points := PackedVector2Array([Vector2.ZERO])
 		for i in range(9):
 			var angle := lunge_dir.angle() - 0.42 + 0.84 * float(i) / 8.0
-			points.append(Vector2.from_angle(angle) * lunge_range)
+			points.append(Vector2.from_angle(angle) * lunge_reach)
 		draw_colored_polygon(points, Color(0.55, 0.95, 0.65, alpha))
 		draw_arc(Vector2.ZERO, 10.0 + 6.0 * progress, 0.0, TAU, 18, Color(0.62, 0.95, 0.70, 0.30 + 0.45 * progress), 2.0)

@@ -68,7 +68,9 @@ I have trimmed this wick short seventeen times. Every name in the roll was writt
 
 ## 4.4 层间提示
 
-F1 至 F5 各有一条专属提示，由 `GameData.FLOOR_TIPS` 按层取用；F5 在提示下方追加门楣刻字 `LORE_F5_DOOR`。通用 `TRANSITION_TIP_*` 保留为兜底。
+F1 至 F5 各有一条专属提示，由 GameData.FLOOR_TIPS 按层取用；F5 在提示下方追加门楣刻字 LORE_F5_DOOR。通用 TRANSITION_TIP_* 保留为兜底。
+
+其余楼层的过渡 2.1 秒后自动进入战斗；**F5 例外**：提示与刻字出现后停住，显示「按 Enter 继续」，等玩家自己确认才开打——这段文字只有这一次机会读到，不能靠计时。
 
 | 楼层 | 提示 |
 | --- | --- |

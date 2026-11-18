@@ -13,22 +13,24 @@ const UPGRADES := [
 ]
 
 # Slime keeps its contact damage; the coil/lunge cycle adds a rhythm and a recovery window.
+# The slime's lunge reach is derived in the behaviour script (speed x time + contact
+# range) so the trigger and the drawn warning can never drift apart.
 const ENEMIES := {
 	"slime": {
 		"hp": 26.0, "speed": 70.0, "damage": 8.0, "cooldown": 1.2,
-		"creep_speed": 38.0, "lunge_range": 150.0, "coil_time": 0.75,
+		"creep_speed": 38.0, "coil_time": 0.75,
 		"lunge_speed": 400.0, "lunge_time": 0.2, "recover": 0.55, "lunge_cooldown": 1.6,
 	},
 	"goblin": {"hp": 38.0, "speed": 95.0, "damage": 12.0, "cooldown": 1.2},
-	"skeleton": {"hp": 30.0, "speed": 55.0, "damage": 10.0, "cooldown": 2.6, "telegraph": 0.55, "shots": 1},
+	"skeleton": {"hp": 30.0, "speed": 55.0, "damage": 10.0, "cooldown": 2.6, "telegraph": 0.55, "shots": 1, "reach": 560.0},
 	"archer": {
 		"hp": 24.0, "speed": 62.0, "damage": 13.0, "cooldown": 2.2,
 		"draw": 0.8, "shot_speed": 560.0, "band_min": 240.0, "band_max": 360.0,
-		"backpedal": 1.15,
+		"backpedal": 1.15, "reach": 640.0,
 	},
 	"elite": {
 		"hp": 160.0, "speed": 55.0, "damage": 12.0, "cooldown": 2.8,
-		"telegraph": 0.75, "shots": 3, "spread": 0.24,
+		"telegraph": 0.75, "shots": 3, "spread": 0.24, "reach": 560.0,
 	},
 }
 

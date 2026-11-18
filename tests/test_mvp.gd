@@ -281,7 +281,9 @@ func _test_full_run() -> void:
 	game.start_run()
 	for floor_number in range(1, 6):
 		check(game.floor_number == floor_number and game.state == game.State.TRANSITION, "floor transition %d" % floor_number)
+		check(game.wait_for_input == (floor_number == 5), "only floor 5 holds the transition for the inscription")
 		game._begin_combat()
+		check(not game.wait_for_input, "entering combat clears the transition wait")
 		check(game.state == game.State.COMBAT, "floor %d enters combat" % floor_number)
 		var waves: Array = GameData.FLOORS[floor_number - 1]
 		for wave_index in range(waves.size()):
