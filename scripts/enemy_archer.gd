@@ -7,7 +7,6 @@ var draw_timer := 0.0
 var aim_dir := Vector2.RIGHT
 var band_min := 240.0
 var band_max := 360.0
-var retreat_range := 170.0
 var backpedal := 1.15
 
 func _ready() -> void:
@@ -15,7 +14,6 @@ func _ready() -> void:
 	draw_time = float(config.get("draw", draw_time))
 	band_min = float(config.get("band_min", band_min))
 	band_max = float(config.get("band_max", band_max))
-	retreat_range = float(config.get("retreat", retreat_range))
 	backpedal = float(config.get("backpedal", backpedal))
 	shot_speed = float(config.get("shot_speed", 560.0))
 
@@ -28,11 +26,11 @@ func _behavior(delta: float) -> void:
 		if draw_timer <= 0.0:
 			_release()
 		return
-	if distance < retreat_range:
+	if distance < band_min:
 		position -= direction * speed * backpedal * delta
 	elif distance > band_max:
 		position += direction * speed * delta
-	if spawn_delay <= 0.0 and attack_timer <= 0.0 and distance >= retreat_range and distance < 640.0:
+	if spawn_delay <= 0.0 and attack_timer <= 0.0 and distance >= band_min and distance < 640.0:
 		draw_timer = draw_time
 		aim_dir = direction
 		sound_requested.emit("enemy_chant")

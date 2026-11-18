@@ -142,6 +142,10 @@ func _on_floor_cleared() -> void:
 	_clear_projectiles()
 	player.can_attack = false
 	if floor_number == 5:
+		# The keeper falling ends the fight. Clear the adds before the player
+		# loses movement and attack input for the closing note, otherwise a
+		# surviving enemy can kill a player who can no longer act.
+		floor_manager.clear_enemies()
 		_open_epilogue()
 	elif GameData.LORE.has(floor_number):
 		state = State.SAFE
@@ -180,7 +184,7 @@ func _on_upgrade_selected(item: Dictionary) -> void:
 	_start_transition()
 
 func _on_player_died() -> void:
-	if state == State.COMBAT:
+	if state in [State.COMBAT, State.SAFE]:
 		end_run(false)
 
 func end_run(victory: bool) -> void:

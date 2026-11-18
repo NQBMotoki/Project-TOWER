@@ -24,7 +24,7 @@ const ENEMIES := {
 	"archer": {
 		"hp": 24.0, "speed": 62.0, "damage": 13.0, "cooldown": 2.2,
 		"draw": 0.8, "shot_speed": 560.0, "band_min": 240.0, "band_max": 360.0,
-		"retreat": 170.0, "backpedal": 1.15,
+		"backpedal": 1.15,
 	},
 	"elite": {
 		"hp": 160.0, "speed": 55.0, "damage": 12.0, "cooldown": 2.8,

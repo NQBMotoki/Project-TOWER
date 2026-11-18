@@ -191,6 +191,16 @@ func _test_combat_and_upgrades() -> void:
 	cycle.attack_timer = 0.0
 	cycle._behavior(0.01)
 	check(is_equal_approx(dummy.hp, dummy_hp), "a recovering slime cannot hurt the player")
+	cycle.phase = 2
+	cycle.phase_timer = 0.05
+	cycle.position = dummy.position + Vector2(30, 0)
+	cycle.lunge_dir = (dummy.global_position - cycle.global_position).normalized()
+	cycle.attack_timer = 0.0
+	cycle.spawn_delay = 0.0
+	dummy.invulnerability = 0.0
+	var dummy_before: float = dummy.hp
+	cycle._behavior(0.05)
+	check(dummy.hp < dummy_before, "the landing step of a lunge still lands contact")
 	var archer = ArcherScene.instantiate()
 	archer.setup("archer", dummy)
 	arena.add_child(archer)
@@ -205,6 +215,13 @@ func _test_combat_and_upgrades() -> void:
 	archer._behavior(0.85)
 	check(arrows.count == 1, "an archer releases a single arrow")
 	check(is_equal_approx(archer.shot_speed, 560.0), "the arrow travels faster than the player")
+	archer.draw_timer = 0.0
+	archer.attack_timer = 0.0
+	archer.position = dummy.position + Vector2(200, 0)
+	var gap_before: float = archer.position.distance_to(dummy.position)
+	archer._behavior(0.1)
+	check(archer.position.distance_to(dummy.position) > gap_before, "an archer backs off toward its minimum band")
+	check(archer.draw_timer <= 0.0, "an archer does not shoot from inside its minimum band")
 	var elite = EliteScene.instantiate()
 	elite.setup("elite", player)
 	arena.add_child(elite)
@@ -276,13 +293,22 @@ func _test_full_run() -> void:
 			for enemy in game.floor_manager.enemies.duplicate():
 				check(enemy.global_position.distance_to(game.player.global_position) >= 220.0, "enemy spawns away from player")
 				check(enemy.spawn_delay > 0.0, "enemy has spawn protection")
-			for enemy in game.floor_manager.enemies.duplicate():
-				if is_instance_valid(enemy) and enemy.alive:
-					enemy.take_damage(9999.0)
+			if floor_number == 5:
+				# Kill only the keeper so the surviving adds are still alive when
+				# the floor clears; they must be removed before the player is locked.
+				for enemy in game.floor_manager.enemies.duplicate():
+					if is_instance_valid(enemy) and enemy.alive and enemy.kind == "elite":
+						enemy.take_damage(9999.0)
+				check(game.floor_manager.enemies.is_empty(), "surviving enemies are cleared when the keeper falls")
+			else:
+				for enemy in game.floor_manager.enemies.duplicate():
+					if is_instance_valid(enemy) and enemy.alive:
+						enemy.take_damage(9999.0)
 			if wave_index + 1 < waves.size():
 				check(game.state == game.State.COMBAT and not game.floor_manager.cleared, "no reward between waves")
 		if floor_number == 5:
 			check(game.state == game.State.SAFE and game.lore_open, "defeating the keeper opens the closing record")
+			check(not game.player.can_move, "the closing record locks movement")
 			await _send_action("interact")
 			check(game.state == game.State.VICTORY, "closing the final record ends the run in victory")
 			break
