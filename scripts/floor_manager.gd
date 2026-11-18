@@ -3,7 +3,7 @@ extends Node
 signal floor_cleared
 signal enemy_killed(enemy: Node)
 signal counts_changed(remaining: int, wave: int, total_waves: int)
-signal projectile_requested(origin: Vector2, direction: Vector2, damage: float)
+signal projectile_requested(origin: Vector2, direction: Vector2, damage: float, shot_speed: float)
 signal sound_requested(kind: String)
 
 const GameData = preload("res://data/game_data.gd")
@@ -11,8 +11,11 @@ const SCENES := {
 	"slime": preload("res://scenes/enemies/slime.tscn"),
 	"goblin": preload("res://scenes/enemies/goblin.tscn"),
 	"skeleton": preload("res://scenes/enemies/skeleton.tscn"),
+	"archer": preload("res://scenes/enemies/archer.tscn"),
 	"elite": preload("res://scenes/enemies/elite.tscn"),
 }
+const SPAWN_DELAY := 0.85
+const SPAWN_STAGGER := 0.35
 var floor_number := 1
 var wave_index := -1
 var waves: Array = []
@@ -48,16 +51,23 @@ func _spawn_wave() -> void:
 	if wave_index >= waves.size():
 		_finish_floor()
 		return
+	var order := 0
 	for kind in waves[wave_index]:
 		var enemy = SCENES[kind].instantiate()
 		enemy.setup(kind, player)
 		enemy.position = _spawn_position()
+		# Staggered arrival keeps four enemies from acting on the same frame.
+		enemy.set_spawn_delay(SPAWN_DELAY + SPAWN_STAGGER * float(order))
 		enemy.died.connect(_on_enemy_died)
-		enemy.projectile_requested.connect(func(origin, direction, damage): projectile_requested.emit(origin, direction, damage))
+		enemy.projectile_requested.connect(_on_enemy_projectile.bind(enemy))
 		enemy.sound_requested.connect(func(sound): sound_requested.emit(sound))
 		actors.add_child(enemy)
 		enemies.append(enemy)
+		order += 1
 	counts_changed.emit(enemies.size(), wave_index + 1, waves.size())
+
+func _on_enemy_projectile(origin: Vector2, direction: Vector2, damage: float, enemy: Node) -> void:
+	projectile_requested.emit(origin, direction, damage, enemy.shot_speed)
 
 func _spawn_position() -> Vector2:
 	var candidates := [Vector2(160, 165), Vector2(640, 165), Vector2(1120, 165), Vector2(160, 555), Vector2(640, 555), Vector2(1120, 555)]

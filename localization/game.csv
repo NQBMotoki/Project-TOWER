@@ -1,6 +1,6 @@
 keys,zh_CN,en_US
 UI_MENU_KICKER,五层魔塔 · 一次冒险,A FIVE-FLOOR ROGUELITE
-UI_MENU_TAG,一场关于剑与魔法的短途冒险,A short adventure of sword and spell
+UI_MENU_TAG,塔门未关，灯未熄。,The gate stands open. The lamp is still lit.
 UI_MENU_START,开始游戏,START GAME
 UI_MENU_QUIT,退出游戏,QUIT GAME
 UI_MENU_LANGUAGE,语言 / LANGUAGE,LANGUAGE / 语言
@@ -29,8 +29,8 @@ UI_REWARD_SUBTITLE,每件装备会立即生效，并可与其他强化叠加。,
 UI_REWARD_CHOOSE,选择,CHOOSE
 UI_VICTORY,守塔者已倒下,THE KEEPER FALLS
 UI_DEFEAT,旅途暂时结束,YOUR JOURNEY ENDS
-UI_VICTORY_SUB,塔中的灯，仍在燃烧。,The tower's light still burns.
-UI_DEFEAT_SUB,带着经验，再次踏入魔塔。,Carry what you learned into the tower again.
+UI_VICTORY_SUB,灯换了守塔人，仍在燃烧。,"The lamp has a new keeper, and still it burns."
+UI_DEFEAT_SUB,台阶还在原处，灯也还亮着。,The steps are where you left them; the lamp still burns.
 UI_RESULT_FLOOR,到达层数,FLOOR REACHED
 UI_RESULT_KILLS,击败敌人,ENEMIES DEFEATED
 UI_RESULT_TIME,本局用时,RUN TIME
@@ -45,10 +45,22 @@ TRANSITION_TIP_02,第 1 至第 4 层结束后，从三件装备中选择一件�
 TRANSITION_TIP_03,塔中的遗物，仍保留着曾经到访者的痕迹。,Relics in the tower still bear traces of those who came before.
 TRANSITION_TIP_04,哥布林攻击前会停下并发出预警。,Goblins stop and telegraph their attacks before striking.
 TRANSITION_TIP_05,同一种装备可以重复获得，效果会叠加。,The same upgrade can appear again; its effects stack.
+TIP_F1,剑与魔法都朝鼠标所指的方向。史莱姆会先鼓起身体，才扑出来。,Sword and spell follow the cursor. A slime swells up before it lunges.
+TIP_F2,哥布林会在动手前停住。它停住的那一瞬，就是你要动的时候。,A goblin halts before it strikes. That halt is your cue to move.
+TIP_F3,墙上的箭孔都朝里。弓手拉弦时不必急，弦响之后才有空隙。,The arrow slits face inward. Do not rush an archer's draw; the opening comes after the string sings.
+TIP_F4,法师咏唱时不要靠近，弓手拉弦时不要跑直线。,"Do not close in while a mage chants, and never run straight while an archer draws."
+TIP_F5,守塔人的灯在塔顶。他总先照亮自己要打的地方。,The keeper's lamp waits at the summit. He always lights the place he means to strike.
 LORE_F1_TITLE,古旧书页,A Fragment of History
-LORE_F1_BODY,古塔建成时，守塔人点亮了一盏灯。许多年后，灯仍亮着，却再无人记得最初是谁将它点燃。,"When the old tower was built, its keepers lit a lamp. Years later, it still burns, though no one remembers who first lit it."
+LORE_F1_BODY,古塔落成那年，守塔人定下一条规矩：灯可以换，守灯的人也可以换。此后名册上每十年添一个新名字——没有一个被划掉。,"In the year the tower was finished, its keeper set down one rule: the lamp may be replaced, and so may whoever keeps it. Every ten years a new name is added to the roll, and not one has ever been struck out."
+LORE_F2_TITLE,石匠刻记,A Stonemason's Mark
+LORE_F2_BODY,我替塔补过三十七级台阶。每年磨穿的总是同一级，图纸上只写着：此处需修，不必问。今年儿子接了手，他说那一级，上去时总比下来时矮一寸。,"I have mended thirty-seven steps in this tower. Every year it is the same one worn through, and the drawing says only this: repair it here, ask nothing. This year my son took over the work. He says that step always sits an inch lower going up than coming down."
 LORE_F3_TITLE,冒险者手记,An Adventurer's Note
-LORE_F3_BODY,第三层的回声比我快一步。我在墙边歇了一会儿，才明白独自前行，并不意味着没有人曾走过这条路。,"On the third floor, my echo ran ahead of me. I rested by the wall and realized that walking alone doesn't mean no one has walked this way before."
+LORE_F3_BODY,回声总比我快半步，像有人在前头替我数台阶。三层往上，墙上开始有箭孔，孔都朝里开。我把火把插进一个孔里，坐下歇脚，才看清孔边还有更旧的焦痕。,"My echo always runs half a step ahead of me, as if someone up there counts the steps for me. From the third floor up the walls carry arrow slits, every one of them facing inward. I wedged my torch into one and sat down to rest, and only then saw the older scorch marks beside it."
+LORE_F4_TITLE,值夜守则残页,A Torn Page of the Warden's Rules
+LORE_F4_BODY,守则·四条：不要追着声音跑。七条：弓手只在换弦时露破绽，箭在弦上时没有。十七条：若有人从下面上来，先点灯，再问名字。最后一条被人撕去了，撕口还很新。,"Warden's rules, article four: never run toward a sound. Article seven: an archer is open only while restringing, never while the arrow is set. Article seventeen: if someone climbs up from below, light the lamp first, ask the name after. The final article has been torn away, and the tear is still fresh."
+LORE_F5_TITLE,灯前留言,A Note Left Before the Lamp
+LORE_F5_BODY,灯芯我一共剪短过十七次。名册上每一个名字都是我写下的，包括你的——在你进塔之前。你还站着，说明我写得早了些。这一页翻过去吧，灯交给下一个愿意上楼的人。,"I have trimmed this wick short seventeen times. Every name in the roll was written by my hand, yours among them, before you ever came in. You are still standing, so I wrote it early. Turn the page. The lamp belongs now to whoever is willing to climb."
+LORE_F5_DOOR,门楣上有几道很浅的划痕，像用指甲刻的：若你读到这里，请替我把灯芯剪短一寸。,"Shallow scratches cross the lintel, as if cut with a fingernail: if you have read this far, trim the wick an inch for me."
 ITEM_U01_NAME,锋利长剑,Sharpened Longsword
 ITEM_U01_EFFECT,剑击伤害 +{value},Sword damage +{value}
 ITEM_U01_LORE,剑刃上的细小缺口，是每一次挥砍留下的记号。,Tiny nicks along the blade mark every swing.

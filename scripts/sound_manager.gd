@@ -6,6 +6,8 @@ func _ready() -> void:
 	sounds["sword"] = _tone(530.0, 260.0, 0.09, 0.25)
 	sounds["magic"] = _tone(440.0, 800.0, 0.16, 0.24)
 	sounds["enemy_magic"] = _tone(280.0, 180.0, 0.12, 0.20)
+	sounds["enemy_chant"] = _tone(330.0, 520.0, 0.26, 0.15)
+	sounds["enemy_arrow"] = _tone(760.0, 250.0, 0.09, 0.19)
 	sounds["hit"] = _tone(170.0, 85.0, 0.07, 0.25)
 	sounds["hurt"] = _tone(150.0, 70.0, 0.20, 0.28)
 	sounds["death"] = _tone(300.0, 90.0, 0.19, 0.22)

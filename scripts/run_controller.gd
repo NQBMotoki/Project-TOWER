@@ -24,6 +24,7 @@ var enemy_count := 0
 var wave := 0
 var total_waves := 0
 var lore_open := false
+var epilogue_open := false
 var current_choices: Array = []
 
 func _ready() -> void:
@@ -50,19 +51,29 @@ func _process(delta: float) -> void:
 			_begin_combat()
 	if state in [State.COMBAT, State.SAFE] and is_instance_valid(player):
 		var near := false
-		if state == State.SAFE and GameData.LORE.has(floor_number):
+		if state == State.SAFE and not epilogue_open and GameData.LORE.has(floor_number):
 			near = player.global_position.distance_to(GameData.LORE[floor_number].position) < 56.0
-		ui.update_hud(player, floor_number, enemy_count, wave, total_waves, state == State.SAFE, near)
+		ui.update_hud(player, floor_number, enemy_count, wave, total_waves, state == State.SAFE and not epilogue_open, near)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if state != State.SAFE or event.is_echo():
 		return
 	if lore_open:
+		if event.is_action_pressed("next") and epilogue_open:
+			lore_open = false
+			ui.close_lore()
+			end_run(true)
+			get_viewport().set_input_as_handled()
+			return
 		if event.is_action_pressed("interact") or event.is_action_pressed("close"):
 			lore_open = false
 			ui.close_lore()
 			player.can_move = true
 			get_viewport().set_input_as_handled()
+			if epilogue_open:
+				end_run(true)
+		return
+	if epilogue_open:
 		return
 	if event.is_action_pressed("interact") and GameData.LORE.has(floor_number):
 		if player.global_position.distance_to(GameData.LORE[floor_number].position) < 56.0:
@@ -79,6 +90,8 @@ func show_menu() -> void:
 	_clear_projectiles()
 	_clear_actors()
 	state = State.MENU
+	lore_open = false
+	epilogue_open = false
 	arena.floor_number = 1
 	arena.lore_active = false
 	arena.queue_redraw()
@@ -92,6 +105,7 @@ func start_run() -> void:
 	kills = 0
 	elapsed = 0.0
 	lore_open = false
+	epilogue_open = false
 	current_choices.clear()
 	player = PlayerScene.instantiate()
 	player.position = Vector2(640, 365)
@@ -110,7 +124,8 @@ func _start_transition() -> void:
 	arena.lore_active = false
 	arena.queue_redraw()
 	transition_remaining = 2.1
-	ui.show_transition(floor_number)
+	var door_key := "LORE_F5_DOOR" if floor_number == 5 else ""
+	ui.show_transition(floor_number, door_key)
 
 func _begin_combat() -> void:
 	if state != State.TRANSITION:
@@ -127,7 +142,7 @@ func _on_floor_cleared() -> void:
 	_clear_projectiles()
 	player.can_attack = false
 	if floor_number == 5:
-		end_run(true)
+		_open_epilogue()
 	elif GameData.LORE.has(floor_number):
 		state = State.SAFE
 		arena.lore_active = true
@@ -136,8 +151,17 @@ func _on_floor_cleared() -> void:
 	else:
 		_show_reward()
 
+func _open_epilogue() -> void:
+	state = State.SAFE
+	epilogue_open = true
+	lore_open = true
+	player.can_move = false
+	arena.lore_active = false
+	arena.queue_redraw()
+	ui.show_lore(GameData.LORE[5])
+
 func _show_reward() -> void:
-	if state not in [State.COMBAT, State.SAFE] or lore_open:
+	if state not in [State.COMBAT, State.SAFE] or lore_open or epilogue_open:
 		return
 	state = State.REWARD
 	player.can_move = false
@@ -165,6 +189,8 @@ func end_run(victory: bool) -> void:
 	state = State.VICTORY if victory else State.GAME_OVER
 	player.can_move = false
 	player.can_attack = false
+	lore_open = false
+	epilogue_open = false
 	floor_manager.clear_enemies()
 	_clear_projectiles()
 	arena.lore_active = false
@@ -183,17 +209,17 @@ func _on_counts_changed(remaining: int, wave_number: int, wave_count: int) -> vo
 	total_waves = wave_count
 
 func _player_projectile(origin: Vector2, direction: Vector2, damage: float) -> void:
-	_spawn_projectile(origin, direction, damage, true)
+	_spawn_projectile(origin, direction, damage, true, -1.0)
 
-func _enemy_projectile(origin: Vector2, direction: Vector2, damage: float) -> void:
-	_spawn_projectile(origin, direction, damage, false)
+func _enemy_projectile(origin: Vector2, direction: Vector2, damage: float, shot_speed: float) -> void:
+	_spawn_projectile(origin, direction, damage, false, shot_speed)
 
-func _spawn_projectile(origin: Vector2, direction: Vector2, damage: float, friendly: bool) -> void:
+func _spawn_projectile(origin: Vector2, direction: Vector2, damage: float, friendly: bool, shot_speed := -1.0) -> void:
 	if state != State.COMBAT:
 		return
 	var projectile := ProjectileScene.instantiate()
 	projectiles.add_child(projectile)
-	projectile.setup(origin, direction, damage, friendly, player)
+	projectile.setup(origin, direction, damage, friendly, player, shot_speed)
 
 func _clear_projectiles() -> void:
 	for projectile in projectiles.get_children():

@@ -9,13 +9,16 @@ var speed := 400.0
 var lifetime := 2.3
 var consumed := false
 
-func setup(origin: Vector2, heading: Vector2, amount: float, is_friendly: bool, player: Node2D) -> void:
+func setup(origin: Vector2, heading: Vector2, amount: float, is_friendly: bool, player: Node2D, shot_speed := -1.0) -> void:
 	global_position = origin
 	direction = heading.normalized()
 	damage = amount
 	friendly = is_friendly
 	target = player
-	speed = 400.0 if friendly else 230.0
+	if shot_speed > 0.0:
+		speed = shot_speed
+	else:
+		speed = 400.0 if friendly else 230.0
 
 func _physics_process(delta: float) -> void:
 	if consumed:
@@ -47,6 +50,11 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	# Fast hostile shots are arrows: a thin shaft instead of an orb.
+	if not friendly and speed > 400.0:
+		draw_line(-direction * 16.0, direction * 9.0, Color(0.95, 0.90, 0.76), 2.0)
+		draw_line(direction * 9.0, direction * 3.0, Color(0.74, 0.54, 0.31), 3.0)
+		return
 	var color := Color(0.49, 0.85, 1.0) if friendly else Color(1.0, 0.42, 0.41)
 	draw_circle(Vector2.ZERO, 10, Color(color.r, color.g, color.b, 0.18))
 	draw_rect(Rect2(-5, -5, 10, 10), color)
