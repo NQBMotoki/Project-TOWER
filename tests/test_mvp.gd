@@ -4,6 +4,7 @@ const MainScene = preload("res://scenes/main.tscn")
 const PlayerScene = preload("res://scenes/player/player.tscn")
 const SlimeScene = preload("res://scenes/enemies/slime.tscn")
 const GoblinScene = preload("res://scenes/enemies/goblin.tscn")
+const ArcherScene = preload("res://scenes/enemies/archer.tscn")
 const EliteScene = preload("res://scenes/enemies/elite.tscn")
 const ProjectileScene = preload("res://scenes/combat/projectile.tscn")
 const Localization = preload("res://scripts/localization_service.gd")
@@ -82,6 +83,17 @@ func _test_localization() -> void:
 			for suffix in ["NAME", "EFFECT", "LORE"]:
 				var key: String = "ITEM_%s_%s" % [item.id, suffix]
 				check(not str(translation.get_message(key)).is_empty(), "%s exists in %s" % [key, code])
+	for number in range(1, 6):
+		for code in ["zh_CN", "en_US"]:
+			var record: Translation = second.translations[code]
+			var lore: Dictionary = GameData.LORE[number]
+			check(not str(record.get_message(lore.title)).is_empty(), "%s exists in %s" % [lore.title, code])
+			check(not str(record.get_message(lore.body)).is_empty(), "%s exists in %s" % [lore.body, code])
+			var tip: String = GameData.FLOOR_TIPS[number]
+			check(not str(record.get_message(tip)).is_empty(), "%s exists in %s" % [tip, code])
+	for code in ["zh_CN", "en_US"]:
+		var record: Translation = second.translations[code]
+		check(not str(record.get_message("LORE_F5_DOOR")).is_empty(), "LORE_F5_DOOR exists in %s" % code)
 	first.queue_free()
 	second.queue_free()
 	DirAccess.remove_absolute(temp_settings)
@@ -104,9 +116,11 @@ func _test_combat_and_upgrades() -> void:
 		enemy.position = player.position + Vector2(40, 0)
 		enemy.set_physics_process(false)
 	player.attack_sword()
-	check(is_equal_approx(a.hp, 10.0) and is_equal_approx(b.hp, 10.0), "one sword swing damages each enemy once and can hit multiple")
+	check(is_equal_approx(a.hp, 14.0) and is_equal_approx(b.hp, 14.0), "one sword swing damages each enemy once and can hit multiple")
 	player.hp = 80
 	player.apply_upgrade(GameData.upgrade("U06"))
+	player.attack_sword()
+	check(a.alive and is_equal_approx(a.hp, 2.0) and is_equal_approx(player.hp, 80.0), "a second swing does not yet kill a slime")
 	player.attack_sword()
 	check(not a.alive and not b.alive and is_equal_approx(player.hp, 90.0), "sword kills heal once per enemy")
 	var c = SlimeScene.instantiate()
@@ -118,7 +132,7 @@ func _test_combat_and_upgrades() -> void:
 	arena.add_child(projectile)
 	projectile.setup(player.position, Vector2.RIGHT, 20.0, true, player)
 	projectile._physics_process(0.25)
-	check(is_equal_approx(c.hp, 2.0) and projectile.consumed, "friendly projectile hits once and is consumed")
+	check(is_equal_approx(c.hp, 6.0) and projectile.consumed, "friendly projectile hits once and is consumed")
 	check(is_equal_approx(player.hp, 90.0), "friendly projectile does not hit the player")
 	var hostile = ProjectileScene.instantiate()
 	arena.add_child(hostile)
@@ -149,6 +163,65 @@ func _test_combat_and_upgrades() -> void:
 	player.invulnerability = 0.0
 	goblin._behavior(0.51)
 	check(is_equal_approx(player.hp, 72.0), "moving away avoids the telegraphed strike")
+	var dummy = PlayerScene.instantiate()
+	arena.add_child(dummy)
+	dummy.position = Vector2(320, 500)
+	var cycle = SlimeScene.instantiate()
+	cycle.setup("slime", dummy)
+	arena.add_child(cycle)
+	cycle.set_physics_process(false)
+	cycle.position = dummy.position + Vector2(400, 0)
+	cycle.spawn_delay = 0.0
+	cycle.attack_timer = 1.0
+	cycle._behavior(0.01)
+	check(cycle.phase == 0, "a slime creeps while the player is far away")
+	cycle.position = dummy.position + Vector2(100, 0)
+	cycle.attack_timer = 1.0
+	cycle._behavior(0.01)
+	check(cycle.phase == 1, "a slime coils before it lunges")
+	var coil_position: Vector2 = cycle.position
+	cycle._behavior(0.8)
+	check(cycle.phase == 2, "a coiled slime lunges")
+	cycle._behavior(0.1)
+	check(cycle.position.distance_to(coil_position) > 30.0, "the lunge covers ground quickly")
+	cycle._behavior(0.15)
+	check(cycle.phase == 3, "the lunge ends in a recovery")
+	var dummy_hp: float = dummy.hp
+	dummy.invulnerability = 0.0
+	cycle.attack_timer = 0.0
+	cycle._behavior(0.01)
+	check(is_equal_approx(dummy.hp, dummy_hp), "a recovering slime cannot hurt the player")
+	cycle.phase = 2
+	cycle.phase_timer = 0.05
+	cycle.position = dummy.position + Vector2(30, 0)
+	cycle.lunge_dir = (dummy.global_position - cycle.global_position).normalized()
+	cycle.attack_timer = 0.0
+	cycle.spawn_delay = 0.0
+	dummy.invulnerability = 0.0
+	var dummy_before: float = dummy.hp
+	cycle._behavior(0.05)
+	check(dummy.hp < dummy_before, "the landing step of a lunge still lands contact")
+	var archer = ArcherScene.instantiate()
+	archer.setup("archer", dummy)
+	arena.add_child(archer)
+	archer.set_physics_process(false)
+	archer.position = dummy.position + Vector2(300, 0)
+	archer.spawn_delay = 0.0
+	archer.attack_timer = 0.0
+	var arrows := {"count": 0}
+	archer.projectile_requested.connect(func(_o, _d, _v): arrows.count += 1)
+	archer._behavior(0.01)
+	check(archer.draw_timer > 0.0 and arrows.count == 0, "an archer draws before it fires")
+	archer._behavior(0.85)
+	check(arrows.count == 1, "an archer releases a single arrow")
+	check(is_equal_approx(archer.shot_speed, 560.0), "the arrow travels faster than the player")
+	archer.draw_timer = 0.0
+	archer.attack_timer = 0.0
+	archer.position = dummy.position + Vector2(200, 0)
+	var gap_before: float = archer.position.distance_to(dummy.position)
+	archer._behavior(0.1)
+	check(archer.position.distance_to(dummy.position) > gap_before, "an archer backs off toward its minimum band")
+	check(archer.draw_timer <= 0.0, "an archer does not shoot from inside its minimum band")
 	var elite = EliteScene.instantiate()
 	elite.setup("elite", player)
 	arena.add_child(elite)
@@ -159,6 +232,8 @@ func _test_combat_and_upgrades() -> void:
 	var shots := {"count": 0}
 	elite.projectile_requested.connect(func(_o, _d, _v): shots.count += 1)
 	elite._behavior(0.01)
+	check(shots.count == 0 and elite.telegraph > 0.0, "the elite warns before firing")
+	elite._behavior(0.8)
 	check(shots.count == 3, "elite fires three projectiles")
 	var stats = PlayerScene.instantiate()
 	arena.add_child(stats)
@@ -206,26 +281,41 @@ func _test_full_run() -> void:
 	game.start_run()
 	for floor_number in range(1, 6):
 		check(game.floor_number == floor_number and game.state == game.State.TRANSITION, "floor transition %d" % floor_number)
+		check(game.wait_for_input == (floor_number == 5), "only floor 5 holds the transition for the inscription")
 		game._begin_combat()
+		check(not game.wait_for_input, "entering combat clears the transition wait")
 		check(game.state == game.State.COMBAT, "floor %d enters combat" % floor_number)
 		var waves: Array = GameData.FLOORS[floor_number - 1]
 		for wave_index in range(waves.size()):
 			game.floor_manager.wait_for_wave = -1.0
 			game.floor_manager._spawn_wave()
 			check(game.floor_manager.enemies.size() == waves[wave_index].size(), "floor %d wave %d spawns" % [floor_number, wave_index + 1])
+			if waves[wave_index].size() > 1:
+				check(game.floor_manager.enemies[1].spawn_delay > game.floor_manager.enemies[0].spawn_delay, "wave spawns are staggered")
 			for enemy in game.floor_manager.enemies.duplicate():
 				check(enemy.global_position.distance_to(game.player.global_position) >= 220.0, "enemy spawns away from player")
 				check(enemy.spawn_delay > 0.0, "enemy has spawn protection")
-			for enemy in game.floor_manager.enemies.duplicate():
-				if is_instance_valid(enemy) and enemy.alive:
-					enemy.take_damage(9999.0)
+			if floor_number == 5:
+				# Kill only the keeper so the surviving adds are still alive when
+				# the floor clears; they must be removed before the player is locked.
+				for enemy in game.floor_manager.enemies.duplicate():
+					if is_instance_valid(enemy) and enemy.alive and enemy.kind == "elite":
+						enemy.take_damage(9999.0)
+				check(game.floor_manager.enemies.is_empty(), "surviving enemies are cleared when the keeper falls")
+			else:
+				for enemy in game.floor_manager.enemies.duplicate():
+					if is_instance_valid(enemy) and enemy.alive:
+						enemy.take_damage(9999.0)
 			if wave_index + 1 < waves.size():
 				check(game.state == game.State.COMBAT and not game.floor_manager.cleared, "no reward between waves")
 		if floor_number == 5:
-			check(game.state == game.State.VICTORY, "elite death triggers victory")
+			check(game.state == game.State.SAFE and game.lore_open, "defeating the keeper opens the closing record")
+			check(not game.player.can_move, "the closing record locks movement")
+			await _send_action("interact")
+			check(game.state == game.State.VICTORY, "closing the final record ends the run in victory")
 			break
+		check(game.state == game.State.SAFE, "floor %d offers a record" % floor_number)
 		if floor_number in [1, 3]:
-			check(game.state == game.State.SAFE, "floor %d offers safe reading" % floor_number)
 			game.player.position = GameData.LORE[floor_number].position
 			await _send_action("interact")
 			check(game.lore_open and not game.player.can_move, "record opens and blocks movement")
@@ -237,7 +327,7 @@ func _test_full_run() -> void:
 			check(game.lore_open, "record can be reread")
 			await _send_action("interact")
 			check(not game.lore_open, "interaction closes the record")
-			await _send_action("next")
+		await _send_action("next")
 		check(game.state == game.State.REWARD, "floor %d enters reward" % floor_number)
 		check(game.current_choices.size() == 3, "three reward cards shown")
 		if game.current_choices.is_empty():
