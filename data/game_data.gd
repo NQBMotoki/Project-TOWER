@@ -34,25 +34,6 @@ const ENEMIES := {
 	},
 }
 
-const FLOORS := [
-	[["slime", "slime"], ["slime", "goblin"]],
-	[["slime", "slime", "goblin"], ["slime", "goblin", "goblin"]],
-	[["goblin", "skeleton", "archer"], ["archer", "skeleton", "skeleton"]],
-	[["slime", "goblin", "skeleton", "archer"], ["archer", "goblin", "goblin", "skeleton"]],
-	[["elite", "slime", "goblin"]],
-]
-
-# One record per floor. Floor 5 is read after the keeper falls, before the result screen.
-const LORE := {
-	1: {"title": "LORE_F1_TITLE", "body": "LORE_F1_BODY", "position": Vector2(905, 400)},
-	2: {"title": "LORE_F2_TITLE", "body": "LORE_F2_BODY", "position": Vector2(300, 220)},
-	3: {"title": "LORE_F3_TITLE", "body": "LORE_F3_BODY", "position": Vector2(905, 400)},
-	4: {"title": "LORE_F4_TITLE", "body": "LORE_F4_BODY", "position": Vector2(1000, 480)},
-	5: {"title": "LORE_F5_TITLE", "body": "LORE_F5_BODY", "position": Vector2(640, 300)},
-}
-
-const FLOOR_TIPS := {1: "TIP_F1", 2: "TIP_F2", 3: "TIP_F3", 4: "TIP_F4", 5: "TIP_F5"}
-
 static func upgrade(id: String) -> Dictionary:
 	for item in UPGRADES:
 		if item.id == id:

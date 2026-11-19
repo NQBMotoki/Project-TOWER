@@ -31,6 +31,7 @@ var safe_label: Label
 var near_label: Label
 var menu_start: Button
 var menu_quit: Button
+var menu_title: Label
 var menu_kicker: Label
 var menu_tag: Label
 var menu_controls: Label
@@ -85,7 +86,7 @@ func _build_ui() -> void:
 	_dimmer(menu, 0.81)
 	_panel(menu, Rect2(320, 65, 640, 590), Color("202831"), Color("74634d"))
 	menu_kicker = _label(menu, Vector2(390, 100), Vector2(500, 24), 13, GOLD, HORIZONTAL_ALIGNMENT_CENTER)
-	_label(menu, Vector2(350, 129), Vector2(580, 70), 52, INK, HORIZONTAL_ALIGNMENT_CENTER).text = "T O W E R"
+	menu_title = _label(menu, Vector2(350, 129), Vector2(580, 70), 52, INK, HORIZONTAL_ALIGNMENT_CENTER)
 	menu_tag = _label(menu, Vector2(380, 205), Vector2(520, 30), 17, MUTED, HORIZONTAL_ALIGNMENT_CENTER)
 	_color(menu, Rect2(470, 252, 340, 2), Color("716049"))
 	menu_controls = _label(menu, Vector2(385, 275), Vector2(510, 92), 16, INK, HORIZONTAL_ALIGNMENT_CENTER, true)
@@ -95,10 +96,8 @@ func _build_ui() -> void:
 	menu_quit.pressed.connect(func(): quit_pressed.emit())
 	menu_language = _label(menu, Vector2(390, 524), Vector2(500, 24), 13, MUTED, HORIZONTAL_ALIGNMENT_CENTER)
 	language_zh = _button(menu, "Chinese", Rect2(440, 556, 190, 42))
-	language_zh.text = "简体中文"
 	language_zh.pressed.connect(func(): loc.set_language("zh_CN"))
 	language_en = _button(menu, "English", Rect2(650, 556, 190, 42))
-	language_en.text = "English (US)"
 	language_en.pressed.connect(func(): loc.set_language("en_US"))
 
 	transition = _layer("Transition")
@@ -194,11 +193,14 @@ func _button(parent: Control, node_name: String, rect: Rect2, primary := false) 
 	return button
 
 func _refresh_menu() -> void:
+	menu_title.text = loc.text("UI_MENU_TITLE")
 	menu_kicker.text = loc.text("UI_MENU_KICKER")
 	menu_tag.text = loc.text("UI_MENU_TAG")
 	menu_start.text = loc.text("UI_MENU_START")
 	menu_quit.text = loc.text("UI_MENU_QUIT")
 	menu_language.text = loc.text("UI_MENU_LANGUAGE")
+	language_zh.text = loc.text("UI_LANGUAGE_ZH_CN")
+	language_en.text = loc.text("UI_LANGUAGE_EN_US")
 	menu_controls.text = loc.text("UI_MENU_CONTROLS", {"move": "%s %s %s %s" % [loc.binding("move_up"), loc.binding("move_left"), loc.binding("move_down"), loc.binding("move_right")], "attack": loc.binding("attack"), "magic": loc.binding("magic"), "interact": loc.binding("interact"), "next": loc.binding("next")})
 	language_zh.modulate = Color.WHITE if loc.locale == "zh_CN" else Color(0.7, 0.7, 0.7)
 	language_en.modulate = Color.WHITE if loc.locale == "en_US" else Color(0.7, 0.7, 0.7)
@@ -216,21 +218,21 @@ func show_hud() -> void:
 	_hide_all()
 	hud.show()
 
-func show_transition(floor_number: int, door_key := "", waiting := false) -> void:
+func show_transition(floor_number: int, tip_key: String, note_key: String, waiting: bool) -> void:
 	_hide_all()
 	transition_heading.text = loc.text("UI_TRANSITION_LABEL")
 	transition_floor.text = loc.text("UI_TRANSITION", {"floor": floor_number})
-	transition_tip.text = loc.text(str(GameData.FLOOR_TIPS.get(floor_number, "TRANSITION_TIP_01")))
-	transition_note.text = "" if door_key == "" else loc.text(door_key)
-	transition_note.visible = door_key != ""
+	transition_tip.text = loc.text(tip_key)
+	transition_note.text = "" if note_key.is_empty() else loc.text(note_key)
+	transition_note.visible = not note_key.is_empty()
 	transition_hint.text = loc.text("UI_TRANSITION_CONTINUE", {"next": loc.binding("next")}) if waiting else ""
 	transition_hint.visible = waiting
 	transition.show()
 
-func update_hud(player: Node, floor_number: int, enemies: int, wave: int, total: int, safe: bool, near: bool) -> void:
+func update_hud(player: Node, floor_number: int, floor_count: int, enemies: int, wave: int, total: int, safe: bool, near: bool) -> void:
 	health_label.text = loc.text("UI_HEALTH", {"hp": ceili(player.hp), "max": ceili(player.max_hp)})
 	health_fill.size.x = 250.0 * clampf(player.hp / player.max_hp, 0.0, 1.0)
-	floor_label.text = loc.text("UI_FLOOR", {"floor": floor_number})
+	floor_label.text = loc.text("UI_FLOOR", {"floor": floor_number, "total": floor_count})
 	enemies_label.text = loc.text("UI_ENEMIES", {"count": enemies})
 	wave_label.text = loc.text("UI_WAVE", {"wave": wave, "total": total})
 	magic_label.text = "%s  ·  %s" % [loc.binding("magic"), loc.text("UI_MAGIC")]
@@ -244,9 +246,9 @@ func update_hud(player: Node, floor_number: int, enemies: int, wave: int, total:
 	near_label.text = loc.text("UI_READ_NEAR", {"interact": loc.binding("interact")})
 	near_label.visible = safe and near
 
-func show_lore(data: Dictionary) -> void:
-	lore_title.text = loc.text(data.title)
-	lore_body.text = loc.text(data.body)
+func show_lore(title_key: String, body_key: String) -> void:
+	lore_title.text = loc.text(title_key)
+	lore_body.text = loc.text(body_key)
 	lore_close.text = loc.text("UI_LORE_CLOSE", {"interact": loc.binding("interact"), "close": loc.binding("close")})
 	lore.show()
 

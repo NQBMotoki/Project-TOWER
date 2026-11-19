@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FloorDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/floor_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+tip_key = "TIP_F5"
+entry_note_key = "LORE_F5_DOOR"
+wait_for_confirmation = true
+waves = Array[PackedStringArray]([PackedStringArray("elite", "slime", "goblin")])
+clear_on_enemy_defeat = "elite"
+after_clear = 2
+record_title_key = "LORE_F5_TITLE"
+record_body_key = "LORE_F5_BODY"

@@ -131,6 +131,8 @@ Godot 工程以可复用场景、事件信号和集中配置支撑迭代。Engin
 
 PM 将素材交给 Engineer 接入，Engineer 回传可玩包供 QA 验证。QA 将缺陷和复现条件反馈给 Engineer，同时向 PM 报告会影响范围或交付的事项。PM 根据样板评审与验收记录决定是否降级。
 
+双语文案负责人确认简体中文源文、美式英语译文和术语。Engineer 提供文本 ID、变量、出现位置与触发条件，导入双语文本并运行候选包检查。QA 按构建号、语言和文本 ID 记录游戏内审校结果。参见[本地化工作流](localization/context.md)。
+
 <a name="milestones"></a>
 
 ### 9.2 计划与验收节点

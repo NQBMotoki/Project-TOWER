@@ -1,12 +1,14 @@
 extends Node2D
 
-const GameData = preload("res://data/game_data.gd")
 const RewardManager = preload("res://scripts/reward_manager.gd")
 const PlayerScene = preload("res://scenes/player/player.tscn")
 const ProjectileScene = preload("res://scenes/combat/projectile.tscn")
 const DeathEffect = preload("res://scripts/death_effect.gd")
 
 enum State { MENU, TRANSITION, COMBAT, SAFE, REWARD, GAME_OVER, VICTORY }
+const RECORD_READ_DISTANCE := 56.0
+
+@export var floors: Array[FloorDefinition] = []
 @onready var arena: Node2D = $Arena
 @onready var actors: Node2D = $Actors
 @onready var projectiles: Node2D = $Projectiles
@@ -17,6 +19,9 @@ enum State { MENU, TRANSITION, COMBAT, SAFE, REWARD, GAME_OVER, VICTORY }
 var state := State.MENU
 var player: Node2D
 var floor_number := 1
+var current_floor: FloorDefinition:
+	get:
+		return floors[floor_number - 1]
 var kills := 0
 var elapsed := 0.0
 var transition_remaining := 0.0
@@ -25,7 +30,6 @@ var enemy_count := 0
 var wave := 0
 var total_waves := 0
 var lore_open := false
-var epilogue_open := false
 var current_choices: Array = []
 
 func _ready() -> void:
@@ -51,10 +55,8 @@ func _process(delta: float) -> void:
 		if transition_remaining <= 0.0 and not wait_for_input:
 			_begin_combat()
 	if state in [State.COMBAT, State.SAFE] and is_instance_valid(player):
-		var near := false
-		if state == State.SAFE and not epilogue_open and GameData.LORE.has(floor_number):
-			near = player.global_position.distance_to(GameData.LORE[floor_number].position) < 56.0
-		ui.update_hud(player, floor_number, enemy_count, wave, total_waves, state == State.SAFE and not epilogue_open, near)
+		var can_read := state == State.SAFE and current_floor.after_clear == FloorDefinition.AfterClear.OPTIONAL_RECORD
+		ui.update_hud(player, floor_number, floors.size(), enemy_count, wave, total_waves, can_read, can_read and _near_record())
 
 func _unhandled_input(event: InputEvent) -> void:
 	if state == State.TRANSITION:
@@ -65,32 +67,26 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if state != State.SAFE or event.is_echo():
 		return
+	var epilogue := current_floor.after_clear == FloorDefinition.AfterClear.EPILOGUE
 	if lore_open:
-		if event.is_action_pressed("next") and epilogue_open:
+		if event.is_action_pressed("interact") or event.is_action_pressed("close") or (epilogue and event.is_action_pressed("next")):
 			lore_open = false
 			ui.close_lore()
-			end_run(true)
 			get_viewport().set_input_as_handled()
-			return
-		if event.is_action_pressed("interact") or event.is_action_pressed("close"):
-			lore_open = false
-			ui.close_lore()
-			player.can_move = true
-			get_viewport().set_input_as_handled()
-			if epilogue_open:
+			if epilogue:
 				end_run(true)
+			else:
+				player.can_move = true
 		return
-	if epilogue_open:
-		return
-	if event.is_action_pressed("interact") and GameData.LORE.has(floor_number):
-		if player.global_position.distance_to(GameData.LORE[floor_number].position) < 56.0:
-			lore_open = true
-			player.can_move = false
-			ui.show_lore(GameData.LORE[floor_number])
-			get_viewport().set_input_as_handled()
+	if event.is_action_pressed("interact") and _near_record():
+		_open_lore()
+		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("next"):
 		_show_reward()
 		get_viewport().set_input_as_handled()
+
+func _near_record() -> bool:
+	return current_floor.after_clear == FloorDefinition.AfterClear.OPTIONAL_RECORD and player.global_position.distance_to(current_floor.record_position) < RECORD_READ_DISTANCE
 
 func show_menu() -> void:
 	floor_manager.clear_enemies()
@@ -98,7 +94,6 @@ func show_menu() -> void:
 	_clear_actors()
 	state = State.MENU
 	lore_open = false
-	epilogue_open = false
 	arena.floor_number = 1
 	arena.lore_active = false
 	arena.queue_redraw()
@@ -112,7 +107,6 @@ func start_run() -> void:
 	kills = 0
 	elapsed = 0.0
 	lore_open = false
-	epilogue_open = false
 	wait_for_input = false
 	current_choices.clear()
 	player = PlayerScene.instantiate()
@@ -132,11 +126,8 @@ func _start_transition() -> void:
 	arena.lore_active = false
 	arena.queue_redraw()
 	transition_remaining = 2.1
-	var door_key := "LORE_F5_DOOR" if floor_number == 5 else ""
-	# The Floor 5 inscription is the only place the player can read it, so that
-	# transition holds until the player continues instead of auto-advancing.
-	wait_for_input = floor_number == 5
-	ui.show_transition(floor_number, door_key, wait_for_input)
+	wait_for_input = current_floor.wait_for_confirmation
+	ui.show_transition(floor_number, current_floor.tip_key, current_floor.entry_note_key, wait_for_input)
 
 func _begin_combat() -> void:
 	if state != State.TRANSITION:
@@ -146,38 +137,33 @@ func _begin_combat() -> void:
 	player.can_move = true
 	player.can_attack = true
 	ui.show_hud()
-	floor_manager.start_floor(floor_number, player, actors)
+	floor_manager.start_floor(current_floor, player, actors)
 
 func _on_floor_cleared() -> void:
 	if state != State.COMBAT:
 		return
 	_clear_projectiles()
 	player.can_attack = false
-	if floor_number == 5:
-		# The keeper falling ends the fight. Clear the adds before the player
-		# loses movement and attack input for the closing note, otherwise a
-		# surviving enemy can kill a player who can no longer act.
-		floor_manager.clear_enemies()
-		_open_epilogue()
-	elif GameData.LORE.has(floor_number):
-		state = State.SAFE
-		arena.lore_active = true
-		arena.queue_redraw()
-		player.can_move = true
-	else:
-		_show_reward()
+	match current_floor.after_clear:
+		FloorDefinition.AfterClear.REWARD:
+			_show_reward()
+		FloorDefinition.AfterClear.OPTIONAL_RECORD:
+			state = State.SAFE
+			arena.lore_position = current_floor.record_position
+			arena.lore_active = true
+			arena.queue_redraw()
+			player.can_move = true
+		FloorDefinition.AfterClear.EPILOGUE:
+			state = State.SAFE
+			_open_lore()
 
-func _open_epilogue() -> void:
-	state = State.SAFE
-	epilogue_open = true
+func _open_lore() -> void:
 	lore_open = true
 	player.can_move = false
-	arena.lore_active = false
-	arena.queue_redraw()
-	ui.show_lore(GameData.LORE[5])
+	ui.show_lore(current_floor.record_title_key, current_floor.record_body_key)
 
 func _show_reward() -> void:
-	if state not in [State.COMBAT, State.SAFE] or lore_open or epilogue_open:
+	if state not in [State.COMBAT, State.SAFE] or lore_open or current_floor.after_clear == FloorDefinition.AfterClear.EPILOGUE:
 		return
 	state = State.REWARD
 	player.can_move = false
@@ -206,7 +192,6 @@ func end_run(victory: bool) -> void:
 	player.can_move = false
 	player.can_attack = false
 	lore_open = false
-	epilogue_open = false
 	floor_manager.clear_enemies()
 	_clear_projectiles()
 	arena.lore_active = false

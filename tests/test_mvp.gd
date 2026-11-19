@@ -10,9 +10,22 @@ const ProjectileScene = preload("res://scenes/combat/projectile.tscn")
 const Localization = preload("res://scripts/localization_service.gd")
 const GameData = preload("res://data/game_data.gd")
 const RewardManager = preload("res://scripts/reward_manager.gd")
+const LOCALES := ["zh_CN", "en_US"]
+const CATEGORIES := ["menu", "hud", "transition", "narrative", "equipment", "reward", "result", "input"]
+const STRING_STATUSES := ["placeholder", "draft", "approved"]
+
+class AuditedLocalization extends "res://scripts/localization_service.gd":
+	signal text_requested(key: String, values: Dictionary)
+
+	func text(key: String, values: Dictionary = {}) -> String:
+		text_requested.emit(key, values)
+		return super.text(key, values)
+
 var failures: Array[String] = []
 var checks := 0
-var clears := 0
+var temp_settings: String
+var translation_variables: Dictionary = {}
+var checked_calls: Dictionary = {}
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -24,9 +37,21 @@ func check(condition: bool, message: String) -> void:
 		printerr("FAIL: " + message)
 
 func _run() -> void:
+	var temp_dir := OS.get_environment("TMPDIR")
+	if temp_dir.is_empty():
+		temp_dir = OS.get_environment("TEMP")
+	if temp_dir.is_empty():
+		temp_dir = OS.get_user_data_dir()
+	temp_settings = temp_dir.path_join("tower-test-%s.cfg" % Time.get_ticks_usec())
 	await _test_localization()
+	_test_floor_resources()
 	await _test_combat_and_upgrades()
-	await _test_full_run()
+	if failures.is_empty():
+		for locale in LOCALES:
+			await _test_full_run(locale)
+		# The same entry, combat, and epilogue rules must work in a different slot.
+		await _test_full_run("en_US", true)
+	DirAccess.remove_absolute(temp_settings)
 	if failures.is_empty():
 		print("PASS: %d checks (localization, combat, upgrades, five-floor flow, restart)" % checks)
 		quit(0)
@@ -35,69 +60,111 @@ func _run() -> void:
 		quit(1)
 
 func _test_localization() -> void:
-	var temp_dir := OS.get_environment("TMPDIR")
-	if temp_dir.is_empty():
-		temp_dir = OS.get_environment("TEMP")
-	if temp_dir.is_empty():
-		temp_dir = OS.get_user_data_dir()
-	var temp_settings := temp_dir.path_join("tower-test-%s.cfg" % Time.get_ticks_usec())
 	var first = Localization.new()
 	first.settings_path = temp_settings
 	root.add_child(first)
-	check(first.text("UI_MENU_START") != "UI_MENU_START", "localized menu text resolves")
-	var source := FileAccess.open("res://localization/game.csv", FileAccess.READ)
-	check(source != null, "translation source exists")
-	if source:
-		var header := source.get_csv_line()
-		check(header == PackedStringArray(["keys", "zh_CN", "en_US"]), "translation source has expected locales")
-		var keys := {}
-		var placeholders := RegEx.new()
-		placeholders.compile("\\{[^}]+\\}")
-		while not source.eof_reached():
-			var row := source.get_csv_line()
-			if row.size() < 3:
-				continue
-			check(not keys.has(row[0]), "translation ID is unique: " + row[0])
-			keys[row[0]] = true
-			check(not row[1].is_empty() and not row[2].is_empty(), "both translations exist: " + row[0])
-			var zh_vars: Array[String] = []
-			var en_vars: Array[String] = []
-			for found in placeholders.search_all(row[1]):
-				zh_vars.append(found.get_string())
-			for found in placeholders.search_all(row[2]):
-				en_vars.append(found.get_string())
-			zh_vars.sort()
-			en_vars.sort()
-			check(zh_vars == en_vars, "matching placeholders: " + row[0])
+	_test_string_table(first.translations)
 	first.set_language("en_US")
-	check(first.text("UI_MENU_START") == "START GAME", "English selection takes effect")
+	var english: Translation = first.translations.get("en_US")
+	check(english != null and first.locale == "en_US" and first.text("UI_MENU_START") == english.get_message("UI_MENU_START"), "English selection takes effect")
 	var second = Localization.new()
 	second.settings_path = temp_settings
 	root.add_child(second)
 	check(second.locale == "en_US", "language selection persists")
 	second.set_language("zh_CN")
-	check(second.text("UI_MENU_START") == "开始游戏", "Chinese selection takes effect")
-	for item in GameData.UPGRADES:
-		for code in ["zh_CN", "en_US"]:
-			var translation: Translation = second.translations[code]
-			for suffix in ["NAME", "EFFECT", "LORE"]:
-				var key: String = "ITEM_%s_%s" % [item.id, suffix]
-				check(not str(translation.get_message(key)).is_empty(), "%s exists in %s" % [key, code])
-	for number in range(1, 6):
-		for code in ["zh_CN", "en_US"]:
-			var record: Translation = second.translations[code]
-			var lore: Dictionary = GameData.LORE[number]
-			check(not str(record.get_message(lore.title)).is_empty(), "%s exists in %s" % [lore.title, code])
-			check(not str(record.get_message(lore.body)).is_empty(), "%s exists in %s" % [lore.body, code])
-			var tip: String = GameData.FLOOR_TIPS[number]
-			check(not str(record.get_message(tip)).is_empty(), "%s exists in %s" % [tip, code])
-	for code in ["zh_CN", "en_US"]:
-		var record: Translation = second.translations[code]
-		check(not str(record.get_message("LORE_F5_DOOR")).is_empty(), "LORE_F5_DOOR exists in %s" % code)
+	var chinese: Translation = second.translations.get("zh_CN")
+	check(chinese != null and second.locale == "zh_CN" and second.text("UI_MENU_START") == chinese.get_message("UI_MENU_START"), "Chinese selection takes effect")
 	first.queue_free()
 	second.queue_free()
-	DirAccess.remove_absolute(temp_settings)
 	await process_frame
+
+func _test_string_table(translations: Dictionary) -> void:
+	var source := FileAccess.open("res://localization/game.csv", FileAccess.READ)
+	check(source != null, "translation source exists")
+	if source == null:
+		return
+	var header := source.get_csv_line()
+	var expected := PackedStringArray(["keys", "zh_CN", "en_US", "_category", "_context", "_status"])
+	check(header == expected, "translation source has the six agreed columns")
+	if header != expected:
+		return
+	var candidate := OS.get_cmdline_user_args().has("--candidate")
+	var placeholders := RegEx.create_from_string("\\{([a-z_][a-z0-9_]*)\\}")
+	while not source.eof_reached():
+		var row := source.get_csv_line()
+		if row.is_empty() or row == PackedStringArray([""]):
+			continue
+		check(row.size() == header.size(), "six CSV fields for %s" % row[0])
+		if row.size() != header.size():
+			continue
+		var key := row[0]
+		check(not key.is_empty() and not translation_variables.has(key), "translation ID is nonempty and unique: " + key)
+		check(row[3] in CATEGORIES, "valid category for " + key)
+		check(not row[4].strip_edges().is_empty(), "context exists for " + key)
+		check(row[5] in STRING_STATUSES, "valid status for " + key)
+		if candidate:
+			check(row[5] != "placeholder", "candidate rejects placeholder text for " + key)
+		var names := _placeholder_names(placeholders, row[1])
+		translation_variables[key] = names
+		check(names == _placeholder_names(placeholders, row[2]), "matching placeholders in both locales: " + key)
+		check(names == _placeholder_names(placeholders, row[4]), "context documents each placeholder: " + key)
+		for column in [1, 2]:
+			var message := row[column].c_unescape()
+			var description := "%s in %s" % [key, header[column]]
+			var remainder := placeholders.sub(message, "", true)
+			check(not remainder.contains("{") and not remainder.contains("}"), "valid placeholder syntax for " + description)
+			check(not message.strip_edges().is_empty(), "nonempty translation for " + description)
+			var translation: Translation = translations.get(header[column])
+			check(translation != null and translation.get_message(key) == message, "imported translation matches CSV for " + description)
+	check(not translation_variables.is_empty(), "string table contains entries")
+
+func _placeholder_names(pattern: RegEx, message: String) -> Array[String]:
+	var names: Array[String] = []
+	for token in pattern.search_all(message):
+		var name := token.get_string(1)
+		if not names.has(name):
+			names.append(name)
+	names.sort()
+	return names
+
+func _check_text_request(key: String, values: Dictionary) -> void:
+	var names: Array[String] = []
+	names.assign(values.keys())
+	names.sort()
+	var signature := "%s %s" % [key, names]
+	if checked_calls.has(signature):
+		return
+	checked_calls[signature] = true
+	check(translation_variables.has(key), "UI used a String ID in the CSV: " + key)
+	check(translation_variables.get(key) == names, "UI supplied %s for %s, expected %s" % [names, key, translation_variables.get(key)])
+
+func _test_floor_resources() -> void:
+	var game = MainScene.instantiate()
+	var manager = game.get_node("FloorManager")
+	check(game.floors.size() == 5, "main scene has five floors")
+	for index in range(game.floors.size()):
+		var floor: FloorDefinition = game.floors[index]
+		var level := "floor %d" % (index + 1)
+		check(floor != null, level + " has a definition")
+		if floor == null:
+			continue
+		check(floor.after_clear in FloorDefinition.AfterClear.values(), level + " has a valid clear sequence")
+		check((floor.after_clear == FloorDefinition.AfterClear.EPILOGUE) == (index == game.floors.size() - 1), level + " ends the run only in the last slot")
+		_check_text_request(floor.tip_key, {})
+		if not floor.entry_note_key.is_empty():
+			_check_text_request(floor.entry_note_key, {})
+		if floor.after_clear != FloorDefinition.AfterClear.REWARD:
+			_check_text_request(floor.record_title_key, {})
+			_check_text_request(floor.record_body_key, {})
+		check(not floor.waves.is_empty(), level + " has combat waves")
+		var enemy_types := []
+		for wave in floor.waves:
+			check(not wave.is_empty(), level + " has no empty waves")
+			for enemy in wave:
+				check(GameData.ENEMIES.has(enemy) and manager.SCENES.has(enemy), level + " can spawn " + enemy)
+			enemy_types.append_array(wave)
+		check(floor.clear_on_enemy_defeat.is_empty() or enemy_types.has(floor.clear_on_enemy_defeat), level + " spawns its configured clear target")
+	game.free()
 
 func _test_combat_and_upgrades() -> void:
 	var arena := Node2D.new()
@@ -273,73 +340,96 @@ func _send_action(action: String) -> void:
 	Input.parse_input_event(release)
 	await process_frame
 
-func _test_full_run() -> void:
+func _test_full_run(locale: String, epilogue_only := false) -> void:
 	var game = MainScene.instantiate()
+	if epilogue_only:
+		game.floors.assign([game.floors.back()])
+	var service = game.get_node("Localization")
+	service.set_script(AuditedLocalization)
+	service.settings_path = temp_settings
+	service.text_requested.connect(_check_text_request)
 	root.add_child(game)
-	game.floor_manager.floor_cleared.connect(func(): clears += 1)
+	var cleared_floors: Array[int] = []
+	game.floor_manager.floor_cleared.connect(func(): cleared_floors.append(game.floor_number))
 	check(game.state == game.State.MENU, "game starts in menu")
-	game.start_run()
-	for floor_number in range(1, 6):
+	var language_button: Button = game.ui.language_zh if locale == "zh_CN" else game.ui.language_en
+	language_button.pressed.emit()
+	var translation: Translation = service.translations[locale]
+	check(game.ui.menu_start.text == translation.get_message("UI_MENU_START"), "menu refreshes in " + locale)
+	for item in GameData.UPGRADES:
+		game.ui.show_reward([item])
+	game.ui.show_menu()
+	game.ui.menu_start.pressed.emit()
+	var floor_count: int = game.floors.size()
+	for floor_number in range(1, floor_count + 1):
+		var floor: FloorDefinition = game.floors[floor_number - 1]
 		check(game.floor_number == floor_number and game.state == game.State.TRANSITION, "floor transition %d" % floor_number)
-		check(game.wait_for_input == (floor_number == 5), "only floor 5 holds the transition for the inscription")
-		game._begin_combat()
+		check(game.ui.transition_tip.text == translation.get_message(floor.tip_key), "floor tip appears in " + locale)
+		check(game.wait_for_input == floor.wait_for_confirmation, "transition uses the configured confirmation rule")
+		if floor.wait_for_confirmation:
+			check(game.ui.transition_note.visible and game.ui.transition_note.text == translation.get_message(floor.entry_note_key), "entry note appears in " + locale)
+			check(game.ui.transition_hint.visible, "confirmation prompt is shown")
+			await _send_action("next")
+			check(game.state == game.State.TRANSITION, "entry note has a minimum reading time")
+			game._process(game.transition_remaining)
+			check(game.state == game.State.TRANSITION, "entry note still waits when the timer expires")
+			await _send_action("next")
+		else:
+			game._process(game.transition_remaining)
 		check(not game.wait_for_input, "entering combat clears the transition wait")
 		check(game.state == game.State.COMBAT, "floor %d enters combat" % floor_number)
-		var waves: Array = GameData.FLOORS[floor_number - 1]
-		for wave_index in range(waves.size()):
+		if floor_number == 1:
+			game.player.cast_magic()
+			game._process(0.0)
+			var floor_text := String(translation.get_message("UI_FLOOR")).format({"floor": floor_number, "total": floor_count})
+			check(game.ui.floor_label.text == floor_text, "HUD uses the run's configured floor count")
+		for wave_index in range(floor.waves.size()):
+			var wave := floor.waves[wave_index]
 			game.floor_manager.wait_for_wave = -1.0
 			game.floor_manager._spawn_wave()
-			check(game.floor_manager.enemies.size() == waves[wave_index].size(), "floor %d wave %d spawns" % [floor_number, wave_index + 1])
-			if waves[wave_index].size() > 1:
+			check(game.floor_manager.enemies.size() == wave.size(), "floor %d wave %d spawns" % [floor_number, wave_index + 1])
+			if game.floor_manager.enemies.size() > 1:
 				check(game.floor_manager.enemies[1].spawn_delay > game.floor_manager.enemies[0].spawn_delay, "wave spawns are staggered")
+			var has_target := wave.has(floor.clear_on_enemy_defeat)
+			var spawned_kinds := PackedStringArray()
 			for enemy in game.floor_manager.enemies.duplicate():
+				spawned_kinds.append(enemy.kind)
 				check(enemy.global_position.distance_to(game.player.global_position) >= 220.0, "enemy spawns away from player")
 				check(enemy.spawn_delay > 0.0, "enemy has spawn protection")
-			if floor_number == 5:
-				# Kill only the keeper so the surviving adds are still alive when
-				# the floor clears; they must be removed before the player is locked.
-				for enemy in game.floor_manager.enemies.duplicate():
-					if is_instance_valid(enemy) and enemy.alive and enemy.kind == "elite":
-						enemy.take_damage(9999.0)
-				check(game.floor_manager.enemies.is_empty(), "surviving enemies are cleared when the keeper falls")
-			else:
-				for enemy in game.floor_manager.enemies.duplicate():
-					if is_instance_valid(enemy) and enemy.alive:
-						enemy.take_damage(9999.0)
-			if wave_index + 1 < waves.size():
+			check(spawned_kinds == wave, "wave uses configured enemy types in order")
+			for enemy in game.floor_manager.enemies.duplicate():
+				if enemy.alive and (not has_target or enemy.kind == floor.clear_on_enemy_defeat):
+					enemy.take_damage(9999.0)
+			if has_target:
+				check(game.floor_manager.cleared and game.floor_manager.enemies.is_empty(), "defeating the clear target despawns surviving enemies")
+				break
+			if wave_index + 1 < floor.waves.size():
 				check(game.state == game.State.COMBAT and not game.floor_manager.cleared, "no reward between waves")
-		if floor_number == 5:
+		if floor.after_clear == FloorDefinition.AfterClear.EPILOGUE:
 			check(game.state == game.State.SAFE and game.lore_open, "defeating the keeper opens the closing record")
-			check(not game.player.can_move, "the closing record locks movement")
-			await _send_action("interact")
+			check(not game.player.can_move and not game.player.can_attack, "the closing record locks movement and attacks")
+			check(game.ui.lore_title.text == translation.get_message(floor.record_title_key), "epilogue title appears in " + locale)
+			check(game.ui.lore_body.text == translation.get_message(floor.record_body_key), "epilogue body appears in " + locale)
+			await _send_action("interact" if locale == "zh_CN" else "next")
 			check(game.state == game.State.VICTORY, "closing the final record ends the run in victory")
+			check(game.ui.result.visible, "victory screen is visible")
 			break
-		check(game.state == game.State.SAFE, "floor %d offers a record" % floor_number)
-		if floor_number in [1, 3]:
-			game.player.position = GameData.LORE[floor_number].position
-			await _send_action("interact")
-			check(game.lore_open and not game.player.can_move, "record opens and blocks movement")
+		if floor.after_clear == FloorDefinition.AfterClear.OPTIONAL_RECORD:
+			check(game.state == game.State.SAFE and game.arena.lore_position == floor.record_position, "optional record appears at its configured location")
+			if floor_number != 2 or locale == "zh_CN":
+				await _test_optional_record(game, floor, translation)
 			await _send_action("next")
-			check(game.state == game.State.SAFE and game.lore_open, "open record blocks reward input")
-			await _send_action("close")
-			check(not game.lore_open and game.player.can_move, "escape closes the record")
-			await _send_action("interact")
-			check(game.lore_open, "record can be reread")
-			await _send_action("interact")
-			check(not game.lore_open, "interaction closes the record")
-		await _send_action("next")
 		check(game.state == game.State.REWARD, "floor %d enters reward" % floor_number)
 		check(game.current_choices.size() == 3, "three reward cards shown")
 		if game.current_choices.is_empty():
 			game.queue_free()
 			await process_frame
 			return
-		var item: Dictionary = game.current_choices[0]
-		game._on_upgrade_selected(item)
+		game.ui.reward.get_node("Card0").pressed.emit()
 		check(game.player.upgrades.size() == floor_number, "exactly one upgrade applied per floor")
-	check(clears == 5, "floor cleared emits exactly once per floor")
-	check(game.kills > 0 and game.player.upgrades.size() == 4, "victory retains run statistics")
-	game.start_run()
+	check(cleared_floors == range(1, floor_count + 1), "floor cleared emits exactly once per floor")
+	check(game.kills > 0 and game.player.upgrades.size() == floor_count - 1, "victory retains run statistics")
+	game.ui.result.get_node("Restart").pressed.emit()
 	check(game.floor_number == 1 and game.kills == 0 and game.player.upgrades.is_empty() and game.player.hp == 100, "restart resets run")
 	game._begin_combat()
 	game.player.take_damage(999)
@@ -348,3 +438,18 @@ func _test_full_run() -> void:
 	check(game.state == game.State.TRANSITION and game.player.alive, "restart after defeat creates a live player")
 	game.queue_free()
 	await process_frame
+
+func _test_optional_record(game: Node, floor: FloorDefinition, translation: Translation) -> void:
+	game.player.position = floor.record_position
+	await _send_action("interact")
+	check(game.lore_open and not game.player.can_move, "record opens and blocks movement")
+	check(game.ui.lore_title.text == translation.get_message(floor.record_title_key), "optional record title appears in " + translation.locale)
+	check(game.ui.lore_body.text == translation.get_message(floor.record_body_key), "optional record body appears in " + translation.locale)
+	await _send_action("next")
+	check(game.state == game.State.SAFE and game.lore_open, "open record blocks reward input")
+	await _send_action("close")
+	check(not game.lore_open and game.player.can_move, "escape closes the record")
+	await _send_action("interact")
+	check(game.lore_open, "record can be reread")
+	await _send_action("interact")
+	check(not game.lore_open, "interaction closes the record")

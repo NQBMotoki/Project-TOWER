@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="FloorDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/floor_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+tip_key = "TIP_F4"
+waves = Array[PackedStringArray]([PackedStringArray("slime", "goblin", "skeleton", "archer"), PackedStringArray("archer", "goblin", "goblin", "skeleton")])
+after_clear = 1
+record_title_key = "LORE_F4_TITLE"
+record_body_key = "LORE_F4_BODY"
+record_position = Vector2(1000, 480)

@@ -1,8 +1,8 @@
 extends Node2D
 
-const GameData = preload("res://data/game_data.gd")
 var floor_number := 1
 var lore_active := false
+var lore_position := Vector2.ZERO
 var clock := 0.0
 
 func _process(delta: float) -> void:
@@ -36,8 +36,8 @@ func _draw() -> void:
 	for p in [Vector2(145, 152), Vector2(1135, 152), Vector2(145, 567), Vector2(1135, 567)]:
 		draw_circle(p, 18, Color(0.95, 0.64, 0.30, 0.05))
 		draw_rect(Rect2(p - Vector2(5, 5), Vector2(10, 10)), Color("e3ac63"))
-	if lore_active and GameData.LORE.has(floor_number):
-		var p: Vector2 = GameData.LORE[floor_number].position
+	if lore_active:
+		var p := lore_position
 		var glow := 0.13 + 0.04 * sin(clock * 3.0)
 		draw_circle(p, 28, Color(0.95, 0.81, 0.52, glow))
 		draw_rect(Rect2(p + Vector2(-12, -8), Vector2(24, 18)), Color("b49770"))

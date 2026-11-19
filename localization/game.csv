@@ -1,88 +1,91 @@
-keys,zh_CN,en_US
-UI_MENU_KICKER,五层魔塔 · 一次冒险,A FIVE-FLOOR ROGUELITE
-UI_MENU_TAG,塔门未关，灯未熄。,The gate stands open. The lamp is still lit.
-UI_MENU_START,开始游戏,START GAME
-UI_MENU_QUIT,退出游戏,QUIT GAME
-UI_MENU_LANGUAGE,语言 / LANGUAGE,LANGUAGE / 语言
+keys,zh_CN,en_US,_category,_context,_status
+UI_MENU_TITLE,T O W E R,T O W E R,menu,主菜单中央的游戏字标。字母间空格属于当前字标样式。,draft
+UI_MENU_KICKER,五层魔塔 · 一次冒险,A FIVE-FLOOR ROGUELITE,menu,主菜单字标上方的短标签。概括五层 Roguelite 玩法，单行。,draft
+UI_MENU_TAG,塔门未关，灯未熄。,The gate stands open. The lamp is still lit.,menu,主菜单字标下方的塔门铭文。语气简短克制，单行。,draft
+UI_MENU_START,开始游戏,START GAME,menu,主菜单的主操作按钮。点击后开始一局，单行。,draft
+UI_MENU_QUIT,退出游戏,QUIT GAME,menu,主菜单退出按钮。点击后关闭游戏，单行。,draft
+UI_MENU_LANGUAGE,语言 / LANGUAGE,LANGUAGE / 语言,menu,语言按钮上方的栏目标签。并列显示中英文，方便玩家找到切换入口。,draft
+UI_LANGUAGE_ZH_CN,简体中文,简体中文,menu,主菜单简体中文选项。两种界面语言都以该语言的自称显示。,draft
+UI_LANGUAGE_EN_US,English (US),English (US),menu,主菜单美式英语选项。两种界面语言都以该语言的自称显示。,draft
 UI_MENU_CONTROLS,"{move} 移动   ·   鼠标瞄准
 {attack} 剑击   ·   {magic} 魔法
 {interact} 阅读记录   ·   {next} 跳过阅读","{move} move   ·   Mouse aim
 {attack} sword   ·   {magic} magic
-{interact} read   ·   {next} skip reading"
-UI_MOUSE_LEFT,鼠标左键,Left mouse
-UI_MOUSE_RIGHT,鼠标右键,Right mouse
-UI_MOUSE_MIDDLE,鼠标中键,Middle mouse
-UI_FLOOR,第 {floor} / 5 层,FLOOR {floor} / 5
-UI_ENEMIES,敌人  {count},ENEMIES  {count}
-UI_WAVE,波次  {wave} / {total},WAVE  {wave} / {total}
-UI_HEALTH,生命  {hp} / {max},HEALTH  {hp} / {max}
-UI_MAGIC,魔法,MAGIC
-UI_MAGIC_READY,已就绪,READY
-UI_MAGIC_WAIT,{time} 秒,{time}s
-UI_INVENTORY_EMPTY,尚无装备,NO UPGRADES YET
-UI_INVENTORY,装备：{items},UPGRADES: {items}
-UI_SAFE,战斗结束  ·  {next} 进入奖励选择,FLOOR CLEARED  ·  {next} to choose an upgrade
-UI_READ_NEAR,{interact} 阅读记录,{interact} READ THE NOTE
-UI_LORE_CLOSE,{interact} / {close} 关闭,{interact} / {close} close
-UI_REWARD_TITLE,选择一件遗物,CHOOSE A RELIC
-UI_REWARD_SUBTITLE,每件装备会立即生效，并可与其他强化叠加。,Your choice takes effect immediately and stacks with other upgrades.
-UI_REWARD_CHOOSE,选择,CHOOSE
-UI_VICTORY,守塔者已倒下,THE KEEPER FALLS
-UI_DEFEAT,旅途暂时结束,YOUR JOURNEY ENDS
-UI_VICTORY_SUB,灯换了守塔人，仍在燃烧。,"The lamp has a new keeper, and still it burns."
-UI_DEFEAT_SUB,台阶还在原处，灯也还亮着。,The steps are where you left them; the lamp still burns.
-UI_RESULT_FLOOR,到达层数,FLOOR REACHED
-UI_RESULT_KILLS,击败敌人,ENEMIES DEFEATED
-UI_RESULT_TIME,本局用时,RUN TIME
-UI_RESULT_ITEMS,获得的装备,RELICS COLLECTED
-UI_RESULT_NONE,无,None
-UI_RESTART,重新开始,PLAY AGAIN
-UI_BACK_MENU,返回主菜单,MAIN MENU
-UI_TRANSITION,第 {floor} 层,FLOOR {floor}
-UI_TRANSITION_LABEL,向上前进,ASCEND THE TOWER
-UI_TRANSITION_CONTINUE,按 {next} 继续,Press {next} to continue
-TRANSITION_TIP_01,剑击和魔法弹都朝鼠标所指的方向发出。,Your sword and magic projectiles aim toward the mouse cursor.
-TRANSITION_TIP_02,第 1 至第 4 层结束后，从三件装备中选择一件。,"After floors 1 through 4, choose one of three upgrades."
-TRANSITION_TIP_03,塔中的遗物，仍保留着曾经到访者的痕迹。,Relics in the tower still bear traces of those who came before.
-TRANSITION_TIP_04,哥布林攻击前会停下并发出预警。,Goblins stop and telegraph their attacks before striking.
-TRANSITION_TIP_05,同一种装备可以重复获得，效果会叠加。,The same upgrade can appear again; its effects stack.
-TIP_F1,剑与魔法都朝鼠标所指的方向。史莱姆会先鼓起身体，才扑出来。,Sword and spell follow the cursor. A slime swells up before it lunges.
-TIP_F2,哥布林会在动手前停住。它停住的那一瞬，就是你要动的时候。,A goblin halts before it strikes. That halt is your cue to move.
-TIP_F3,墙上的箭孔都朝里。弓手拉弦时不必急，弦响之后才有空隙。,The arrow slits face inward. Do not rush an archer's draw; the opening comes after the string sings.
-TIP_F4,法师咏唱时不要靠近，弓手拉弦时不要跑直线。,"Do not close in while a mage chants, and never run straight while an archer draws."
-TIP_F5,守塔人的灯在塔顶。他总先照亮自己要打的地方。,The keeper's lamp waits at the summit. He always lights the place he means to strike.
-LORE_F1_TITLE,古旧书页,A Fragment of History
-LORE_F1_BODY,古塔落成那年，守塔人定下一条规矩：灯可以换，守灯的人也可以换。此后名册上每十年添一个新名字——没有一个被划掉。,"In the year the tower was finished, its keeper set down one rule: the lamp may be replaced, and so may whoever keeps it. Every ten years a new name is added to the roll, and not one has ever been struck out."
-LORE_F2_TITLE,石匠刻记,A Stonemason's Mark
-LORE_F2_BODY,我替塔补过三十七级台阶。每年磨穿的总是同一级，图纸上只写着：此处需修，不必问。今年儿子接了手，他说那一级，上去时总比下来时矮一寸。,"I have mended thirty-seven steps in this tower. Every year it is the same one worn through, and the drawing says only this: repair it here, ask nothing. This year my son took over the work. He says that step always sits an inch lower going up than coming down."
-LORE_F3_TITLE,冒险者手记,An Adventurer's Note
-LORE_F3_BODY,回声总比我快半步，像有人在前头替我数台阶。三层往上，墙上开始有箭孔，孔都朝里开。我把火把插进一个孔里，坐下歇脚，才看清孔边还有更旧的焦痕。,"My echo always runs half a step ahead of me, as if someone up there counts the steps for me. From the third floor up the walls carry arrow slits, every one of them facing inward. I wedged my torch into one and sat down to rest, and only then saw the older scorch marks beside it."
-LORE_F4_TITLE,值夜守则残页,A Torn Page of the Warden's Rules
-LORE_F4_BODY,守则·四条：不要追着声音跑。七条：弓手只在换弦时露破绽，箭在弦上时没有。十七条：若有人从下面上来，先点灯，再问名字。最后一条被人撕去了，撕口还很新。,"Warden's rules, article four: never run toward a sound. Article seven: an archer is open only while restringing, never while the arrow is set. Article seventeen: if someone climbs up from below, light the lamp first, ask the name after. The final article has been torn away, and the tear is still fresh."
-LORE_F5_TITLE,灯前留言,A Note Left Before the Lamp
-LORE_F5_BODY,灯芯我一共剪短过十七次。名册上每一个名字都是我写下的，包括你的——在你进塔之前。你还站着，说明我写得早了些。这一页翻过去吧，灯交给下一个愿意上楼的人。,"I have trimmed this wick short seventeen times. Every name in the roll was written by my hand, yours among them, before you ever came in. You are still standing, so I wrote it early. Turn the page. The lamp belongs now to whoever is willing to climb."
-LORE_F5_DOOR,门楣上有几道很浅的划痕，像用指甲刻的：若你读到这里，请替我把灯芯剪短一寸。,"Shallow scratches cross the lintel, as if cut with a fingernail: if you have read this far, trim the wick an inch for me."
-ITEM_U01_NAME,锋利长剑,Sharpened Longsword
-ITEM_U01_EFFECT,剑击伤害 +{value},Sword damage +{value}
-ITEM_U01_LORE,剑刃上的细小缺口，是每一次挥砍留下的记号。,Tiny nicks along the blade mark every swing.
-ITEM_U02_NAME,疾风手套,Swiftwind Gloves
-ITEM_U02_EFFECT,剑击冷却降低 {value}%,Sword cooldown reduced by {value}%
-ITEM_U02_LORE,轻薄的手套让持剑的手如风般敏捷。,These light gloves let a sword hand move as swiftly as the wind.
-ITEM_U03_NAME,烈焰法杖,Flame Staff
-ITEM_U03_EFFECT,魔法弹伤害 +{value},Magic damage +{value}
-ITEM_U03_LORE,杖尖残留的温度，像一团不肯熄灭的余烬。,"Warmth lingers at the tip, like an ember that refuses to die."
-ITEM_U04_NAME,奥术戒指,Arcane Ring
-ITEM_U04_EFFECT,魔法冷却降低 {value}%,Magic cooldown reduced by {value}%
-ITEM_U04_LORE,戒面刻着一圈细密符文，微光随呼吸起伏。,"Fine runes circle the ring, their glow rising and falling with each breath."
-ITEM_U05_NAME,幸运徽章,Lucky Emblem
-ITEM_U05_EFFECT,暴击率 +{value} 个百分点,Critical chance +{value} percentage points
-ITEM_U05_LORE,磨损的徽章被无数次攥紧，仿佛能为旅人留住好运。,"Worn smooth by countless anxious grips, this emblem seems to hold a traveler's luck."
-ITEM_U06_NAME,吸血剑刃,Lifedrinker Blade
-ITEM_U06_EFFECT,剑击击杀恢复 {value} HP,Sword kills restore {value} HP
-ITEM_U06_LORE,暗红的纹路沿刃脊延伸，仿佛仍在脉动。,"Dark red lines run along the blade, as if they still pulse."
-ITEM_U07_NAME,骑士铠甲,Knight's Armor
-ITEM_U07_EFFECT,最大 HP +{value}，恢复 {value} HP,Max HP +{value}; restore {value} HP
-ITEM_U07_LORE,铠甲上布满修补痕迹，却依旧可靠。,"Repairs cover this armor, but it remains dependable."
-ITEM_U08_NAME,迅捷长靴,Swift Boots
-ITEM_U08_EFFECT,移动速度 +{value}%,Movement speed +{value}%
-ITEM_U08_LORE,鞋底的磨痕，记录着一位旅人走过的漫长道路。,The worn soles tell of the long road a traveler once walked.
+{interact} read   ·   {next} skip reading",menu,主菜单键鼠说明，可换行。{move} 为四个方向键，例如 W A S D。{attack} 为剑击键，例如鼠标左键。{magic} 为魔法键，例如鼠标右键。{interact} 为阅读键，例如 E。{next} 为跳过阅读的按键，例如 Enter。,draft
+UI_MOUSE_LEFT,鼠标左键,Left mouse,input,鼠标左键的名称，嵌入主菜单剑击说明等按键提示。,draft
+UI_MOUSE_RIGHT,鼠标右键,Right mouse,input,鼠标右键的名称，嵌入主菜单魔法说明，也显示在 HUD 魔法标签旁。,draft
+UI_MOUSE_MIDDLE,鼠标中键,Middle mouse,input,鼠标中键的名称，供使用中键绑定的按键提示。,draft
+UI_FLOOR,第 {floor} / {total} 层,FLOOR {floor} / {total},hud,战斗 HUD 右上角的楼层进度。{floor} 为当前楼层序号，例如 3。{total} 为本局楼层总数，例如 5。单行。,draft
+UI_ENEMIES,敌人  {count},ENEMIES  {count},hud,战斗 HUD 右上角的剩余敌人数。{count} 是当前波仍在场的敌人数，例如 2。单行。,draft
+UI_WAVE,波次  {wave} / {total},WAVE  {wave} / {total},hud,战斗 HUD 右上角的波次进度。{wave} 为当前波次，例如 1。{total} 为本层总波次，例如 2。单行。,draft
+UI_HEALTH,生命  {hp} / {max},HEALTH  {hp} / {max},hud,战斗 HUD 左上角的生命值，位于生命条上方。{hp} 为当前生命，例如 83。{max} 为最大生命，例如 100。单行。,draft
+UI_MAGIC,魔法,MAGIC,hud,战斗 HUD 左下角的魔法技能标签，左侧有魔法按键，单行。,draft
+UI_MAGIC_READY,已就绪,READY,hud,魔法冷却结束时显示在 HUD 魔法标签下，单行。,draft
+UI_MAGIC_WAIT,{time} 秒,{time}s,hud,魔法冷却期间显示在 HUD 魔法标签下。{time} 为剩余秒数，例如 1.2。单行。,draft
+UI_INVENTORY_EMPTY,尚无装备,NO UPGRADES YET,hud,战斗 HUD 右下角的装备列表为空时显示。,draft
+UI_INVENTORY,装备：{items},UPGRADES: {items},hud,战斗 HUD 右下角的已获装备。{items} 为拼接后的已本地化名称，例如 锋利长剑 · 疾风手套。列表可换行。,draft
+UI_SAFE,战斗结束  ·  {next} 进入奖励选择,FLOOR CLEARED  ·  {next} to choose an upgrade,hud,带可选记录的楼层清场后，在 HUD 下方提示进入奖励。{next} 为进入奖励的按键，例如 Enter。单行。,draft
+UI_READ_NEAR,{interact} 阅读记录,{interact} READ THE NOTE,hud,清场后靠近可选记录时，在记录附近显示。{interact} 为阅读按键，例如 E。单行。,draft
+UI_LORE_CLOSE,{interact} / {close} 关闭,{interact} / {close} close,narrative,可选记录和尾声面板底部的关闭提示。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
+UI_REWARD_TITLE,选择一件遗物,CHOOSE A RELIC,reward,三选一奖励面板顶部的标题，单行。,draft
+UI_REWARD_SUBTITLE,每件装备会立即生效，并可与其他强化叠加。,Your choice takes effect immediately and stacks with other upgrades.,reward,奖励面板标题下方。告知玩家选中即生效且强化可叠加，可换行。,draft
+UI_REWARD_CHOOSE,选择,CHOOSE,reward,每张奖励卡底部的选择提示。点击卡片后应用装备，单行。,draft
+UI_VICTORY,守塔者已倒下,THE KEEPER FALLS,result,尾声关闭后出现的胜利结算标题，单行。,draft
+UI_DEFEAT,旅途暂时结束,YOUR JOURNEY ENDS,result,玩家死亡后出现的失败结算标题，单行。,draft
+UI_VICTORY_SUB,灯换了守塔人，仍在燃烧。,"The lamp has a new keeper, and still it burns.",result,胜利标题下方的叙事短句，延续守塔人与灯的意象，单行。,draft
+UI_DEFEAT_SUB,台阶还在原处，灯也还亮着。,The steps are where you left them; the lamp still burns.,result,失败标题下方的叙事短句，呼应台阶与仍然亮着的灯，单行。,draft
+UI_RESULT_FLOOR,到达层数,FLOOR REACHED,result,胜负结算的统计栏标签。对应的楼层序号另显示在下方。,draft
+UI_RESULT_KILLS,击败敌人,ENEMIES DEFEATED,result,胜负结算的统计栏标签。对应的本局击败敌人数另显示在下方。,draft
+UI_RESULT_TIME,本局用时,RUN TIME,result,胜负结算的统计栏标签。对应的本局用时以分秒形式另显示在下方。,draft
+UI_RESULT_ITEMS,获得的装备,RELICS COLLECTED,result,胜负结算的已获装备清单标题。,draft
+UI_RESULT_NONE,无,None,result,结算时本局尚未取得装备，在清单位置显示。,draft
+UI_RESTART,重新开始,PLAY AGAIN,result,胜负结算的主按钮。点击后立即开始新的一局，单行。,draft
+UI_BACK_MENU,返回主菜单,MAIN MENU,result,胜负结算的次按钮。点击后返回主菜单，单行。,draft
+UI_TRANSITION,第 {floor} 层,FLOOR {floor},transition,开战前的过渡界面主标题。{floor} 为即将进入的楼层序号，例如 5。单行。,draft
+UI_TRANSITION_LABEL,向上前进,ASCEND THE TOWER,transition,开战前的过渡界面主标题上方，提示正在登塔。,draft
+UI_TRANSITION_CONTINUE,按 {next} 继续,Press {next} to continue,transition,等待确认的楼层过渡面板底部，目前用于第五层门楣。{next} 为继续按键，例如 Enter。单行。,draft
+TRANSITION_TIP_01,剑击和魔法弹都朝鼠标所指的方向发出。,Your sword and magic projectiles aim toward the mouse cursor.,transition,通用过渡提示备选。配置为楼层提示时，向玩家解释两种攻击如何瞄准，可换行。,draft
+TRANSITION_TIP_02,第 1 至第 4 层结束后，从三件装备中选择一件。,"After floors 1 through 4, choose one of three upgrades.",transition,通用过渡提示备选。配置为楼层提示时，说明前四层后的三选一奖励，可换行。,draft
+TRANSITION_TIP_03,塔中的遗物，仍保留着曾经到访者的痕迹。,Relics in the tower still bear traces of those who came before.,transition,通用过渡短句备选。配置为楼层提示时，介绍遗物与前任来访者的关系，可换行。,draft
+TRANSITION_TIP_04,哥布林攻击前会停下并发出预警。,Goblins stop and telegraph their attacks before striking.,transition,通用过渡提示备选。配置为楼层提示时，说明哥布林停步预警，可换行。,draft
+TRANSITION_TIP_05,同一种装备可以重复获得，效果会叠加。,The same upgrade can appear again; its effects stack.,transition,通用过渡提示备选。配置为楼层提示时，说明重复获得同一装备可以叠加效果，可换行。,draft
+TIP_F1,剑与魔法都朝鼠标所指的方向。史莱姆会先鼓起身体，才扑出来。,Sword and spell follow the cursor. A slime swells up before it lunges.,transition,第一层开战前的玩法提示，介绍鼠标瞄准和史莱姆突进前的鼓胀，可换行。,draft
+TIP_F2,哥布林会在动手前停住。它停住的那一瞬，就是你要动的时候。,A goblin halts before it strikes. That halt is your cue to move.,transition,第二层开战前的玩法提示，说明哥布林会在攻击前停步，可换行。,draft
+TIP_F3,墙上的箭孔都朝里。弓手拉弦时不必急，弦响之后才有空隙。,The arrow slits face inward. Do not rush an archer's draw; the opening comes after the string sings.,transition,第三层开战前的玩法提示，以箭孔引出弓手，提示玩家观察拉弦与射出的节奏，可换行。,draft
+TIP_F4,法师咏唱时不要靠近，弓手拉弦时不要跑直线。,"Do not close in while a mage chants, and never run straight while an archer draws.",transition,第四层开战前的玩法提示，帮助玩家区分法师咏唱与弓手拉弦，可换行。,draft
+TIP_F5,守塔人的灯在塔顶。他总先照亮自己要打的地方。,The keeper's lamp waits at the summit. He always lights the place he means to strike.,transition,第五层开战前的玩法提示，借灯光暗示守塔人的攻击方向。位于门楣刻字上方，可换行。,draft
+LORE_F1_TITLE,古旧书页,A Fragment of History,narrative,第一层清场后靠近书页并互动时显示的记录标题，单行。,draft
+LORE_F1_BODY,古塔落成那年，守塔人定下一条规矩：灯可以换，守灯的人也可以换。此后名册上每十年添一个新名字——没有一个被划掉。,"In the year the tower was finished, its keeper set down one rule: the lamp may be replaced, and so may whoever keeps it. Every ten years a new name is added to the roll, and not one has ever been struck out.",narrative,第一层清场后可选阅读的书页正文。记录古塔的规矩、守灯人的更替和名册，可换行。,draft
+LORE_F2_TITLE,石匠刻记,A Stonemason's Mark,narrative,第二层清场后靠近石匠刻记并互动时显示的记录标题，单行。,draft
+LORE_F2_BODY,我替塔补过三十七级台阶。每年磨穿的总是同一级，图纸上只写着：此处需修，不必问。今年儿子接了手，他说那一级，上去时总比下来时矮一寸。,"I have mended thirty-seven steps in this tower. Every year it is the same one worn through, and the drawing says only this: repair it here, ask nothing. This year my son took over the work. He says that step always sits an inch lower going up than coming down.",narrative,第二层清场后可选阅读的刻记正文。石匠用第一人称记录修台阶的经历，可换行。,draft
+LORE_F3_TITLE,冒险者手记,An Adventurer's Note,narrative,第三层清场后靠近手记并互动时显示的记录标题，单行。,draft
+LORE_F3_BODY,回声总比我快半步，像有人在前头替我数台阶。三层往上，墙上开始有箭孔，孔都朝里开。我把火把插进一个孔里，坐下歇脚，才看清孔边还有更旧的焦痕。,"My echo always runs half a step ahead of me, as if someone up there counts the steps for me. From the third floor up the walls carry arrow slits, every one of them facing inward. I wedged my torch into one and sat down to rest, and only then saw the older scorch marks beside it.",narrative,第三层清场后可选阅读的手记正文。冒险者用第一人称写回声、朝内的箭孔和旧焦痕，可换行。,draft
+LORE_F4_TITLE,值夜守则残页,A Torn Page of the Warden's Rules,narrative,第四层清场后靠近守则残页并互动时显示的记录标题，单行。,draft
+LORE_F4_BODY,守则·四条：不要追着声音跑。七条：弓手只在换弦时露破绽，箭在弦上时没有。十七条：若有人从下面上来，先点灯，再问名字。最后一条被人撕去了，撕口还很新。,"Warden's rules, article four: never run toward a sound. Article seven: an archer is open only while restringing, never while the arrow is set. Article seventeen: if someone climbs up from below, light the lamp first, ask the name after. The final article has been torn away, and the tear is still fresh.",narrative,第四层清场后可选阅读的守则正文。使用条文口吻，保留第四、第七、第十七条的顺序和撕页线索，可换行。,draft
+LORE_F5_TITLE,灯前留言,A Note Left Before the Lamp,narrative,击败第五层守塔人并清场后，自动弹出的尾声标题。关闭尾声后显示胜利结算，单行。,draft
+LORE_F5_BODY,灯芯我一共剪短过十七次。名册上每一个名字都是我写下的，包括你的——在你进塔之前。你还站着，说明我写得早了些。这一页翻过去吧，灯交给下一个愿意上楼的人。,"I have trimmed this wick short seventeen times. Every name in the roll was written by my hand, yours among them, before you ever came in. You are still standing, so I wrote it early. Turn the page. The lamp belongs now to whoever is willing to climb.",narrative,击败第五层守塔人后自动显示的尾声正文。守塔人向玩家留言，回收灯芯与名册的线索，可换行。,draft
+LORE_F5_DOOR,门楣上有几道很浅的划痕，像用指甲刻的：若你读到这里，请替我把灯芯剪短一寸。,"Shallow scratches cross the lintel, as if cut with a fingernail: if you have read this far, trim the wick an inch for me.",narrative,第五层开战前，在过渡提示下方显示的门楣刻字。语气像留给来访者的私人嘱托，面板停等并可换行。,draft
+ITEM_U01_NAME,锋利长剑,Sharpened Longsword,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U01_EFFECT,剑击伤害 +{value},Sword damage +{value},equipment,奖励卡的强化说明，可换行。增加剑击伤害。{value} 为加成点数，例如 6。,draft
+ITEM_U01_LORE,剑刃上的细小缺口，是每一次挥砍留下的记号。,Tiny nicks along the blade mark every swing.,equipment,奖励卡效果下方的遗物短句，写剑刃上的战斗痕迹，可换行。,draft
+ITEM_U02_NAME,疾风手套,Swiftwind Gloves,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U02_EFFECT,剑击冷却降低 {value}%,Sword cooldown reduced by {value}%,equipment,奖励卡的强化说明，可换行。按比例缩短剑击冷却。{value} 为名义降幅的百分数，例如 20。实际冷却受下限约束。,draft
+ITEM_U02_LORE,轻薄的手套让持剑的手如风般敏捷。,These light gloves let a sword hand move as swiftly as the wind.,equipment,奖励卡效果下方的遗物短句，写手套的轻薄与挥剑速度，可换行。,draft
+ITEM_U03_NAME,烈焰法杖,Flame Staff,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U03_EFFECT,魔法弹伤害 +{value},Magic damage +{value},equipment,奖励卡的强化说明，可换行。增加魔法弹伤害。{value} 为加成点数，例如 12。,draft
+ITEM_U03_LORE,杖尖残留的温度，像一团不肯熄灭的余烬。,"Warmth lingers at the tip, like an ember that refuses to die.",equipment,奖励卡效果下方的遗物短句，写法杖的余温，可换行。,draft
+ITEM_U04_NAME,奥术戒指,Arcane Ring,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U04_EFFECT,魔法冷却降低 {value}%,Magic cooldown reduced by {value}%,equipment,奖励卡的强化说明，可换行。按比例缩短魔法冷却。{value} 为名义降幅的百分数，例如 25。实际冷却受下限约束。,draft
+ITEM_U04_LORE,戒面刻着一圈细密符文，微光随呼吸起伏。,"Fine runes circle the ring, their glow rising and falling with each breath.",equipment,奖励卡效果下方的遗物短句，写戒指上的符文与微光，可换行。,draft
+ITEM_U05_NAME,幸运徽章,Lucky Emblem,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U05_EFFECT,暴击率 +{value} 个百分点,Critical chance +{value} percentage points,equipment,奖励卡的强化说明，可换行。增加暴击率。{value} 为增加的百分点，例如 15。实际暴击率受上限约束。,draft
+ITEM_U05_LORE,磨损的徽章被无数次攥紧，仿佛能为旅人留住好运。,"Worn smooth by countless anxious grips, this emblem seems to hold a traveler's luck.",equipment,奖励卡效果下方的遗物短句，写被反复攥紧的徽章，可换行。,draft
+ITEM_U06_NAME,吸血剑刃,Lifedrinker Blade,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U06_EFFECT,剑击击杀恢复 {value} HP,Sword kills restore {value} HP,equipment,奖励卡的强化说明，可换行。剑击击杀时恢复生命。{value} 为每次触发恢复的 HP，例如 5。,draft
+ITEM_U06_LORE,暗红的纹路沿刃脊延伸，仿佛仍在脉动。,"Dark red lines run along the blade, as if they still pulse.",equipment,奖励卡效果下方的遗物短句，写像在跳动的剑刃暗纹，可换行。,draft
+ITEM_U07_NAME,骑士铠甲,Knight's Armor,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U07_EFFECT,最大 HP +{value}，恢复 {value} HP,Max HP +{value}; restore {value} HP,equipment,奖励卡的强化说明，可换行。提高生命上限并立即恢复生命。两处 {value} 使用同一个 HP 数值，例如 25。,draft
+ITEM_U07_LORE,铠甲上布满修补痕迹，却依旧可靠。,"Repairs cover this armor, but it remains dependable.",equipment,奖励卡效果下方的遗物短句，写反复修补的铠甲，可换行。,draft
+ITEM_U08_NAME,迅捷长靴,Swift Boots,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U08_EFFECT,移动速度 +{value}%,Movement speed +{value}%,equipment,奖励卡的强化说明，可换行。按比例提高移动速度。{value} 为增加的百分数，例如 15。,draft
+ITEM_U08_LORE,鞋底的磨痕，记录着一位旅人走过的漫长道路。,The worn soles tell of the long road a traveler once walked.,equipment,奖励卡效果下方的遗物短句，写长年行走留下的鞋底磨痕，可换行。,draft

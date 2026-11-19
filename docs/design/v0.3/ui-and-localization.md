@@ -21,9 +21,9 @@ Project TOWER · v0.3 · [GDD 第 6 章](../../GDD.md#ui-and-localization)
 
 玩家语言为简体中文（zh-CN）及美式英语（en-US）。首启匹配系统语言，英文环境选 en-US，其余回退简体中文。已保存的选择优先，设置存于 `user://settings.cfg`。切换后更新翻译服务和当前菜单，后续界面使用新语言。
 
-[`localization/game.csv`](../../../localization/game.csv) 使用 UTF-8，含 `keys`、`zh_CN`、`en_US` 三列。所有玩家可见文本使用稳定 ID，并通过 Godot 导入两份翻译资源。装备名称、效果和短句各用独立 ID，数值来自配置和预览计算。同一条文本的变量名在两种语言中一致。缺项回退简体中文并记录，双语均缺失时显示可读的兜底提示。
+[`localization/game.csv`](../../../localization/game.csv) 使用 UTF-8，按稳定 ID 保存简体中文源文、美式英语译文、分类、上下文和审校状态。Godot 导入两份翻译资源。装备名称、效果和短句各用独立 ID，数值来自配置。同一条文本的变量名在两种语言中一致。缺项回退简体中文并记录，双语均缺失时显示可读的兜底提示。
 
-[`docs/localization/`](../../localization/) 保存术语与字符串上下文。新增预览或提示时，Engineer 更新双语和上下文，QA 核对术语、占位符、字体、换行及目标包内显示。两端游戏包包含双语资源、Noto Sans SC 字体及其许可证。楼层记录正文见[《五层关卡与叙事》文档的第 4.2 节](floors-and-narrative.md#optional-reading)，遗物与过渡短文见本文[附录](#bilingual-narrative)。
+Engineer 定义 ID、显示条件和变量，双语文案负责人撰写并确认文案，QA 核对术语、变量、字体、换行及候选包内显示。参见[本地化工作流](../../localization/context.md)。两端游戏包包含双语资源、Noto Sans SC 字体及其许可证。楼层记录的设计文案见[《五层关卡与叙事》](floors-and-narrative.md)，遗物与过渡短文见本文[附录](#bilingual-narrative)。
 
 <a name="bilingual-narrative"></a>
 
