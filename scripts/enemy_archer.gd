@@ -52,8 +52,10 @@ func _behavior(delta: float) -> void:
 			_release()
 		return
 	if distance <= melee_range:
-		# Hold ground and swing: retreating here would never stop.
-		if spawn_delay <= 0.0 and melee_timer <= 0.0:
+		# Hold ground here instead of retreating forever. The swing waits for the
+		# bow to finish recovering: slashing during that window would take away
+		# the opening the Floor 3 tip promises after the string sounds.
+		if spawn_delay <= 0.0 and melee_timer <= 0.0 and attack_timer <= 0.0:
 			melee_windup = melee_windup_time
 			melee_dir = direction
 			sound_requested.emit("enemy_chant")
@@ -82,7 +84,6 @@ func _melee_strike() -> void:
 	if to_player.length() > 1.0 and absf(melee_dir.angle_to(to_player)) > deg_to_rad(55.0):
 		return
 	player.take_damage(melee_damage)
-	sound_requested.emit("hit")
 
 func _draw() -> void:
 	super._draw()

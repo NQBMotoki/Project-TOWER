@@ -299,6 +299,12 @@ func _test_combat_and_upgrades() -> void:
 	var hp_before_melee: float = dummy.hp
 	archer._behavior(0.5)
 	check(dummy.hp < hp_before_melee, "the melee windup lands its strike")
+	archer.melee_windup = 0.0
+	archer.melee_timer = 0.0
+	archer.attack_timer = 2.0
+	archer.position = dummy.position + Vector2(60, 0)
+	archer._behavior(0.01)
+	check(archer.melee_windup <= 0.0, "the archer cannot slash while the bow is recovering")
 	var elite = EliteScene.instantiate()
 	elite.setup("elite", player)
 	arena.add_child(elite)
@@ -381,11 +387,12 @@ func _test_full_run(locale: String, epilogue_only := false) -> void:
 				check(not game.ui.transition_note.visible, "no entry note when the floor has none")
 			else:
 				check(game.ui.transition_note.visible and game.ui.transition_note.text == translation.get_message(floor.entry_note_key), "entry note appears in " + locale)
-			check(game.ui.transition_hint.visible, "confirmation prompt is shown")
+			check(not game.ui.transition_hint.visible, "prompt stays hidden during the minimum reading time")
 			await _send_action("next")
-			check(game.state == game.State.TRANSITION, "entry note has a minimum reading time")
+			check(game.state == game.State.TRANSITION, "early confirmation is ignored during the minimum reading time")
 			game._process(game.transition_remaining)
 			check(game.state == game.State.TRANSITION, "entry note still waits when the timer expires")
+			check(game.ui.transition_hint.visible, "confirmation prompt appears once the press is accepted")
 			await _send_action("next")
 		else:
 			game._process(game.transition_remaining)

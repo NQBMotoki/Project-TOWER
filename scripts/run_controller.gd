@@ -52,8 +52,11 @@ func _process(delta: float) -> void:
 		elapsed += delta
 	if state == State.TRANSITION:
 		transition_remaining -= delta
-		if transition_remaining <= 0.0 and not wait_for_input:
-			_begin_combat()
+		if transition_remaining <= 0.0:
+			if wait_for_input:
+				ui.set_transition_ready(true)
+			else:
+				_begin_combat()
 	if state in [State.COMBAT, State.SAFE] and is_instance_valid(player):
 		var can_read := state == State.SAFE and current_floor.after_clear == FloorDefinition.AfterClear.OPTIONAL_RECORD
 		ui.update_hud(player, floor_number, floors.size(), enemy_count, wave, total_waves, can_read, can_read and _near_record())
