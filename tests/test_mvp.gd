@@ -367,7 +367,10 @@ func _test_full_run(locale: String, epilogue_only := false) -> void:
 		check(game.ui.transition_tip.text == translation.get_message(floor.tip_key), "floor tip appears in " + locale)
 		check(game.wait_for_input == floor.wait_for_confirmation, "transition uses the configured confirmation rule")
 		if floor.wait_for_confirmation:
-			check(game.ui.transition_note.visible and game.ui.transition_note.text == translation.get_message(floor.entry_note_key), "entry note appears in " + locale)
+			if floor.entry_note_key == "":
+				check(not game.ui.transition_note.visible, "no entry note when the floor has none")
+			else:
+				check(game.ui.transition_note.visible and game.ui.transition_note.text == translation.get_message(floor.entry_note_key), "entry note appears in " + locale)
 			check(game.ui.transition_hint.visible, "confirmation prompt is shown")
 			await _send_action("next")
 			check(game.state == game.State.TRANSITION, "entry note has a minimum reading time")

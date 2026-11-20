@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1")
 tip_key = "TIP_F2"
+wait_for_confirmation = true
 waves = Array[PackedStringArray]([PackedStringArray("slime", "slime", "goblin"), PackedStringArray("slime", "goblin", "goblin")])
 after_clear = 1
 record_title_key = "LORE_F2_TITLE"

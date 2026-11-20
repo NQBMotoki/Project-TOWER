@@ -9,9 +9,9 @@ UI_LANGUAGE_ZH_CN,简体中文,简体中文,menu,主菜单简体中文选项。�
 UI_LANGUAGE_EN_US,English (US),English (US),menu,主菜单美式英语选项。两种界面语言都以该语言的自称显示。,draft
 UI_MENU_CONTROLS,"{move} 移动   ·   鼠标瞄准
 {attack} 剑击   ·   {magic} 魔法
-{interact} 阅读记录   ·   {next} 跳过阅读","{move} move   ·   Mouse aim
-{attack} sword   ·   {magic} magic
-{interact} read   ·   {next} skip reading",menu,主菜单键鼠说明，可换行。{move} 为四个方向键，例如 W A S D。{attack} 为剑击键，例如鼠标左键。{magic} 为魔法键，例如鼠标右键。{interact} 为阅读键，例如 E。{next} 为跳过阅读的按键，例如 Enter。,draft
+{interact} 阅读记录   ·   {next} 跳过阅读","{move}: move   ·   Mouse: aim
+{attack}: sword   ·   {magic}: magic
+{interact}: read   ·   {next}: skip reading",menu,主菜单键鼠说明，可换行。{move} 为四个方向键，例如 W A S D。{attack} 为剑击键，例如鼠标左键。{magic} 为魔法键，例如鼠标右键。{interact} 为阅读键，例如 E。{next} 为跳过阅读的按键，例如 Enter。,draft
 UI_MOUSE_LEFT,鼠标左键,Left mouse,input,鼠标左键的名称，嵌入主菜单剑击说明等按键提示。,draft
 UI_MOUSE_RIGHT,鼠标右键,Right mouse,input,鼠标右键的名称，嵌入主菜单魔法说明，也显示在 HUD 魔法标签旁。,draft
 UI_MOUSE_MIDDLE,鼠标中键,Middle mouse,input,鼠标中键的名称，供使用中键绑定的按键提示。,draft
@@ -55,7 +55,7 @@ TIP_F3,墙上的箭孔都朝里。弓手拉弦时不必急，弦响之后才有�
 TIP_F4,法师咏唱时不要靠近，弓手拉弦时不要跑直线。,"Do not close in while a mage chants, and never run straight while an archer draws.",transition,第四层开战前的玩法提示，帮助玩家区分法师咏唱与弓手拉弦，可换行。,draft
 TIP_F5,守塔人的灯在塔顶。他总先照亮自己要打的地方。,The keeper's lamp waits at the summit. He always lights the place he means to strike.,transition,第五层开战前的玩法提示，借灯光暗示守塔人的攻击方向。位于门楣刻字上方，可换行。,draft
 LORE_F1_TITLE,古旧书页,A Fragment of History,narrative,第一层清场后靠近书页并互动时显示的记录标题，单行。,draft
-LORE_F1_BODY,古塔落成那年，守塔人定下一条规矩：灯可以换，守灯的人也可以换。此后名册上每十年添一个新名字——没有一个被划掉。,"In the year the tower was finished, its keeper set down one rule: the lamp may be replaced, and so may whoever keeps it. Every ten years a new name is added to the roll, and not one has ever been struck out.",narrative,第一层清场后可选阅读的书页正文。记录古塔的规矩、守灯人的更替和名册，可换行。,draft
+LORE_F1_BODY,古塔落成那年，守塔人定下一条规矩：守塔的人可以换，灯不能换。此后名册上每十年添一个新名字，但却没一个被划掉。,"In the year the tower was finished, its keeper set down one rule: the keeper may be replaced; the lamp may not. Since then a new name is added to the roll every ten years, and not one has ever been struck out.",narrative,第一层清场后可选阅读的书页正文。记录古塔的规矩、守灯人的更替和名册，可换行。,draft
 LORE_F2_TITLE,石匠刻记,A Stonemason's Mark,narrative,第二层清场后靠近石匠刻记并互动时显示的记录标题，单行。,draft
 LORE_F2_BODY,我替塔补过三十七级台阶。每年磨穿的总是同一级，图纸上只写着：此处需修，不必问。今年儿子接了手，他说那一级，上去时总比下来时矮一寸。,"I have mended thirty-seven steps in this tower. Every year it is the same one worn through, and the drawing says only this: repair it here, ask nothing. This year my son took over the work. He says that step always sits an inch lower going up than coming down.",narrative,第二层清场后可选阅读的刻记正文。石匠用第一人称记录修台阶的经历，可换行。,draft
 LORE_F3_TITLE,冒险者手记,An Adventurer's Note,narrative,第三层清场后靠近手记并互动时显示的记录标题，单行。,draft
@@ -78,7 +78,7 @@ ITEM_U04_NAME,奥术戒指,Arcane Ring,equipment,装备名称，用于奖励卡�
 ITEM_U04_EFFECT,魔法冷却降低 {value}%,Magic cooldown reduced by {value}%,equipment,奖励卡的强化说明，可换行。按比例缩短魔法冷却。{value} 为名义降幅的百分数，例如 25。实际冷却受下限约束。,draft
 ITEM_U04_LORE,戒面刻着一圈细密符文，微光随呼吸起伏。,"Fine runes circle the ring, their glow rising and falling with each breath.",equipment,奖励卡效果下方的遗物短句，写戒指上的符文与微光，可换行。,draft
 ITEM_U05_NAME,幸运徽章,Lucky Emblem,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
-ITEM_U05_EFFECT,暴击率 +{value} 个百分点,Critical chance +{value} percentage points,equipment,奖励卡的强化说明，可换行。增加暴击率。{value} 为增加的百分点，例如 15。实际暴击率受上限约束。,draft
+ITEM_U05_EFFECT,暴击率 +{value}%,Critical chance +{value}%,equipment,奖励卡的强化说明，可换行。增加暴击率。{value} 为百分比数值，例如 15。实际暴击率受上限约束。,draft
 ITEM_U05_LORE,磨损的徽章被无数次攥紧，仿佛能为旅人留住好运。,"Worn smooth by countless anxious grips, this emblem seems to hold a traveler's luck.",equipment,奖励卡效果下方的遗物短句，写被反复攥紧的徽章，可换行。,draft
 ITEM_U06_NAME,吸血剑刃,Lifedrinker Blade,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
 ITEM_U06_EFFECT,剑击击杀恢复 {value} HP,Sword kills restore {value} HP,equipment,奖励卡的强化说明，可换行。剑击击杀时恢复生命。{value} 为每次触发恢复的 HP，例如 5。,draft

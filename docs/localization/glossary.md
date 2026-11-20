@@ -8,7 +8,7 @@
 | 装备 / 遗物 | upgrade / relic | 无装备栏、可叠加的被动强化 |
 | 剑击 | sword attack | 鼠标左键 |
 | 魔法弹 | magic projectile | 鼠标右键 |
-| 暴击率 | critical chance | 百分比概率；装备加成使用百分点 |
+| 暴击率 | critical chance | 百分比数值；装备加成与其它属性统一使用 % |
 | 冷却 | cooldown | 数值有下限，递减效果按当前值相乘 |
 | 骷髅法师 | skeleton mage | 保持中距离、咏唱后发射慢速法术球的敌人 |
 | 骷髅弓手 | skeleton archer | 第四类普通敌人；拉弦后射出高速箭矢 |
