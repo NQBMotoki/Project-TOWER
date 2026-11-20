@@ -42,9 +42,9 @@ F5 精英倒下后清除剩余敌人并自动弹出「灯前留言」。按 E、
 
 **F1 古旧书页 / A Fragment of History**
 
-古塔落成那年，守塔人定下一条规矩：灯可以换，守灯的人也可以换。此后名册上每十年添一个新名字——没有一个被划掉。
+古塔落成那年，守塔人定下一条规矩：守塔的人可以换，灯不能换。此后名册上每十年添一个新名字，但却没一个被划掉。
 
-In the year the tower was finished, its keeper set down one rule: the lamp may be replaced, and so may whoever keeps it. Every ten years a new name is added to the roll, and not one has ever been struck out.
+In the year the tower was finished, its keeper set down one rule: the keeper may be replaced; the lamp may not. Since then a new name is added to the roll every ten years, and not one has been struck out.
 
 **F2 石匠刻记 / A Stonemason's Mark**
 
@@ -74,7 +74,7 @@ I have trimmed this wick short seventeen times. Every name in the roll was writt
 
 每层通过 `Tip Key` 引用提示。F5 在 `Entry Note Key` 引用 `LORE_F5_DOOR`，显示在提示下方。`TRANSITION_TIP_*` 可用作通用过渡提示。
 
-前四层显示提示 2.1 秒后开战。F5 启用 `Wait For Confirmation`，显示「按 Enter 继续」，最短展示时间结束后等待玩家确认。
+五层都启用 `Wait For Confirmation`：提示展示满 2.1 秒后先出现「按 Enter 继续」，玩家确认才开战。「按 Enter 继续」只在控制器能接受按键之后才出现，所以不会出现「照着提示按了没反应」。
 
 | 楼层 | 提示 |
 | --- | --- |

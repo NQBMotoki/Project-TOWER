@@ -289,6 +289,22 @@ func _test_combat_and_upgrades() -> void:
 	archer._behavior(0.1)
 	check(archer.position.distance_to(dummy.position) > gap_before, "an archer backs off toward its minimum band")
 	check(archer.draw_timer <= 0.0, "an archer does not shoot from inside its minimum band")
+	archer.melee_timer = 0.0
+	archer.attack_timer = 0.0
+	archer.draw_timer = 0.0
+	archer.position = dummy.position + Vector2(60, 0)
+	dummy.invulnerability = 0.0
+	archer._behavior(0.01)
+	check(archer.melee_windup > 0.0 and archer.draw_timer <= 0.0, "an archer switches to melee when the player closes in")
+	var hp_before_melee: float = dummy.hp
+	archer._behavior(0.5)
+	check(dummy.hp < hp_before_melee, "the melee windup lands its strike")
+	archer.melee_windup = 0.0
+	archer.melee_timer = 0.0
+	archer.attack_timer = 2.0
+	archer.position = dummy.position + Vector2(60, 0)
+	archer._behavior(0.01)
+	check(archer.melee_windup <= 0.0, "the archer cannot slash while the bow is recovering")
 	var elite = EliteScene.instantiate()
 	elite.setup("elite", player)
 	arena.add_child(elite)
@@ -367,12 +383,16 @@ func _test_full_run(locale: String, epilogue_only := false) -> void:
 		check(game.ui.transition_tip.text == translation.get_message(floor.tip_key), "floor tip appears in " + locale)
 		check(game.wait_for_input == floor.wait_for_confirmation, "transition uses the configured confirmation rule")
 		if floor.wait_for_confirmation:
-			check(game.ui.transition_note.visible and game.ui.transition_note.text == translation.get_message(floor.entry_note_key), "entry note appears in " + locale)
-			check(game.ui.transition_hint.visible, "confirmation prompt is shown")
+			if floor.entry_note_key == "":
+				check(not game.ui.transition_note.visible, "no entry note when the floor has none")
+			else:
+				check(game.ui.transition_note.visible and game.ui.transition_note.text == translation.get_message(floor.entry_note_key), "entry note appears in " + locale)
+			check(not game.ui.transition_hint.visible, "prompt stays hidden during the minimum reading time")
 			await _send_action("next")
-			check(game.state == game.State.TRANSITION, "entry note has a minimum reading time")
+			check(game.state == game.State.TRANSITION, "early confirmation is ignored during the minimum reading time")
 			game._process(game.transition_remaining)
 			check(game.state == game.State.TRANSITION, "entry note still waits when the timer expires")
+			check(game.ui.transition_hint.visible, "confirmation prompt appears once the press is accepted")
 			await _send_action("next")
 		else:
 			game._process(game.transition_remaining)

@@ -14,7 +14,7 @@ Project TOWER · v0.3 · [GDD 第 5 章](../../GDD.md#equipment-and-reward-previ
 | U02 | 疾风手套 Swiftwind Gloves | 剑击冷却乘 0.8，最低 0.22 秒 |
 | U03 | 烈焰法杖 Flame Staff | 魔法弹伤害 +12 |
 | U04 | 奥术戒指 Arcane Ring | 魔法冷却乘 0.75，最低 1.0 秒 |
-| U05 | 幸运徽章 Lucky Emblem | 暴击率 +15 个百分点，最高 60% |
+| U05 | 幸运徽章 Lucky Emblem | 暴击率 +15%，最高 60% |
 | U06 | 吸血剑刃 Lifedrinker Blade | 每次剑击击杀额外恢复 5 HP，回复量叠加 |
 | U07 | 骑士铠甲 Knight's Armor | 最大 HP +25，同时恢复 25 HP |
 | U08 | 迅捷长靴 Swift Boots | 移动速度乘 1.15 |

@@ -44,6 +44,7 @@ var lore_close: Label
 var transition_floor: Label
 var transition_tip: Label
 var transition_note: Label
+var transition_waiting := false
 var transition_hint: Label
 var transition_heading: Label
 
@@ -225,9 +226,14 @@ func show_transition(floor_number: int, tip_key: String, note_key: String, waiti
 	transition_tip.text = loc.text(tip_key)
 	transition_note.text = "" if note_key.is_empty() else loc.text(note_key)
 	transition_note.visible = not note_key.is_empty()
+	transition_waiting = waiting
 	transition_hint.text = loc.text("UI_TRANSITION_CONTINUE", {"next": loc.binding("next")}) if waiting else ""
-	transition_hint.visible = waiting
+	# Hidden until the controller can actually accept the confirmation.
+	transition_hint.visible = false
 	transition.show()
+
+func set_transition_ready(ready: bool) -> void:
+	transition_hint.visible = transition_waiting and ready
 
 func update_hud(player: Node, floor_number: int, floor_count: int, enemies: int, wave: int, total: int, safe: bool, near: bool) -> void:
 	health_label.text = loc.text("UI_HEALTH", {"hp": ceili(player.hp), "max": ceili(player.max_hp)})
