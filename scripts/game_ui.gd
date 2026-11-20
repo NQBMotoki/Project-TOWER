@@ -252,10 +252,13 @@ func update_hud(player: Node, floor_number: int, floor_count: int, enemies: int,
 	near_label.text = loc.text("UI_READ_NEAR", {"interact": loc.binding("interact")})
 	near_label.visible = safe and near
 
-func show_lore(title_key: String, body_key: String) -> void:
+func show_lore(title_key: String, body_key: String, epilogue: bool) -> void:
 	lore_title.text = loc.text(title_key)
 	lore_body.text = loc.text(body_key)
-	lore_close.text = loc.text("UI_LORE_CLOSE", {"interact": loc.binding("interact"), "close": loc.binding("close")})
+	var bindings := {"interact": loc.binding("interact"), "close": loc.binding("close")}
+	if epilogue:
+		bindings["next"] = loc.binding("next")
+	lore_close.text = loc.text("UI_EPILOGUE_RESULTS" if epilogue else "UI_LORE_CLOSE", bindings)
 	lore.show()
 
 func close_lore() -> void:
@@ -276,9 +279,9 @@ func show_reward(choices: Array) -> void:
 		var item: Dictionary = choices[i]
 		var card := _button(reward, "Card%d" % i, Rect2(130 + i * 345, 226, 330, 310))
 		card.pressed.connect(func(): upgrade_selected.emit(item))
-		var badge := _color(card, Rect2(24, 24, 56, 56), Color("6b5946"))
-		badge.color = [Color("9b7755"), Color("617f81"), Color("80667c")][i]
-		_label(card, Vector2(24, 24), Vector2(56, 56), 13, INK, HORIZONTAL_ALIGNMENT_CENTER).text = item.id
+		var badge := _color(card, Rect2(24, 24, 56, 56), [Color("9b7755"), Color("617f81"), Color("80667c")][i])
+		badge.name = "IconPlaceholder"
+		_label(badge, Vector2.ZERO, badge.size, 13, INK, HORIZONTAL_ALIGNMENT_CENTER).text = loc.text("ITEM_%s_BADGE" % item.id)
 		_label(card, Vector2(24, 91), Vector2(282, 45), 20, GOLD, HORIZONTAL_ALIGNMENT_CENTER, true).text = loc.text("ITEM_%s_NAME" % item.id)
 		_label(card, Vector2(24, 146), Vector2(282, 50), 16, INK, HORIZONTAL_ALIGNMENT_CENTER, true).text = loc.text("ITEM_%s_EFFECT" % item.id, {"value": GameData.effect_value(item)})
 		_label(card, Vector2(24, 201), Vector2(282, 72), 14, MUTED, HORIZONTAL_ALIGNMENT_CENTER, true).text = loc.text("ITEM_%s_LORE" % item.id)

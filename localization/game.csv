@@ -9,9 +9,9 @@ UI_LANGUAGE_ZH_CN,简体中文,简体中文,menu,主菜单简体中文选项。�
 UI_LANGUAGE_EN_US,English (US),English (US),menu,主菜单美式英语选项。两种界面语言都以该语言的自称显示。,draft
 UI_MENU_CONTROLS,"{move} 移动   ·   鼠标瞄准
 {attack} 剑击   ·   {magic} 魔法
-{interact} 阅读记录   ·   {next} 跳过阅读","{move}: move   ·   Mouse: aim
+{interact} 阅读记录   ·   {next} 继续或跳过阅读","{move}: move   ·   Mouse: aim
 {attack}: sword   ·   {magic}: magic
-{interact}: read   ·   {next}: skip reading",menu,主菜单键鼠说明，可换行。{move} 为四个方向键，例如 W A S D。{attack} 为剑击键，例如鼠标左键。{magic} 为魔法键，例如鼠标右键。{interact} 为阅读键，例如 E。{next} 为跳过阅读的按键，例如 Enter。,draft
+{interact}: read   ·   {next}: continue or skip reading",menu,主菜单键鼠说明，可换行。{move} 为四个方向键，例如 W A S D。{attack} 为剑击键，例如鼠标左键。{magic} 为魔法键，例如鼠标右键。{interact} 为阅读键，例如 E。{next} 用于确认转场或跳过可选记录，例如 Enter。,draft
 UI_MOUSE_LEFT,鼠标左键,Left mouse,input,鼠标左键的名称，嵌入主菜单剑击说明等按键提示。,draft
 UI_MOUSE_RIGHT,鼠标右键,Right mouse,input,鼠标右键的名称，嵌入主菜单魔法说明，也显示在 HUD 魔法标签旁。,draft
 UI_MOUSE_MIDDLE,鼠标中键,Middle mouse,input,鼠标中键的名称，供使用中键绑定的按键提示。,draft
@@ -26,7 +26,8 @@ UI_INVENTORY_EMPTY,尚无装备,NO UPGRADES YET,hud,战斗 HUD 右下角的装�
 UI_INVENTORY,装备：{items},UPGRADES: {items},hud,战斗 HUD 右下角的已获装备。{items} 为拼接后的已本地化名称，例如 锋利长剑 · 疾风手套。列表可换行。,draft
 UI_SAFE,战斗结束  ·  {next} 进入奖励选择,FLOOR CLEARED  ·  {next} to choose an upgrade,hud,带可选记录的楼层清场后，在 HUD 下方提示进入奖励。{next} 为进入奖励的按键，例如 Enter。单行。,draft
 UI_READ_NEAR,{interact} 阅读记录,{interact} READ THE NOTE,hud,清场后靠近可选记录时，在记录附近显示。{interact} 为阅读按键，例如 E。单行。,draft
-UI_LORE_CLOSE,{interact} / {close} 关闭,{interact} / {close} close,narrative,可选记录和尾声面板底部的关闭提示。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
+UI_LORE_CLOSE,{interact} / {close} 关闭,{interact} / {close} close,narrative,可选记录面板底部的关闭提示。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
+UI_EPILOGUE_RESULTS,按 {next} / {interact} / {close} 查看结算,{next} / {interact} / {close}: View results,narrative,尾声面板底部。按任一键关闭留言并进入胜利结算。{next} 为继续键，例如 Enter。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
 UI_REWARD_TITLE,选择一件遗物,CHOOSE A RELIC,reward,三选一奖励面板顶部的标题，单行。,draft
 UI_REWARD_SUBTITLE,每件装备会立即生效，并可与其他强化叠加。,Your choice takes effect immediately and stacks with other upgrades.,reward,奖励面板标题下方。告知玩家选中即生效且强化可叠加，可换行。,draft
 UI_REWARD_CHOOSE,选择,CHOOSE,reward,每张奖励卡底部的选择提示。点击卡片后应用装备，单行。,draft
@@ -43,7 +44,7 @@ UI_RESTART,重新开始,PLAY AGAIN,result,胜负结算的主按钮。点击后�
 UI_BACK_MENU,返回主菜单,MAIN MENU,result,胜负结算的次按钮。点击后返回主菜单，单行。,draft
 UI_TRANSITION,第 {floor} 层,FLOOR {floor},transition,开战前的过渡界面主标题。{floor} 为即将进入的楼层序号，例如 5。单行。,draft
 UI_TRANSITION_LABEL,向上前进,ASCEND THE TOWER,transition,开战前的过渡界面主标题上方，提示正在登塔。,draft
-UI_TRANSITION_CONTINUE,按 {next} 继续,Press {next} to continue,transition,等待确认的楼层过渡面板底部，目前用于第五层门楣。{next} 为继续按键，例如 Enter。单行。,draft
+UI_TRANSITION_CONTINUE,按 {next} 继续,Press {next} to continue,transition,等待确认的楼层过渡面板底部，提示展示满最短阅读时间后出现。{next} 为继续按键，例如 Enter。单行。,draft
 TRANSITION_TIP_01,剑击和魔法弹都朝鼠标所指的方向发出。,Your sword and magic projectiles aim toward the mouse cursor.,transition,通用过渡提示备选。配置为楼层提示时，向玩家解释两种攻击如何瞄准，可换行。,draft
 TRANSITION_TIP_02,第 1 至第 4 层结束后，从三件装备中选择一件。,"After floors 1 through 4, choose one of three upgrades.",transition,通用过渡提示备选。配置为楼层提示时，说明前四层后的三选一奖励，可换行。,draft
 TRANSITION_TIP_03,塔中的遗物，仍保留着曾经到访者的痕迹。,Relics in the tower still bear traces of those who came before.,transition,通用过渡短句备选。配置为楼层提示时，介绍遗物与前任来访者的关系，可换行。,draft
@@ -66,26 +67,34 @@ LORE_F5_TITLE,灯前留言,A Note Left Before the Lamp,narrative,击败第五层
 LORE_F5_BODY,灯芯我一共剪短过十七次。名册上每一个名字都是我写下的，包括你的——在你进塔之前。你还站着，说明我写得早了些。这一页翻过去吧，灯交给下一个愿意上楼的人。,"I have trimmed this wick short seventeen times. Every name in the roll was written by my hand, yours among them, before you ever came in. You are still standing, so I wrote it early. Turn the page. The lamp belongs now to whoever is willing to climb.",narrative,击败第五层守塔人后自动显示的尾声正文。守塔人向玩家留言，回收灯芯与名册的线索，可换行。,draft
 LORE_F5_DOOR,门楣上有几道很浅的划痕，像用指甲刻的：若你读到这里，请替我把灯芯剪短一寸。,"Shallow scratches cross the lintel, as if cut with a fingernail: if you have read this far, trim the wick an inch for me.",narrative,第五层开战前，在过渡提示下方显示的门楣刻字。语气像留给来访者的私人嘱托，面板停等并可换行。,draft
 ITEM_U01_NAME,锋利长剑,Sharpened Longsword,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U01_BADGE,剑击,SWORD,reward,锋利长剑奖励卡的图标占位短标签，提示剑击强化。56 × 56 像素内单行。,draft
 ITEM_U01_EFFECT,剑击伤害 +{value},Sword damage +{value},equipment,奖励卡的强化说明，可换行。增加剑击伤害。{value} 为加成点数，例如 6。,draft
 ITEM_U01_LORE,剑刃上的细小缺口，是每一次挥砍留下的记号。,Tiny nicks along the blade mark every swing.,equipment,奖励卡效果下方的遗物短句，写剑刃上的战斗痕迹，可换行。,draft
 ITEM_U02_NAME,疾风手套,Swiftwind Gloves,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U02_BADGE,剑击,SWORD,reward,疾风手套奖励卡的图标占位短标签，提示剑击强化。56 × 56 像素内单行。,draft
 ITEM_U02_EFFECT,剑击冷却降低 {value}%,Sword cooldown reduced by {value}%,equipment,奖励卡的强化说明，可换行。按比例缩短剑击冷却。{value} 为名义降幅的百分数，例如 20。实际冷却受下限约束。,draft
 ITEM_U02_LORE,轻薄的手套让持剑的手如风般敏捷。,These light gloves let a sword hand move as swiftly as the wind.,equipment,奖励卡效果下方的遗物短句，写手套的轻薄与挥剑速度，可换行。,draft
 ITEM_U03_NAME,烈焰法杖,Flame Staff,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U03_BADGE,魔法,MAGIC,reward,烈焰法杖奖励卡的图标占位短标签，提示魔法强化。56 × 56 像素内单行。,draft
 ITEM_U03_EFFECT,魔法弹伤害 +{value},Magic damage +{value},equipment,奖励卡的强化说明，可换行。增加魔法弹伤害。{value} 为加成点数，例如 12。,draft
 ITEM_U03_LORE,杖尖残留的温度，像一团不肯熄灭的余烬。,"Warmth lingers at the tip, like an ember that refuses to die.",equipment,奖励卡效果下方的遗物短句，写法杖的余温，可换行。,draft
 ITEM_U04_NAME,奥术戒指,Arcane Ring,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U04_BADGE,魔法,MAGIC,reward,奥术戒指奖励卡的图标占位短标签，提示魔法强化。56 × 56 像素内单行。,draft
 ITEM_U04_EFFECT,魔法冷却降低 {value}%,Magic cooldown reduced by {value}%,equipment,奖励卡的强化说明，可换行。按比例缩短魔法冷却。{value} 为名义降幅的百分数，例如 25。实际冷却受下限约束。,draft
 ITEM_U04_LORE,戒面刻着一圈细密符文，微光随呼吸起伏。,"Fine runes circle the ring, their glow rising and falling with each breath.",equipment,奖励卡效果下方的遗物短句，写戒指上的符文与微光，可换行。,draft
 ITEM_U05_NAME,幸运徽章,Lucky Emblem,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U05_BADGE,暴击,CRIT,reward,幸运徽章奖励卡的图标占位短标签，提示暴击率强化。56 × 56 像素内单行。,draft
 ITEM_U05_EFFECT,暴击率 +{value}%,Critical chance +{value}%,equipment,奖励卡的强化说明，可换行。增加暴击率。{value} 为百分比数值，例如 15。实际暴击率受上限约束。,draft
 ITEM_U05_LORE,磨损的徽章被无数次攥紧，仿佛能为旅人留住好运。,"Worn smooth by countless anxious grips, this emblem seems to hold a traveler's luck.",equipment,奖励卡效果下方的遗物短句，写被反复攥紧的徽章，可换行。,draft
 ITEM_U06_NAME,吸血剑刃,Lifedrinker Blade,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U06_BADGE,回血,HEAL,reward,吸血剑刃奖励卡的图标占位短标签，提示击杀恢复生命。56 × 56 像素内单行。,draft
 ITEM_U06_EFFECT,剑击击杀恢复 {value} HP,Sword kills restore {value} HP,equipment,奖励卡的强化说明，可换行。剑击击杀时恢复生命。{value} 为每次触发恢复的 HP，例如 5。,draft
 ITEM_U06_LORE,暗红的纹路沿刃脊延伸，仿佛仍在脉动。,"Dark red lines run along the blade, as if they still pulse.",equipment,奖励卡效果下方的遗物短句，写像在跳动的剑刃暗纹，可换行。,draft
 ITEM_U07_NAME,骑士铠甲,Knight's Armor,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U07_BADGE,生命,HP,reward,骑士铠甲奖励卡的图标占位短标签，提示生命上限强化。56 × 56 像素内单行。,draft
 ITEM_U07_EFFECT,最大 HP +{value}，恢复 {value} HP,Max HP +{value}; restore {value} HP,equipment,奖励卡的强化说明，可换行。提高生命上限并立即恢复生命。两处 {value} 使用同一个 HP 数值，例如 25。,draft
 ITEM_U07_LORE,铠甲上布满修补痕迹，却依旧可靠。,"Repairs cover this armor, but it remains dependable.",equipment,奖励卡效果下方的遗物短句，写反复修补的铠甲，可换行。,draft
 ITEM_U08_NAME,迅捷长靴,Swift Boots,equipment,装备名称，用于奖励卡标题、HUD 已获装备和结算清单。奖励卡标题可换行。,draft
+ITEM_U08_BADGE,移速,SPEED,reward,迅捷长靴奖励卡的图标占位短标签，提示移动速度强化。56 × 56 像素内单行。,draft
 ITEM_U08_EFFECT,移动速度 +{value}%,Movement speed +{value}%,equipment,奖励卡的强化说明，可换行。按比例提高移动速度。{value} 为增加的百分数，例如 15。,draft
 ITEM_U08_LORE,鞋底的磨痕，记录着一位旅人走过的漫长道路。,The worn soles tell of the long road a traveler once walked.,equipment,奖励卡效果下方的遗物短句，写长年行走留下的鞋底磨痕，可换行。,draft

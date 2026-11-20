@@ -163,7 +163,8 @@ func _on_floor_cleared() -> void:
 func _open_lore() -> void:
 	lore_open = true
 	player.can_move = false
-	ui.show_lore(current_floor.record_title_key, current_floor.record_body_key)
+	var epilogue := current_floor.after_clear == FloorDefinition.AfterClear.EPILOGUE
+	ui.show_lore(current_floor.record_title_key, current_floor.record_body_key, epilogue)
 
 func _show_reward() -> void:
 	if state not in [State.COMBAT, State.SAFE] or lore_open or current_floor.after_clear == FloorDefinition.AfterClear.EPILOGUE:

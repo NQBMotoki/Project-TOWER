@@ -374,6 +374,8 @@ func _test_full_run(locale: String, epilogue_only := false) -> void:
 	check(game.ui.menu_start.text == translation.get_message("UI_MENU_START"), "menu refreshes in " + locale)
 	for item in GameData.UPGRADES:
 		game.ui.show_reward([item])
+		var badge: Label = game.ui.reward.get_node("Card0/IconPlaceholder").get_child(0)
+		check(badge.text == translation.get_message("ITEM_%s_BADGE" % item.id), "reward icon placeholder is localized for %s in %s" % [item.id, locale])
 	game.ui.show_menu()
 	game.ui.menu_start.pressed.emit()
 	var floor_count: int = game.floors.size()
@@ -430,6 +432,9 @@ func _test_full_run(locale: String, epilogue_only := false) -> void:
 			check(not game.player.can_move and not game.player.can_attack, "the closing record locks movement and attacks")
 			check(game.ui.lore_title.text == translation.get_message(floor.record_title_key), "epilogue title appears in " + locale)
 			check(game.ui.lore_body.text == translation.get_message(floor.record_body_key), "epilogue body appears in " + locale)
+			var bindings := {"next": service.binding("next"), "interact": service.binding("interact"), "close": service.binding("close")}
+			var hint := String(translation.get_message("UI_EPILOGUE_RESULTS")).format(bindings)
+			check(game.ui.lore_close.text == hint, "epilogue shows all three results keys in " + locale)
 			await _send_action("interact" if locale == "zh_CN" else "next")
 			check(game.state == game.State.VICTORY, "closing the final record ends the run in victory")
 			check(game.ui.result.visible, "victory screen is visible")
@@ -465,6 +470,9 @@ func _test_optional_record(game: Node, floor: FloorDefinition, translation: Tran
 	check(game.lore_open and not game.player.can_move, "record opens and blocks movement")
 	check(game.ui.lore_title.text == translation.get_message(floor.record_title_key), "optional record title appears in " + translation.locale)
 	check(game.ui.lore_body.text == translation.get_message(floor.record_body_key), "optional record body appears in " + translation.locale)
+	var bindings := {"interact": game.loc.binding("interact"), "close": game.loc.binding("close")}
+	var hint := String(translation.get_message("UI_LORE_CLOSE")).format(bindings)
+	check(game.ui.lore_close.text == hint, "optional record shows its close keys in " + translation.locale)
 	await _send_action("next")
 	check(game.state == game.State.SAFE and game.lore_open, "open record blocks reward input")
 	await _send_action("close")
