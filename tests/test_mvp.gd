@@ -289,6 +289,16 @@ func _test_combat_and_upgrades() -> void:
 	archer._behavior(0.1)
 	check(archer.position.distance_to(dummy.position) > gap_before, "an archer backs off toward its minimum band")
 	check(archer.draw_timer <= 0.0, "an archer does not shoot from inside its minimum band")
+	archer.melee_timer = 0.0
+	archer.attack_timer = 0.0
+	archer.draw_timer = 0.0
+	archer.position = dummy.position + Vector2(60, 0)
+	dummy.invulnerability = 0.0
+	archer._behavior(0.01)
+	check(archer.melee_windup > 0.0 and archer.draw_timer <= 0.0, "an archer switches to melee when the player closes in")
+	var hp_before_melee: float = dummy.hp
+	archer._behavior(0.5)
+	check(dummy.hp < hp_before_melee, "the melee windup lands its strike")
 	var elite = EliteScene.instantiate()
 	elite.setup("elite", player)
 	arena.add_child(elite)
