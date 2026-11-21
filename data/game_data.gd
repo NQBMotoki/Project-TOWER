@@ -2,15 +2,22 @@ extends RefCounted
 
 # Values are the single source of truth for both gameplay and item descriptions.
 const UPGRADES := [
-	{"id": "U01", "type": "sword_damage", "value": 6},
-	{"id": "U02", "type": "sword_cooldown", "value": 0.8},
-	{"id": "U03", "type": "magic_damage", "value": 12},
-	{"id": "U04", "type": "magic_cooldown", "value": 0.75},
-	{"id": "U05", "type": "critical", "value": 0.15},
-	{"id": "U06", "type": "lifesteal", "value": 5},
-	{"id": "U07", "type": "health", "value": 25},
-	{"id": "U08", "type": "speed", "value": 1.15},
+	{"id": "U01", "slot": "sword", "type": "sword_damage", "value": 6},
+	{"id": "U02", "slot": "gloves", "type": "sword_cooldown", "value": 0.8},
+	{"id": "U03", "slot": "magic", "type": "magic_damage", "value": 12},
+	{"id": "U04", "slot": "accessory", "type": "magic_cooldown", "value": 0.75},
+	{"id": "U05", "slot": "accessory", "type": "critical", "value": 0.15},
+	{"id": "U06", "slot": "sword", "type": "lifesteal", "value": 5},
+	{"id": "U07", "slot": "armor", "type": "health", "value": 25},
+	{"id": "U08", "slot": "shoes", "type": "speed", "value": 1.15},
 ]
+const SLOTS := ["sword", "magic", "gloves", "accessory", "armor", "shoes"]
+const STARTERS := {"sword": "START_SWORD", "magic": "START_STAFF"}
+const STACKABLE := ["MUSHROOM", "WATER", "POTION"]
+const REWARD_FILLERS := ["POTION", "MUSHROOM", "WATER"]
+const BOOKS := ["LORE_KIT", "LORE_ORDER", "LORE_F1", "LORE_F2", "LORE_PRAYER",
+	"LORE_F3", "LORE_F4", "LORE_RESEARCH", "LORE_F5"]
+const POTION_HEAL := 30.0
 
 # Slime keeps its contact damage; the coil/lunge cycle adds a rhythm and a recovery window.
 # The slime's lunge reach is derived in the behaviour script (speed x time + contact
@@ -41,6 +48,21 @@ static func upgrade(id: String) -> Dictionary:
 		if item.id == id:
 			return item
 	return {}
+
+static func slot_for(id: String) -> String:
+	var starter_slot: Variant = STARTERS.find_key(id)
+	if starter_slot != null:
+		return starter_slot
+	return upgrade(id).get("slot", "")
+
+static func is_book(id: String) -> bool:
+	return id in BOOKS
+
+static func is_item(id: String) -> bool:
+	return id in STACKABLE or is_book(id) or not slot_for(id).is_empty()
+
+static func name_key(id: String) -> String:
+	return "%s_TITLE" % id if is_book(id) else "ITEM_%s_NAME" % id
 
 static func effect_value(item: Dictionary) -> int:
 	match item.type:

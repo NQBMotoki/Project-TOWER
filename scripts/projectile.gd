@@ -1,6 +1,5 @@
 extends Node2D
 
-const ARENA := Rect2(112, 124, 1056, 472)
 var direction := Vector2.RIGHT
 var damage := 0.0
 var friendly := true
@@ -8,6 +7,7 @@ var target: Node2D
 var speed := 400.0
 var lifetime := 2.3
 var consumed := false
+var layout: ArenaLayout
 
 func setup(origin: Vector2, heading: Vector2, amount: float, is_friendly: bool, player: Node2D, shot_speed := -1.0) -> void:
 	global_position = origin
@@ -15,6 +15,7 @@ func setup(origin: Vector2, heading: Vector2, amount: float, is_friendly: bool, 
 	damage = amount
 	friendly = is_friendly
 	target = player
+	layout = player.layout
 	if shot_speed > 0.0:
 		speed = shot_speed
 	else:
@@ -26,28 +27,42 @@ func _physics_process(delta: float) -> void:
 	lifetime -= delta
 	var old_position := global_position
 	var next_position := old_position + direction * speed * delta
+	var impact := layout.first_block(old_position, next_position, ArenaLayout.PROJECTILE_RADIUS)
+	var victim: Node2D
 	if friendly:
 		for enemy in get_tree().get_nodes_in_group("enemies"):
 			if not is_instance_valid(enemy) or not enemy.alive:
 				continue
-			var closest := Geometry2D.get_closest_point_to_segment(enemy.global_position, old_position, next_position)
-			if closest.distance_to(enemy.global_position) <= enemy.hit_radius + 5.0:
-				consumed = true
-				enemy.take_damage(damage, direction * 100.0)
-				queue_free()
-				return
+			var entry := _hit_fraction(old_position, next_position, enemy.global_position, enemy.hit_radius + 5.0)
+			if entry < impact and layout.has_clear_line(enemy.global_position, old_position.lerp(next_position, entry)):
+				impact = entry
+				victim = enemy
 	elif is_instance_valid(target) and target.alive:
-		var closest := Geometry2D.get_closest_point_to_segment(target.global_position, old_position, next_position)
-		if closest.distance_to(target.global_position) <= 17.0:
-			consumed = true
-			target.take_damage(damage)
-			queue_free()
-			return
+		var entry := _hit_fraction(old_position, next_position, target.global_position, 17.0)
+		if entry < impact and layout.has_clear_line(target.global_position, old_position.lerp(next_position, entry)):
+			impact = entry
+			victim = target
+	if impact < INF:
+		consumed = true
+		global_position = old_position.lerp(next_position, impact)
+		queue_free()
+		if victim != null:
+			if friendly:
+				victim.take_damage(damage, direction * 100.0)
+			else:
+				victim.take_damage(damage)
+		return
 	global_position = next_position
-	if lifetime <= 0.0 or not ARENA.has_point(global_position):
+	if lifetime <= 0.0 or not ArenaLayout.BOUNDS.has_point(global_position):
 		consumed = true
 		queue_free()
 	queue_redraw()
+
+func _hit_fraction(from: Vector2, to: Vector2, center: Vector2, radius: float) -> float:
+	if from.distance_squared_to(center) <= radius * radius:
+		return 0.0
+	var fraction := Geometry2D.segment_intersects_circle(from, to, center, radius)
+	return fraction if fraction >= 0.0 else INF
 
 func _draw() -> void:
 	# Fast hostile shots are arrows: a thin shaft instead of an orb.

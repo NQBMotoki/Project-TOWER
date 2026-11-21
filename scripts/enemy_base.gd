@@ -6,7 +6,6 @@ signal projectile_requested(origin: Vector2, direction: Vector2, damage: float)
 signal sound_requested(kind: String)
 
 const GameData = preload("res://data/game_data.gd")
-const ARENA := Rect2(112, 124, 1056, 472)
 var kind := "slime"
 var config: Dictionary = {}
 var player: Node2D
@@ -25,10 +24,18 @@ var body_scale := Vector2.ONE
 var shot_speed := 230.0
 var alive := true
 var active := true
+var drop_id := ""
+var layout: ArenaLayout
+var _route := PackedVector2Array()
+var _route_target := Vector2.INF
+var _route_remaining := 0.0
+var _sight_position := Vector2.ZERO
+var _sight_remaining := 0.0
 
 func setup(enemy_kind: String, target: Node2D) -> void:
 	kind = enemy_kind
 	player = target
+	layout = target.layout
 	config = GameData.ENEMIES[kind]
 	max_hp = config.hp
 	hp = max_hp
@@ -38,7 +45,7 @@ func setup(enemy_kind: String, target: Node2D) -> void:
 	shot_speed = float(config.get("shot_speed", 230.0))
 	attack_timer = cooldown * 0.5
 	if kind == "elite":
-		hit_radius = 25.0
+		hit_radius = ArenaLayout.ELITE_RADIUS
 
 func set_spawn_delay(value: float) -> void:
 	spawn_delay = maxf(0.0, value)
@@ -53,17 +60,42 @@ func _physics_process(delta: float) -> void:
 	spawn_delay = maxf(0.0, spawn_delay - delta)
 	hit_flash = maxf(0.0, hit_flash - delta)
 	attack_timer = maxf(0.0, attack_timer - delta)
+	_route_remaining -= delta
+	_sight_remaining -= delta
 	# A spawning enemy holds still so staggered waves read as separate arrivals.
 	if spawn_delay <= 0.0:
 		_behavior(delta)
-	position += knockback * delta
+	move_by(knockback * delta)
 	knockback = knockback.move_toward(Vector2.ZERO, 500.0 * delta)
-	position.x = clampf(position.x, ARENA.position.x + hit_radius, ARENA.end.x - hit_radius)
-	position.y = clampf(position.y, ARENA.position.y + hit_radius, ARENA.end.y - hit_radius)
 	queue_redraw()
 
 func _behavior(_delta: float) -> void:
 	pass
+
+func move_by(offset: Vector2) -> void:
+	global_position = layout.move_actor(global_position, offset, hit_radius)
+
+func sees_player(clearance := 0.0) -> bool:
+	return layout.has_clear_line(global_position, player.global_position, clearance)
+
+func move_towards(target: Vector2, distance: float) -> void:
+	var waypoint := target
+	if not layout.has_clear_line(global_position, target, hit_radius):
+		if _route_remaining <= 0.0 or _route_target.distance_squared_to(target) > 48.0 * 48.0:
+			_route = layout.path_to(global_position, target, hit_radius)
+			_route_target = target
+			_route_remaining = 0.22
+		if not _route.is_empty():
+			waypoint = _route[0]
+			if global_position.distance_to(waypoint) <= distance:
+				_route.remove_at(0)
+	move_by((waypoint - global_position).limit_length(distance))
+
+func move_to_sight(preferred: float, distance: float) -> void:
+	if _sight_remaining <= 0.0:
+		_sight_position = layout.shooting_position(global_position, player.global_position, preferred, hit_radius)
+		_sight_remaining = 0.35
+	move_towards(_sight_position, distance)
 
 func take_damage(amount: float, impulse: Vector2 = Vector2.ZERO) -> bool:
 	if not alive:

@@ -1,8 +1,6 @@
 class_name FloorDefinition
 extends Resource
 
-enum AfterClear { REWARD, OPTIONAL_RECORD, EPILOGUE }
-
 @export_group("Entry")
 @export var tip_key := ""
 @export var entry_note_key := ""
@@ -13,9 +11,11 @@ enum AfterClear { REWARD, OPTIONAL_RECORD, EPILOGUE }
 @export var waves: Array[PackedStringArray] = []
 ## When set, defeating this enemy type clears the encounter, including surviving enemies.
 @export var clear_on_enemy_defeat := ""
+@export var obstacle_count := 4
+@export var keep_center_open := false
 
 @export_group("After Clear")
-@export var after_clear: AfterClear = AfterClear.REWARD
-@export var record_title_key := ""
-@export var record_body_key := ""
-@export var record_position := Vector2.ZERO
+## World position to item ID for guaranteed pickups after the floor is clear.
+@export var clear_pickups: Dictionary[Vector2, String] = {}
+## When set, continuing after the floor shows this book instead of a reward.
+@export var epilogue := ""

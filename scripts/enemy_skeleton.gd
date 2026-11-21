@@ -21,10 +21,13 @@ func _behavior(delta: float) -> void:
 		if telegraph <= 0.0:
 			_fire()
 		return
+	if not sees_player(ArenaLayout.PROJECTILE_RADIUS):
+		move_to_sight(235.0, speed * delta)
+		return
 	if distance < 170.0:
-		position -= to_player.normalized() * speed * delta
+		move_by(-to_player.normalized() * speed * delta)
 	elif distance > 270.0:
-		position += to_player.normalized() * speed * delta
+		move_towards(player.global_position, speed * delta)
 	if spawn_delay <= 0.0 and attack_timer <= 0.0 and distance < reach:
 		aim_dir = to_player.normalized() if distance > 1.0 else Vector2.RIGHT
 		telegraph = telegraph_time

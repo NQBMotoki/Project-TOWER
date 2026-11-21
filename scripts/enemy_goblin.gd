@@ -8,14 +8,14 @@ func _behavior(delta: float) -> void:
 	if windup > 0.0:
 		windup -= delta
 		if windup <= 0.0:
-			if spawn_delay <= 0.0 and to_player.length() < 55.0 and absf(strike_direction.angle_to(to_player)) < deg_to_rad(55.0):
+			if spawn_delay <= 0.0 and to_player.length() < 55.0 and absf(strike_direction.angle_to(to_player)) < deg_to_rad(55.0) and sees_player():
 				player.take_damage(damage)
 			attack_timer = cooldown
-	elif to_player.length() < 42.0 and attack_timer <= 0.0 and spawn_delay <= 0.0:
+	elif to_player.length() < 42.0 and attack_timer <= 0.0 and spawn_delay <= 0.0 and sees_player():
 		windup = 0.5
 		strike_direction = to_player.normalized()
-	elif to_player.length() > 33.0:
-		position += to_player.normalized() * speed * delta
+	elif to_player.length() > 33.0 or not sees_player():
+		move_towards(player.global_position, speed * delta)
 
 func _draw() -> void:
 	super._draw()

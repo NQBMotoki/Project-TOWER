@@ -49,8 +49,8 @@ func _behavior(delta: float) -> void:
 		var breath := sin(clock * 5.0) * 0.05
 		body_scale = Vector2(1.0 + breath, 1.0 - breath)
 		if distance > CONTACT_RANGE * 0.7:
-			position += to_player.normalized() * creep_speed * delta
-		if spawn_delay <= 0.0 and lunge_timer <= 0.0 and distance > CONTACT_RANGE and distance <= lunge_reach:
+			move_towards(player.global_position, creep_speed * delta)
+		if spawn_delay <= 0.0 and lunge_timer <= 0.0 and distance > CONTACT_RANGE and distance <= lunge_reach and sees_player():
 			lunge_dir = to_player.normalized()
 			phase = PHASE_COIL
 			phase_timer = coil_time
@@ -62,7 +62,7 @@ func _behavior(delta: float) -> void:
 			phase_timer = lunge_time
 	elif phase == PHASE_LUNGE:
 		body_scale = Vector2(0.82, 1.22)
-		position += lunge_dir * lunge_speed * delta
+		move_by(lunge_dir * lunge_speed * delta)
 		# The landing step can be the one that reaches the player, so contact
 		# is checked again after moving instead of only before it.
 		_touch_player()
@@ -74,7 +74,7 @@ func _behavior(delta: float) -> void:
 func _touch_player() -> void:
 	if spawn_delay > 0.0 or attack_timer > 0.0:
 		return
-	if global_position.distance_to(player.global_position) <= CONTACT_RANGE:
+	if global_position.distance_to(player.global_position) <= CONTACT_RANGE and sees_player():
 		player.take_damage(damage)
 		attack_timer = cooldown
 

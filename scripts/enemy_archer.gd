@@ -51,7 +51,7 @@ func _behavior(delta: float) -> void:
 		if draw_timer <= 0.0:
 			_release()
 		return
-	if distance <= melee_range:
+	if distance <= melee_range and sees_player():
 		# Hold ground here instead of retreating forever. The swing waits for the
 		# bow to finish recovering: slashing during that window would take away
 		# the opening the Floor 3 tip promises after the string sounds.
@@ -60,10 +60,17 @@ func _behavior(delta: float) -> void:
 			melee_dir = direction
 			sound_requested.emit("enemy_chant")
 		return
+	if not sees_player(ArenaLayout.PROJECTILE_RADIUS):
+		move_to_sight((band_min + band_max) * 0.5, speed * delta)
+		return
 	if distance < band_min:
-		position -= direction * speed * backpedal * delta
+		var step := -direction * speed * backpedal * delta
+		if layout.is_walkable(global_position + step, hit_radius):
+			move_by(step)
+		else:
+			move_to_sight((band_min + band_max) * 0.5, speed * delta)
 	elif distance > band_max:
-		position += direction * speed * delta
+		move_towards(player.global_position, speed * delta)
 	if spawn_delay <= 0.0 and attack_timer <= 0.0 and distance >= band_min and distance < reach:
 		draw_timer = draw_time
 		aim_dir = direction
@@ -79,7 +86,7 @@ func _melee_strike() -> void:
 	if spawn_delay > 0.0:
 		return
 	var to_player: Vector2 = player.global_position - global_position
-	if to_player.length() > melee_reach:
+	if to_player.length() > melee_reach or not sees_player():
 		return
 	if to_player.length() > 1.0 and absf(melee_dir.angle_to(to_player)) > deg_to_rad(55.0):
 		return

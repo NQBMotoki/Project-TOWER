@@ -3,6 +3,8 @@ extends Node
 signal floor_cleared
 signal enemy_killed(enemy: Node)
 signal counts_changed(remaining: int, wave: int, total_waves: int)
+signal before_wave(index: int)
+signal between_waves(next_index: int)
 signal projectile_requested(origin: Vector2, direction: Vector2, damage: float, shot_speed: float)
 signal sound_requested(kind: String)
 
@@ -23,17 +25,20 @@ var actors: Node2D
 var wait_for_wave := -1.0
 var cleared := false
 var running := false
+var spawn_seed := 0
+var wave_drops: Array[String] = []
 
-func start_floor(definition: FloorDefinition, target: Node2D, parent: Node2D) -> void:
+func start_floor(definition: FloorDefinition, target: Node2D, parent: Node2D, next_index: int, seed: int) -> void:
 	clear_enemies()
 	floor = definition
 	player = target
 	actors = parent
-	wave_index = -1
+	wave_index = next_index - 1
+	spawn_seed = seed
 	cleared = false
 	running = true
 	wait_for_wave = 0.65
-	counts_changed.emit(0, 0, floor.waves.size())
+	counts_changed.emit(0, next_index, floor.waves.size())
 
 func _process(delta: float) -> void:
 	if not running or cleared or wait_for_wave < 0.0:
@@ -49,11 +54,16 @@ func _spawn_wave() -> void:
 	if wave_index >= waves.size():
 		_finish_floor()
 		return
+	before_wave.emit(wave_index)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash([spawn_seed, wave_index])
+	var rotation := rng.randi_range(0, ArenaLayout.SPAWN_POINTS.size() - 1)
 	var order := 0
 	for kind in waves[wave_index]:
 		var enemy = SCENES[kind].instantiate()
 		enemy.setup(kind, player)
-		enemy.position = _spawn_position()
+		enemy.position = _spawn_position(rotation)
+		enemy.drop_id = wave_drops[order] if order < wave_drops.size() else ""
 		# Staggered arrival keeps four enemies from acting on the same frame.
 		enemy.set_spawn_delay(SPAWN_DELAY + SPAWN_STAGGER * float(order))
 		enemy.died.connect(_on_enemy_died)
@@ -67,12 +77,12 @@ func _spawn_wave() -> void:
 func _on_enemy_projectile(origin: Vector2, direction: Vector2, damage: float, enemy: Node) -> void:
 	projectile_requested.emit(origin, direction, damage, enemy.shot_speed)
 
-func _spawn_position() -> Vector2:
-	var candidates := [Vector2(160, 165), Vector2(640, 165), Vector2(1120, 165), Vector2(160, 555), Vector2(640, 555), Vector2(1120, 555)]
-	candidates.shuffle()
-	var best: Vector2 = candidates[0]
+func _spawn_position(rotation: int) -> Vector2:
+	var candidates := ArenaLayout.SPAWN_POINTS
+	var best: Vector2 = candidates[rotation]
 	var best_score := -1.0
-	for point in candidates:
+	for i in range(candidates.size()):
+		var point: Vector2 = candidates[(i + rotation) % candidates.size()]
 		var score: float = point.distance_to(player.global_position)
 		for enemy in enemies:
 			if is_instance_valid(enemy):
@@ -96,6 +106,7 @@ func _on_enemy_died(enemy: Node) -> void:
 	elif enemies.is_empty():
 		if wave_index + 1 < floor.waves.size():
 			wait_for_wave = 0.9
+			between_waves.emit(wave_index + 1)
 		else:
 			_finish_floor()
 
@@ -115,3 +126,6 @@ func clear_enemies() -> void:
 			enemy.remove_from_group("enemies")
 			enemy.queue_free()
 	enemies.clear()
+
+func wave_in_progress() -> bool:
+	return running and not enemies.is_empty()

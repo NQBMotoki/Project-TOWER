@@ -1,13 +1,13 @@
 extends Node2D
 
 var floor_number := 1
-var lore_active := false
-var lore_position := Vector2.ZERO
+var layout := ArenaLayout.new()
+var high_quality := true
 var clock := 0.0
 
 func _process(delta: float) -> void:
-	clock += delta
-	if lore_active:
+	if visible and high_quality:
+		clock += delta
 		queue_redraw()
 
 func _draw() -> void:
@@ -34,13 +34,28 @@ func _draw() -> void:
 		draw_rect(Rect2(x, 109, 36, 12), Color("81705a"))
 		draw_rect(Rect2(x, 596, 36, 12), Color("51493f"))
 	for p in [Vector2(145, 152), Vector2(1135, 152), Vector2(145, 567), Vector2(1135, 567)]:
-		draw_circle(p, 18, Color(0.95, 0.64, 0.30, 0.05))
+		if high_quality:
+			draw_circle(p, 32, Color(0.95, 0.64, 0.30, 0.05 + sin(clock * 5.0 + p.x) * 0.01))
+			draw_circle(p, 18, Color(0.95, 0.64, 0.30, 0.08))
 		draw_rect(Rect2(p - Vector2(5, 5), Vector2(10, 10)), Color("e3ac63"))
-	if lore_active:
-		var p := lore_position
-		var glow := 0.13 + 0.04 * sin(clock * 3.0)
-		draw_circle(p, 28, Color(0.95, 0.81, 0.52, glow))
-		draw_rect(Rect2(p + Vector2(-12, -8), Vector2(24, 18)), Color("b49770"))
-		draw_rect(Rect2(p + Vector2(-10, -11), Vector2(20, 16)), Color("e9d6ae"))
-		draw_line(p + Vector2(-7, -6), p + Vector2(6, -6), Color("9b8165"), 1.0)
-		draw_line(p + Vector2(-7, -2), p + Vector2(4, -2), Color("9b8165"), 1.0)
+	if high_quality:
+		for i in range(13):
+			var p := Vector2(138.0 + fposmod(i * 153.0 + clock * 7.0, 1004.0),
+				146.0 + fposmod(i * 107.0 - clock * 5.0, 426.0))
+			draw_circle(p, 1.2, Color(0.95, 0.79, 0.61, 0.22 + 0.08 * sin(clock * 2.0 + i)))
+	for entry in layout.obstacles:
+		_draw_obstacle(entry.rect, entry.kind == "pillar")
+
+func _draw_obstacle(rect: Rect2, pillar: bool) -> void:
+	draw_rect(Rect2(rect.position + Vector2(4, 6), rect.size), Color(0.08, 0.07, 0.09, 0.56))
+	draw_rect(rect, Color("23252a"))
+	draw_rect(rect.grow(-2), Color("777264") if pillar else Color("6f6861"))
+	draw_rect(Rect2(rect.position + Vector2(2, 2), Vector2(rect.size.x - 4, 9)), Color("9b9080"))
+	draw_rect(Rect2(rect.position + Vector2(2, rect.size.y - 8), Vector2(rect.size.x - 4, 6)), Color("504c48"))
+	if pillar:
+		draw_rect(rect.grow(-9), Color("8b8173"))
+		draw_rect(rect.grow(-9), Color("605d55"), false, 2.0)
+	else:
+		for offset in [0.26, 0.61, 0.85]:
+			var x: float = rect.position.x + rect.size.x * offset
+			draw_line(Vector2(x + 3, rect.position.y + 5), Vector2(x - 5, rect.end.y - 6), Color("4d4947"), 2.0)
