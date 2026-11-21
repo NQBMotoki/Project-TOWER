@@ -5,9 +5,10 @@ signal health_changed(current: float, maximum: float)
 signal projectile_requested(origin: Vector2, direction: Vector2, damage: float)
 signal sound_requested(kind: String)
 
-const ARENA := Rect2(112, 124, 1056, 472)
+const GameData = preload("res://data/game_data.gd")
 const SWORD_RANGE := 60.0
 const SWORD_HALF_ANGLE := deg_to_rad(50.0)
+const BASE_HP := 100.0
 
 var max_hp := 100.0
 var hp := 100.0
@@ -26,7 +27,9 @@ var aim := Vector2.RIGHT
 var can_move := false
 var can_attack := false
 var alive := true
-var upgrades: Array[String] = []
+var has_sword := true
+var has_staff := true
+var layout := ArenaLayout.new()
 
 func _physics_process(delta: float) -> void:
 	if not alive:
@@ -35,9 +38,7 @@ func _physics_process(delta: float) -> void:
 	sword_flash = maxf(0.0, sword_flash - delta)
 	if can_move:
 		var movement := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-		position += movement * speed * delta
-		position.x = clampf(position.x, ARENA.position.x + 16, ARENA.end.x - 16)
-		position.y = clampf(position.y, ARENA.position.y + 16, ARENA.end.y - 16)
+		global_position = layout.move_actor(global_position, movement * speed * delta, ArenaLayout.PLAYER_RADIUS)
 		var cursor := get_global_mouse_position() - global_position
 		if cursor.length_squared() > 16.0:
 			aim = cursor.normalized()
@@ -51,7 +52,7 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func attack_sword() -> void:
-	if not can_attack or not alive:
+	if not has_sword or not can_attack or not alive:
 		return
 	sword_timer = sword_cooldown
 	sword_flash = 0.16
@@ -60,14 +61,14 @@ func attack_sword() -> void:
 		if not is_instance_valid(enemy) or not enemy.alive:
 			continue
 		var difference: Vector2 = enemy.global_position - global_position
-		if difference.length() <= SWORD_RANGE + enemy.hit_radius and absf(aim.angle_to(difference)) <= SWORD_HALF_ANGLE:
+		if difference.length() <= SWORD_RANGE + enemy.hit_radius and absf(aim.angle_to(difference)) <= SWORD_HALF_ANGLE and layout.has_clear_line(global_position, enemy.global_position):
 			var damage := sword_damage * (1.5 if randf() < crit_chance else 1.0)
 			var killed: bool = enemy.take_damage(damage, difference.normalized() * 150.0)
 			if killed and sword_heal > 0.0:
 				heal(sword_heal)
 
 func cast_magic() -> void:
-	if not can_attack or not alive:
+	if not has_staff or not can_attack or not alive:
 		return
 	magic_timer = magic_cooldown
 	var damage := magic_damage * (1.5 if randf() < crit_chance else 1.0)
@@ -89,7 +90,26 @@ func heal(amount: float) -> void:
 	hp = minf(max_hp, hp + amount)
 	health_changed.emit(hp, max_hp)
 
-func apply_upgrade(item: Dictionary) -> void:
+func set_equipment(equipment: Dictionary) -> void:
+	has_sword = equipment.has("sword")
+	has_staff = equipment.has("magic")
+	max_hp = BASE_HP
+	speed = 185.0
+	sword_damage = 12.0
+	sword_cooldown = 0.42
+	magic_damage = 20.0
+	magic_cooldown = 2.4
+	crit_chance = 0.05
+	sword_heal = 0.0
+	for id in equipment.values():
+		var item := GameData.upgrade(id)
+		if not item.is_empty():
+			_apply_equipment_effect(item)
+	hp = minf(hp, max_hp)
+	health_changed.emit(hp, max_hp)
+	queue_redraw()
+
+func _apply_equipment_effect(item: Dictionary) -> void:
 	var value: float = item.value
 	match item.type:
 		"sword_damage": sword_damage += value
@@ -98,11 +118,8 @@ func apply_upgrade(item: Dictionary) -> void:
 		"magic_cooldown": magic_cooldown = maxf(1.0, magic_cooldown * value)
 		"critical": crit_chance = minf(0.6, crit_chance + value)
 		"lifesteal": sword_heal += value
-		"health":
-			max_hp += value
-			heal(value)
+		"health": max_hp += value
 		"speed": speed *= value
-	upgrades.append(item.id)
 
 func _draw() -> void:
 	if sword_flash > 0.0:
@@ -125,8 +142,12 @@ func _draw() -> void:
 	draw_rect(Rect2(-9, -20, 18, 7), Color(0.31, 0.24, 0.24) * tint)
 	draw_rect(Rect2(-5, -11, 3, 3), Color(0.12, 0.16, 0.20))
 	draw_rect(Rect2(3, -11, 3, 3), Color(0.12, 0.16, 0.20))
-	draw_line(aim * 13.0, aim * 27.0, Color(0.90, 0.89, 0.76), 4.0)
-	draw_line(aim * 12.0 + aim.orthogonal() * 5.0, aim * 12.0 - aim.orthogonal() * 5.0, Color(0.74, 0.55, 0.27), 3.0)
+	if has_sword:
+		draw_line(aim * 13.0, aim * 27.0, Color(0.90, 0.89, 0.76), 4.0)
+		draw_line(aim * 12.0 + aim.orthogonal() * 5.0, aim * 12.0 - aim.orthogonal() * 5.0, Color(0.74, 0.55, 0.27), 3.0)
+	if has_staff:
+		draw_line(Vector2(-12, 11), Vector2(-18, -14), Color("b39173"), 3.0)
+		draw_circle(Vector2(-18, -14), 3.0, Color("9ae4e2"))
 
 func draw_ellipse_shadow() -> void:
 	draw_circle(Vector2(0, 15), 15.0, Color(0.02, 0.02, 0.04, 0.35))

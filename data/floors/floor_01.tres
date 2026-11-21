@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="FloorDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/floor_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+tip_key = "TIP_F1"
+wait_for_confirmation = true
+waves = Array[PackedStringArray]([PackedStringArray("slime", "slime"), PackedStringArray("slime", "goblin")])
+obstacle_count = 4
+clear_pickups = Dictionary[Vector2, String]({Vector2(905, 400): "LORE_F1", Vector2(835, 430): "MUSHROOM", Vector2(955, 445): "WATER"})

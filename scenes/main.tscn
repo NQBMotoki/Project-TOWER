@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/run_controller.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/arena.gd" id="2"]
@@ -6,12 +6,24 @@
 [ext_resource type="Script" path="res://scripts/sound_manager.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/localization_service.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/game_ui.gd" id="6"]
+[ext_resource type="Script" path="res://data/floor_definition.gd" id="7"]
+[ext_resource type="Resource" path="res://data/floors/floor_01.tres" id="8"]
+[ext_resource type="Resource" path="res://data/floors/floor_02.tres" id="9"]
+[ext_resource type="Resource" path="res://data/floors/floor_03.tres" id="10"]
+[ext_resource type="Resource" path="res://data/floors/floor_04.tres" id="11"]
+[ext_resource type="Resource" path="res://data/floors/floor_05.tres" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/world/tower_grounds.tscn" id="13"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1")
+floors = Array[ExtResource("7")]([ExtResource("8"), ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12")])
 
 [node name="Arena" type="Node2D" parent="."]
 script = ExtResource("2")
+
+[node name="TowerGrounds" parent="." instance=ExtResource("13")]
+
+[node name="Pickups" type="Node2D" parent="."]
 
 [node name="Actors" type="Node2D" parent="."]
 
