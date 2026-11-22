@@ -223,12 +223,12 @@ UI_ACTION_INTERACT,互动,Interact,input,按键设置中可重绑的操作名称
 UI_ACTION_NEXT,继续,Continue,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
 UI_ACTION_INVENTORY,背包,Bag,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
 UI_ACTION_QUICK_ITEM,快捷栏,Quick slot,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
-UI_SLOT_SWORD,近战,Melee,equipment,背包中已穿戴清单的装备槽标签。,draft
-UI_SLOT_MAGIC,魔法,Magic,equipment,背包中已穿戴清单的装备槽标签。,draft
+UI_SLOT_SWORD,剑,Sword,equipment,背包中已穿戴清单的装备槽标签。,draft
+UI_SLOT_MAGIC,法杖,Staff,equipment,背包中已穿戴清单的装备槽标签。,draft
 UI_SLOT_GLOVES,手套,Gloves,equipment,背包中已穿戴清单的装备槽标签。,draft
 UI_SLOT_ACCESSORY,饰品,Accessory,equipment,背包中已穿戴清单的装备槽标签。,draft
 UI_SLOT_ARMOR,护甲,Armor,equipment,背包中已穿戴清单的装备槽标签。,draft
-UI_SLOT_SHOES,鞋,Footwear,equipment,背包中已穿戴清单的装备槽标签。,draft
+UI_SLOT_SHOES,靴,Boots,equipment,背包中已穿戴清单的装备槽标签。,draft
 LORE_KIT_TITLE,骑士的行装册,The Knight's Kit List,narrative,十年前骑士莱昂所写，塔前营火南侧拾取时打开。弓箭手为艾妲，牧师为米拉，法师为索伦。阅读面板标题，也用作拾取与背包名称。,draft
 LORE_KIT_BODY,"四份干粮，一卷绷带，两罐灯油。艾妲试了三次弓弦，最后把最旧的那根也收进了袋里。米拉从午后就开始数我们有几个人。我说四个，她说已经数过了。
 
