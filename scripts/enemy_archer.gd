@@ -15,7 +15,8 @@ var reach := 640.0
 
 var melee_range := 70.0
 var melee_reach := 100.0
-var melee_windup_time := 0.45
+var melee_windup_time := 0.7
+var melee_half_angle := deg_to_rad(35.0)
 var melee_damage := 9.0
 var melee_cooldown := 1.3
 var melee_windup := 0.0
@@ -33,6 +34,7 @@ func _ready() -> void:
 	melee_range = float(config.get("melee_range", melee_range))
 	melee_reach = float(config.get("melee_reach", melee_reach))
 	melee_windup_time = float(config.get("melee_windup", melee_windup_time))
+	melee_half_angle = deg_to_rad(float(config.get("melee_arc", rad_to_deg(melee_half_angle))))
 	melee_damage = float(config.get("melee_damage", melee_damage))
 	melee_cooldown = float(config.get("melee_cooldown", melee_cooldown))
 
@@ -88,7 +90,7 @@ func _melee_strike() -> void:
 	var to_player: Vector2 = player.global_position - global_position
 	if to_player.length() > melee_reach or not sees_player():
 		return
-	if to_player.length() > 1.0 and absf(melee_dir.angle_to(to_player)) > deg_to_rad(55.0):
+	if to_player.length() > 1.0 and absf(melee_dir.angle_to(to_player)) > melee_half_angle:
 		return
 	player.take_damage(melee_damage)
 
@@ -99,7 +101,7 @@ func _draw() -> void:
 		var t := 1.0 - melee_windup / maxf(0.01, melee_windup_time)
 		var melee_alpha := lerpf(0.12, 0.9, t)
 		var melee_color := Color(1.0, 0.52, 0.34, melee_alpha)
-		var arc := deg_to_rad(55.0)
+		var arc := melee_half_angle
 		var points := PackedVector2Array([Vector2.ZERO])
 		for i in range(9):
 			var a := melee_dir.angle() - arc + 2.0 * arc * float(i) / 8.0
