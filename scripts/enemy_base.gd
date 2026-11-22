@@ -5,7 +5,13 @@ signal died(enemy: Node)
 signal projectile_requested(origin: Vector2, direction: Vector2, damage: float)
 signal sound_requested(kind: String)
 
-const GameData = preload("res://data/game_data.gd")
+const CompleteEnemies = preload("res://data/complete_enemies.gd")
+const EditionArt = preload("res://data/edition_art.gd")
+const EnemyHazard = preload("res://scripts/enemy_ground_hazard.gd")
+const ActorMotion = preload("res://scripts/actor_motion.gd")
+const HIT_FLASH_TIME := 0.14
+const RELEASE_POSE_TIME := 0.13
+const RECOVERY_POSE_TIME := 0.25
 var kind := "slime"
 var config: Dictionary = {}
 var player: Node2D
@@ -21,22 +27,32 @@ var hit_flash := 0.0
 var knockback := Vector2.ZERO
 var hit_radius := 17.0
 var body_scale := Vector2.ONE
+var body_alpha := 1.0
+var facing := Vector2.RIGHT
 var shot_speed := 230.0
 var alive := true
 var active := true
 var drop_id := ""
+var hazard_sound: Callable
 var layout: ArenaLayout
 var _route := PackedVector2Array()
 var _route_target := Vector2.INF
 var _route_remaining := 0.0
 var _sight_position := Vector2.ZERO
 var _sight_remaining := 0.0
+var _art_scale := 1.0
+var _motion := ActorMotion.new()
+var _pose_phase := ActorMotion.Phase.MOVE
+var _pose_progress := 0.0
+var _release_pose_age := INF
+
+@onready var art: Sprite2D = get_node_or_null("Sprite2D")
 
 func setup(enemy_kind: String, target: Node2D) -> void:
 	kind = enemy_kind
 	player = target
 	layout = target.layout
-	config = GameData.ENEMIES[kind]
+	config = CompleteEnemies.ENEMIES[kind]
 	max_hp = config.hp
 	hp = max_hp
 	speed = config.speed
@@ -44,7 +60,7 @@ func setup(enemy_kind: String, target: Node2D) -> void:
 	cooldown = config.cooldown
 	shot_speed = float(config.get("shot_speed", 230.0))
 	attack_timer = cooldown * 0.5
-	if kind == "elite":
+	if kind in ["elite", "lord"]:
 		hit_radius = ArenaLayout.ELITE_RADIUS
 
 func set_spawn_delay(value: float) -> void:
@@ -53,6 +69,13 @@ func set_spawn_delay(value: float) -> void:
 
 func _ready() -> void:
 	add_to_group("enemies")
+	if art != null and art.texture == null:
+		art.texture = EditionArt.icon(kind)
+	if art != null and art.texture != null:
+		var texture_size := art.texture.get_size()
+		_art_scale = hit_radius * 2.7 / maxf(texture_size.x, texture_size.y)
+		art.scale = Vector2.ONE * _art_scale
+		art.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 func _physics_process(delta: float) -> void:
 	if not active or not alive or not is_instance_valid(player) or not player.alive:
@@ -60,6 +83,8 @@ func _physics_process(delta: float) -> void:
 	spawn_delay = maxf(0.0, spawn_delay - delta)
 	hit_flash = maxf(0.0, hit_flash - delta)
 	attack_timer = maxf(0.0, attack_timer - delta)
+	_release_pose_age += delta
+	var previous_position := global_position
 	_route_remaining -= delta
 	_sight_remaining -= delta
 	# A spawning enemy holds still so staggered waves read as separate arrivals.
@@ -67,7 +92,39 @@ func _physics_process(delta: float) -> void:
 		_behavior(delta)
 	move_by(knockback * delta)
 	knockback = knockback.move_toward(Vector2.ZERO, 500.0 * delta)
+	if art != null and art.texture != null:
+		_animate_body(delta, (global_position - previous_position) / maxf(delta, 0.001))
 	queue_redraw()
+
+func _animate_body(delta: float, movement_velocity: Vector2) -> void:
+	_pose_phase = ActorMotion.Phase.MOVE
+	_pose_progress = 0.0
+	_prepare_action_pose()
+	if _release_pose_age < RELEASE_POSE_TIME:
+		_pose_phase = ActorMotion.Phase.STRIKE
+		_pose_progress = _release_pose_age / RELEASE_POSE_TIME
+	elif _pose_phase == ActorMotion.Phase.MOVE and movement_velocity.length_squared() < 100.0:
+		var recovery_age := _release_pose_age - RELEASE_POSE_TIME
+		if recovery_age < RECOVERY_POSE_TIME:
+			_pose_phase = ActorMotion.Phase.RECOVERY
+			_pose_progress = recovery_age / RECOVERY_POSE_TIME
+	if hit_flash > 0.0:
+		set_action_pose(ActorMotion.Phase.HURT, hit_flash, HIT_FLASH_TIME)
+	_motion.advance(delta, movement_velocity, facing, _pose_phase, _pose_progress)
+	_motion.apply(art, Vector2.ZERO, body_scale * _art_scale)
+	var hit_age := HIT_FLASH_TIME - hit_flash
+	var tint := 1.7 if hit_flash > 0.0 and fmod(hit_age, 0.065) < 0.043 else 1.0
+	art.modulate = Color(tint, tint, tint, body_alpha)
+
+func _prepare_action_pose() -> void:
+	pass
+
+func set_action_pose(phase: ActorMotion.Phase, remaining: float, duration: float) -> void:
+	_pose_phase = phase
+	_pose_progress = 1.0 - clampf(remaining / maxf(duration, 0.001), 0.0, 1.0)
+
+func show_attack_release() -> void:
+	_release_pose_age = 0.0
 
 func _behavior(_delta: float) -> void:
 	pass
@@ -79,6 +136,9 @@ func sees_player(clearance := 0.0) -> bool:
 	return layout.has_clear_line(global_position, player.global_position, clearance)
 
 func move_towards(target: Vector2, distance: float) -> void:
+	var direction := global_position.direction_to(target)
+	if direction != Vector2.ZERO:
+		facing = direction
 	var waypoint := target
 	if not layout.has_clear_line(global_position, target, hit_radius):
 		if _route_remaining <= 0.0 or _route_target.distance_squared_to(target) > 48.0 * 48.0:
@@ -102,7 +162,7 @@ func take_damage(amount: float, impulse: Vector2 = Vector2.ZERO) -> bool:
 		return false
 	hp -= amount
 	knockback = impulse
-	hit_flash = 0.14
+	hit_flash = HIT_FLASH_TIME
 	sound_requested.emit("hit")
 	if hp <= 0.0:
 		alive = false
@@ -111,12 +171,81 @@ func take_damage(amount: float, impulse: Vector2 = Vector2.ZERO) -> bool:
 		return true
 	return false
 
+func aim_at_player() -> Vector2:
+	var direction := global_position.direction_to(player.global_position)
+	facing = direction if direction != Vector2.ZERO else facing
+	return facing
+
+func target_in_sector(heading: Vector2, reach: float, half_angle: float) -> bool:
+	var offset: Vector2 = player.global_position - global_position
+	if offset.length_squared() > reach * reach or not sees_player():
+		return false
+	return offset.is_zero_approx() or absf(heading.angle_to(offset)) <= half_angle
+
+func clear_reach(heading: Vector2, reach: float, clearance := 0.0) -> float:
+	var fraction := layout.first_block(global_position, global_position + heading * reach, clearance)
+	return reach if fraction == INF else reach * fraction
+
+func move_straight(heading: Vector2, distance: float) -> void:
+	var available := clear_reach(heading, distance, hit_radius)
+	global_position += heading * maxf(0.0, minf(distance, available - ArenaLayout.MOTION_MARGIN))
+
+func draw_sector(heading: Vector2, reach: float, half_angle: float, progress: float, color: Color) -> void:
+	var rim := PackedVector2Array()
+	for i in range(25):
+		var ray := heading.rotated(lerpf(-half_angle, half_angle, i / 24.0))
+		rim.append(ray * clear_reach(ray, reach))
+	var area := PackedVector2Array([Vector2.ZERO])
+	area.append_array(rim)
+	draw_colored_polygon(area, Color(color, 0.10 + 0.20 * progress))
+	draw_polyline(rim, Color(color, 0.45 + 0.45 * progress), 2.5)
+	draw_line(Vector2.ZERO, heading * clear_reach(heading, reach), Color(color, 0.30 + 0.40 * progress), 2.0)
+
+func draw_magic_guides(heading: Vector2, reach: float, shots: int, spread: float, progress: float) -> void:
+	var color := Color(1.0, 0.46, 0.37, 0.38 + 0.48 * progress)
+	for i in range(shots):
+		var ray := heading.rotated((i - (shots - 1) * 0.5) * spread)
+		var extent := clear_reach(ray, reach, ArenaLayout.PROJECTILE_RADIUS)
+		draw_line(Vector2.ZERO, ray * extent, color, 2.0)
+		draw_line(ray * minf(24.0, extent), ray * minf(46.0, extent), Color(color, 0.9), 4.0)
+	draw_arc(Vector2.ZERO, hit_radius + 8.0, -PI * 0.5, -PI * 0.5 + TAU * progress, 24, color, 2.5)
+
+func fire_fan(heading: Vector2, shots: int, spread: float) -> void:
+	show_attack_release()
+	for i in range(shots):
+		var ray := heading.rotated((i - (shots - 1) * 0.5) * spread)
+		projectile_requested.emit(global_position, ray, damage)
+	sound_requested.emit("enemy_magic")
+
+func add_hazard(origin: Vector2, end: Vector2, radius: float, delay: float, duration: float, amount: float) -> void:
+	var hazard := EnemyHazard.new()
+	hazard.setup(player, end - origin, radius, delay, duration, amount)
+	if hazard_sound.is_valid():
+		hazard.sound_requested.connect(hazard_sound)
+	get_parent().add_child(hazard)
+	hazard.global_position = origin
+
 func _draw() -> void:
-	var scale_factor := 1.45 if kind == "elite" else 1.0
+	var scale_factor := hit_radius / 17.0
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2(scale_factor, scale_factor) * body_scale)
 	draw_circle(Vector2(0, 13), 15, Color(0.02, 0.02, 0.04, 0.30))
+	if art == null or art.texture == null:
+		_draw_placeholder()
+	draw_set_transform(Vector2.ZERO)
+	if hp < max_hp and alive:
+		draw_rect(Rect2(-18, -31 * scale_factor, 36, 4), Color(0.12, 0.10, 0.15, 0.9))
+		draw_rect(Rect2(-18, -31 * scale_factor, 36 * maxf(0.0, hp / max_hp), 4), Color(0.92, 0.42, 0.35))
+	if spawn_delay > 0.0:
+		var progress := clampf(1.0 - spawn_delay / spawn_delay_total, 0.0, 1.0)
+		draw_arc(Vector2.ZERO, hit_radius + 16.0 - 9.0 * progress, 0.0, TAU, 24, Color(0.98, 0.82, 0.51, 0.25 + 0.35 * progress), 2.0)
+		draw_arc(Vector2.ZERO, hit_radius + 7.0, 0.0, TAU, 24, Color(0.98, 0.82, 0.51, 0.55), 2.0)
+
+func _draw_placeholder() -> void:
 	var flash := Color.WHITE if hit_flash <= 0.0 else Color(2.2, 2.2, 2.2)
-	match kind:
+	if config.get("corrupted", false):
+		flash *= Color(1.2, 0.65, 1.9)
+		draw_arc(Vector2.ZERO, 20.0, 0.0, TAU, 16, Color("cf77ec"), 2.0)
+	match config.get("behavior", kind):
 		"slime":
 			draw_rect(Rect2(-14, -7, 28, 19), Color(0.38, 0.72, 0.48) * flash)
 			draw_rect(Rect2(-10, -12, 20, 6), Color(0.50, 0.82, 0.56) * flash)
@@ -137,6 +266,13 @@ func _draw() -> void:
 			draw_rect(Rect2(2, -10, 4, 4), Color(0.12, 0.14, 0.16))
 			draw_rect(Rect2(-7, 5, 14, 3), Color(0.55, 0.62, 0.52))
 			draw_arc(Vector2(11, 0), 17.0, -1.15, 1.15, 10, Color(0.55, 0.42, 0.26), 2.5)
+		"ghost":
+			draw_colored_polygon(PackedVector2Array([Vector2(-14, 15), Vector2(-11, -12),
+				Vector2(-4, -19), Vector2(5, -19), Vector2(12, -11), Vector2(16, 15),
+				Vector2(6, 9), Vector2(0, 16), Vector2(-6, 10)]),
+				Color(0.62, 0.86, 0.96, body_alpha))
+			draw_rect(Rect2(-7, -10, 4, 5), Color(0.08, 0.14, 0.28, body_alpha))
+			draw_rect(Rect2(3, -10, 4, 5), Color(0.08, 0.14, 0.28, body_alpha))
 		_:
 			var robe := Color(0.39, 0.33, 0.52) if kind == "skeleton" else Color(0.60, 0.24, 0.31)
 			draw_rect(Rect2(-11, 0, 22, 18), robe * flash)
@@ -144,15 +280,7 @@ func _draw() -> void:
 			draw_rect(Rect2(-7, -10, 5, 5), Color(0.15, 0.12, 0.21))
 			draw_rect(Rect2(2, -10, 5, 5), Color(0.15, 0.12, 0.21))
 			draw_rect(Rect2(-4, -1, 8, 3), Color(0.35, 0.31, 0.32))
-			if kind == "elite":
+			if kind in ["elite", "lord"]:
 				draw_rect(Rect2(-10, -22, 20, 5), Color(0.89, 0.65, 0.25))
 				draw_rect(Rect2(-10, -26, 4, 6), Color(0.89, 0.65, 0.25))
 				draw_rect(Rect2(6, -26, 4, 6), Color(0.89, 0.65, 0.25))
-	draw_set_transform(Vector2.ZERO)
-	if hp < max_hp and alive:
-		draw_rect(Rect2(-18, -31 * scale_factor, 36, 4), Color(0.12, 0.10, 0.15, 0.9))
-		draw_rect(Rect2(-18, -31 * scale_factor, 36 * maxf(0.0, hp / max_hp), 4), Color(0.92, 0.42, 0.35))
-	if spawn_delay > 0.0:
-		var progress := clampf(1.0 - spawn_delay / spawn_delay_total, 0.0, 1.0)
-		draw_arc(Vector2.ZERO, hit_radius + 16.0 - 9.0 * progress, 0.0, TAU, 24, Color(0.98, 0.82, 0.51, 0.25 + 0.35 * progress), 2.0)
-		draw_arc(Vector2.ZERO, hit_radius + 7.0, 0.0, TAU, 24, Color(0.98, 0.82, 0.51, 0.55), 2.0)

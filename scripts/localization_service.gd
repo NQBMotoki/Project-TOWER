@@ -8,7 +8,7 @@ const SETTINGS_PATH := "user://settings.cfg"
 const DEFAULT_LOCALE := "zh_CN"
 const REMAPPABLE := [
 	"move_up", "move_left", "move_down", "move_right",
-	"attack", "magic", "interact", "next", "inventory", "quick_item",
+	"attack", "interact", "next", "inventory", "quick_item",
 ]
 var settings_path := SETTINGS_PATH
 var locale := DEFAULT_LOCALE
@@ -16,6 +16,7 @@ var translations: Dictionary = {}
 var high_quality := true
 var master_volume := 1.0
 var effects_volume := 1.0
+var music_volume := 1.0
 var _config := ConfigFile.new()
 var _defaults: Dictionary = {}
 
@@ -30,6 +31,7 @@ func _ready() -> void:
 		high_quality = _config.get_value("video", "quality", "high") != "low"
 		master_volume = _read_volume("master")
 		effects_volume = _read_volume("effects")
+		music_volume = _read_volume("music")
 	else:
 		var system := OS.get_locale().to_lower()
 		locale = "en_US" if system.begins_with("en") else DEFAULT_LOCALE
@@ -73,15 +75,16 @@ func set_quality(high: bool) -> void:
 	preferences_changed.emit()
 
 func preview_volume(channel: String, value: float) -> void:
-	if channel == "master":
-		master_volume = clampf(value, 0.0, 1.0)
-	else:
-		effects_volume = clampf(value, 0.0, 1.0)
+	match channel:
+		"master": master_volume = clampf(value, 0.0, 1.0)
+		"effects": effects_volume = clampf(value, 0.0, 1.0)
+		"music": music_volume = clampf(value, 0.0, 1.0)
 	preferences_changed.emit()
 
 func save_volumes() -> void:
 	_config.set_value("audio", "master", master_volume)
 	_config.set_value("audio", "effects", effects_volume)
+	_config.set_value("audio", "music", music_volume)
 	_save_settings()
 
 func _save_settings() -> void:

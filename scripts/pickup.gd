@@ -1,11 +1,21 @@
 extends Node2D
 
 const GameData = preload("res://data/game_data.gd")
+const EditionArt = preload("res://data/edition_art.gd")
+
 var item_id := ""
 var guided := false
 var clock := 0.0
 var bob := Vector2.ZERO
 @onready var sprite: Sprite2D = $Sprite2D
+
+func _ready() -> void:
+	if sprite.texture == null:
+		sprite.texture = EditionArt.icon(item_id)
+	if sprite.texture != null:
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		var size := sprite.texture.get_size()
+		sprite.scale = Vector2.ONE * (26.0 / maxf(size.x, size.y))
 
 func _process(delta: float) -> void:
 	clock += delta

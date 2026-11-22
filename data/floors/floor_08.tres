@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="FloorDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/floor_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+tip_key = "TIP_F8"
+waves = Array[PackedStringArray]([PackedStringArray("corrupted_skeleton", "corrupted_goblin", "ghost"), PackedStringArray("corrupted_slime", "corrupted_skeleton", "ghost", "corrupted_goblin")])
+obstacle_count = 7
+clear_pickups = Dictionary[Vector2, String]({Vector2(860.0, 490.0): "LORE_TRIAL"})

@@ -1,8 +1,8 @@
 # Project TOWER
 
-五层俯视角动作 Roguelite，使用 Godot 4.7.2 / GDScript。玩家从塔前取剑与法杖，进塔战斗、搜集与换装，击败守塔者后阅读尾声。界面与叙事支持简体中文和美式英语。
+十层俯视角动作 Roguelite，使用 Godot 4.7.2 / GDScript。玩家在塔前装备武器，进塔战斗、搜集和魔化，击败塔顶领主后亲自走入终点。界面与文稿支持简体中文和美式英语。
 
-当前开发候选的 macOS 导出预设标记为 **0.2.0**。已发布的测试包按对应标签取用。 [GitHub Releases](https://github.com/NQBMotoki/Project-TOWER/releases)
+当前完全体候选为 **0.3.0-dev**，实现基线为 **0.2.1**（`031876f`）。[GitHub Releases](https://github.com/NQBMotoki/Project-TOWER/releases)
 
 ## 启动与操作
 
@@ -15,19 +15,17 @@ godot --path .
 | 默认操作 | 用途 |
 | --- | --- |
 | WASD、鼠标 | 移动与瞄准 |
-| 鼠标左键、右键 | 近战与魔法 |
-| E | 拾取、查看营地、通过塔门、关闭阅读 |
-| B、Q | 打开背包、使用已绑定到快捷栏的药水 |
-| Enter | 确认楼层提示，或在清场探索后进入奖励或尾声 |
-| Esc | 暂停或关闭最上层面板 |
+| 鼠标左键 | 以当前武器攻击 |
+| E | 互动、吸收血珠、推进对话或关闭阅读 |
+| B、Q | 打开背包、使用已设到快捷栏的药水 |
+| Enter | 推进塔顶对话 |
+| Esc | 暂停或关闭当前面板 |
 
-首次玩时，先拾取塔门两侧的剑和法杖，两件会自动装备。缺武器就尝试进门时，蓝色骑士幽灵会指路。每层柱子和碎墙阻挡移动、弹体和隔墙近战。清场后可以先拾取地上的物品和书刊。前四层各领一件奖励，装备从背包穿戴后生效。塔前和第一层清场区分别提供蘑菇和水瓶各一份，在背包的合成面板可制成一瓶恢复 30 HP 的药水。
+走近地面物品即可拾取。塔前拿起任意一把武器后可按 E 进塔。F1–F9 清场后可搜集、领珠、换装、魔化，再走上楼梯。F10 击败领主后，走进终点触发胜利。背包分为背包、魔化、合成与图鉴四页。
 
 ## 设置与续档
 
-主菜单和暂停菜单共用设置。画质、总音量、音效音量、界面语言及键鼠绑定保存在 `user://settings.cfg`。两档画质均显示战斗预警和入塔、楼层演出。Esc 固定，其余显示在操控设置中的动作可重绑。
-
-用暂停菜单的保存并返回主菜单，或正常关闭游戏窗口。主菜单有有效存档时可继续。塔前、楼层提示、清场探索、领奖和尾声可从对应阶段恢复。战斗续档回到本波开战前，本波的用时、受伤、击杀、拾取、换装、合成和消耗一并回退。波间保存保留已完成波次的成果。主档不可用时游戏尝试读取备份。死亡和胜利结算清除本局存档与备份。
+设置保存语言、画质、按键、总音量、配乐和音效音量。Esc 固定。暂停菜单的保存并返回主菜单，或正常关闭窗口，均可保留当前局。波中从本波初始状态恢复。波间、清场探索或转场从保存时的阶段继续。损坏的主档可尝试从同一局备份恢复。主菜单图鉴保留跨局发现与已读记录。0.2.1 五层存档与完全体不兼容。
 
 ## 文档
 
@@ -35,6 +33,8 @@ godot --path .
 - [技术架构](docs/architecture.md)
 - [本地化规范](docs/localization.md)
 - [世界观设定](docs/worldbuilding.md)
+- [Excel 设定表](data/design/Project-TOWER-设定表.xlsx)
+- [美术和音频资产交接](docs/asset-handoff.md)
 
 排期、QA、模块细则与交付材料通过团队在线目录维护。本地待同步稿位于项目旁的 `Project-TOWER-OnlineDocsCandidates`。 [在线文档目录](https://docs.qq.com/sheet/DT2t0WEdBd3RGcFFz?tab=BB08J2)
 
@@ -46,6 +46,8 @@ godot --path .
 godot --headless --path . --import
 godot --headless --path . --script res://tests/test_mvp.gd
 godot --headless --path . --script res://tests/test_mvp.gd -- --candidate
+godot --headless --path . --script res://tests/test_settings.gd
+python3 tools/export_settings.py data/design/Project-TOWER-设定表.xlsx --check
 ```
 
 使用 [导出预设](export_presets.cfg) 与 Godot 4.7.2 导出模板。正式组包前核对源码、导出元数据、包名和验收版本。
@@ -56,4 +58,4 @@ godot --headless --path . --export-release "Windows Desktop" builds/windows/Proj
 godot --headless --path . --export-release "macOS" builds/ProjectTOWER-macOS.zip
 ```
 
-Windows 的 `.exe` 与 `.pck` 放在同一目录。macOS 预设使用临时签名，交付前记录公证状态与目标设备的启动结果。角色、场景与特效由项目绘制，音效由代码合成。随包附 Noto Sans SC 的 [SIL Open Font License 1.1](assets/fonts/OFL.txt)。构建产物放在 `builds/`，QA 对实际候选包记录独立启动、操作、完整通关和听感。
+Windows 的 `.exe` 与 `.pck` 放在同一目录。macOS 预设使用临时签名，交付前记录公证状态与目标设备的启动结果。轻像素贴图来自 ImageGen，动作由玩法状态驱动，配乐与音效由代码合成。随包附 Noto Sans SC 的 [SIL Open Font License 1.1](assets/fonts/OFL.txt)。构建产物放在 `builds/`，QA 对实际候选包记录独立启动、操作、完整通关和听感。
