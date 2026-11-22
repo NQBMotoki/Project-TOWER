@@ -59,3 +59,7 @@ godot --headless --path . --export-release "macOS" builds/ProjectTOWER-macOS.zip
 ```
 
 Windows 的 `.exe` 与 `.pck` 放在同一目录。macOS 预设使用临时签名，交付前记录公证状态与目标设备的启动结果。轻像素贴图来自 ImageGen，动作由玩法状态驱动，配乐与音效由代码合成。随包附 Noto Sans SC 的 [SIL Open Font License 1.1](assets/fonts/OFL.txt)。构建产物放在 `builds/`，QA 对实际候选包记录独立启动、操作、完整通关和听感。
+
+## 许可
+
+Project TOWER 的原创代码、项目拥有授权权利的美术和音频、文稿及文档采用 [MIT 许可证](LICENSE)。第三方内容适用各自的许可证，包括 [Noto Sans SC（SIL OFL 1.1）](assets/fonts/OFL.txt)和 [Godot AI 插件（MIT）](addons/godot_ai/LICENSE)。素材来源见[美术和音频资产交接](docs/asset-handoff.md)。
