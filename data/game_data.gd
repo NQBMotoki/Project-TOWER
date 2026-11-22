@@ -34,8 +34,8 @@ const ENEMIES := {
 		"hp": 24.0, "speed": 62.0, "damage": 13.0, "cooldown": 2.2,
 		"draw": 0.8, "shot_speed": 560.0, "band_min": 240.0, "band_max": 360.0,
 		"backpedal": 1.15, "reach": 640.0,
-		"melee_range": 70.0, "melee_reach": 100.0, "melee_windup": 0.45,
-		"melee_damage": 9.0, "melee_cooldown": 1.3,
+		"melee_range": 70.0, "melee_reach": 80.0, "melee_windup": 0.7,
+		"melee_damage": 9.0, "melee_cooldown": 1.3, "melee_arc": 35.0,
 	},
 	"elite": {
 		"hp": 160.0, "speed": 55.0, "damage": 12.0, "cooldown": 2.8,

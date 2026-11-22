@@ -6,11 +6,11 @@ UI_MENU_QUIT,退出游戏,QUIT GAME,menu,主菜单退出按钮。点击后关闭
 UI_MENU_LANGUAGE,语言 / LANGUAGE,LANGUAGE / 语言,menu,语言按钮上方的栏目标签。并列显示中英文，方便玩家找到切换入口。,draft
 UI_LANGUAGE_ZH_CN,简体中文,简体中文,menu,主菜单简体中文选项。两种界面语言都以该语言的自称显示。,draft
 UI_LANGUAGE_EN_US,English (US),English (US),menu,主菜单美式英语选项。两种界面语言都以该语言的自称显示。,draft
-UI_MENU_CONTROLS,"{move} 移动  ·  鼠标瞄准
-{attack} 剑击  ·  {magic} 魔法
-{interact} 互动  ·  {next} 继续","{move} Move  ·  Mouse Aim
-{attack} Sword  ·  {magic} Magic
-{interact} Interact  ·  {next} Continue",menu,主菜单键鼠说明。{move} 为方向键，例如 W A S D。{attack} 为剑击键，例如鼠标左键。{magic} 为魔法键，例如鼠标右键。{interact} 为互动键，例如 E。{next} 为继续键，例如 Enter。,draft
+UI_MENU_CONTROLS,"{move}：移动  ·  鼠标：瞄准
+{attack}：剑击  ·  {magic}：魔法
+{interact}：互动  ·  {next}：继续","{move}: Move  ·  Mouse: Aim
+{attack}: Sword  ·  {magic}: Magic
+{interact}: Interact  ·  {next}: Continue",menu,主菜单键鼠说明。{move} 为方向键，例如 W A S D。{attack} 为剑击键，例如鼠标左键。{magic} 为魔法键，例如鼠标右键。{interact} 为互动键，例如 E。{next} 为继续键，例如 Enter。,draft
 UI_MOUSE_LEFT,鼠标左键,Left mouse,input,鼠标左键的名称，嵌入主菜单剑击说明等按键提示。,draft
 UI_MOUSE_RIGHT,鼠标右键,Right mouse,input,鼠标右键的名称，嵌入主菜单魔法说明，也显示在 HUD 魔法标签旁。,draft
 UI_MOUSE_MIDDLE,鼠标中键,Middle mouse,input,鼠标中键的名称，供使用中键绑定的按键提示。,draft
@@ -21,8 +21,8 @@ UI_HEALTH,生命  {hp} / {max},HEALTH  {hp} / {max},hud,战斗 HUD 左上角的�
 UI_MAGIC,魔法,MAGIC,hud,战斗 HUD 左下角的魔法技能标签，左侧有魔法按键，单行。,draft
 UI_MAGIC_READY,已就绪,READY,hud,魔法冷却结束时显示在 HUD 魔法标签下，单行。,draft
 UI_MAGIC_WAIT,{time} 秒,{time}s,hud,魔法冷却期间显示在 HUD 魔法标签下。{time} 为剩余秒数，例如 1.2。单行。,draft
-UI_SAFE,清场后可拾取与阅读  ·  {next} 领奖,Collect items and read  ·  {next} Rewards,hud,前四层清场后显示。{next} 为继续键，例如 Enter。,draft
-UI_LORE_CLOSE,{interact} / {close} 关闭,{interact} / {close} close,narrative,可选记录面板底部的关闭提示。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
+UI_SAFE,清场后可拾取与阅读  ·  {next}：领奖,Collect items and read  ·  {next}: Rewards,hud,前四层清场后显示。{next} 为继续键，例如 Enter。,draft
+UI_LORE_CLOSE,{interact} / {close}：关闭,{interact} / {close}: close,narrative,可选记录面板底部的关闭提示。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
 UI_EPILOGUE_RESULTS,按 {next} / {interact} / {close} 查看结算,{next} / {interact} / {close}: View results,narrative,尾声面板底部。按任一键关闭留言并进入胜利结算。{next} 为继续键，例如 Enter。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
 UI_REWARD_TITLE,选择一件奖励,CHOOSE A REWARD,reward,三张奖励卡上方的标题。卡片可能是装备、药水或材料。,draft
 UI_REWARD_SUBTITLE,所选物品放入背包。装备可在背包穿戴。,Your choice goes to your bag. Equip gear from the bag to use it.,reward,前四层三选一面板副标题，说明获得奖励及穿戴规则。,draft
@@ -178,7 +178,7 @@ UI_CAMP_NEAR,{interact}  查看营地,{interact}  Inspect camp,hud,塔前靠近�
 UI_NEED_WEAPONS,拾齐长剑和法杖后，就可以进塔。,Collect the sword and staff to enter the tower.,hud,幽灵已经出现过且仍缺少武器时再次尝试入塔。,draft
 UI_PICKUP_NEAR,{interact}  拾取 {item},{interact}  Pick up {item},hud,接近任意可拾取物时显示。{interact} 为互动键，例如 E。{item} 为地面物品名称，例如 蘑菇。,draft
 UI_PICKED_UP,已拾取 {item},Picked up {item},hud,拾取非书刊物品时的短提示。{item} 为本地化物品名称，例如 水瓶。,draft
-UI_SAFE_EPILOGUE,清场后可拾取  ·  {next} 阅读尾声,Collect items  ·  {next} Read the epilogue,hud,第五层清场探索的提示。{next} 为继续键，例如 Enter。,draft
+UI_SAFE_EPILOGUE,清场后可拾取  ·  {next}：阅读尾声,Collect items  ·  {next}: Read the epilogue,hud,第五层清场探索的提示。{next} 为继续键，例如 Enter。,draft
 UI_VIEW_RESULTS,查看结算,VIEW RESULTS,result,阅读尾声后的主操作按钮。,draft
 UI_BAG_HUD,{bag}  背包,{bag}  BAG,hud,塔前与楼层 HUD 的背包入口提示。{bag} 为背包键，例如 B。,draft
 UI_QUICK_HUD,{quick}  治疗药水 ×{count},{quick}  Healing Potion ×{count},hud,已绑定药水快捷栏时显示。{quick} 为快捷键，例如 Q。{count} 为药水剩余数量，例如 2。,draft

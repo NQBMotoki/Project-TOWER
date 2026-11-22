@@ -11,6 +11,7 @@ const ProjectileScene = preload("res://scenes/combat/projectile.tscn")
 const Localization = preload("res://scripts/localization_service.gd")
 const GameData = preload("res://data/game_data.gd")
 const RewardManager = preload("res://scripts/reward_manager.gd")
+const RunController = preload("res://scripts/run_controller.gd")
 const LOCALES := ["zh_CN", "en_US"]
 const CATEGORIES := ["menu", "hud", "transition", "narrative", "equipment", "reward", "result", "input"]
 const STRING_STATUSES := ["placeholder", "draft", "approved"]
@@ -312,7 +313,7 @@ func _test_combat_and_equipment() -> void:
 	archer._behavior(0.01)
 	check(archer.melee_windup > 0.0 and archer.draw_timer <= 0.0, "an archer switches to melee when the player closes in")
 	var hp_before_melee: float = dummy.hp
-	archer._behavior(0.5)
+	archer._behavior(0.75)
 	check(dummy.hp < hp_before_melee, "the melee windup lands its strike")
 	archer.melee_windup = 0.0
 	archer.melee_timer = 0.0
@@ -537,11 +538,12 @@ func _test_full_run(locale: String, epilogue_only := false) -> void:
 	var translation: Translation = game.loc.translations[locale]
 	check(game.state == game.State.MENU and not game.ui.menu_continue.visible, "game starts at the menu without an active save")
 	check(game.ui.menu_start.text == translation.get_message("UI_MENU_START"), "menu refreshes in " + locale)
+	check(RunController.BAG_STATES.has(RunController.State.REWARD), "the bag can be opened while choosing a reward")
 	for item in GameData.UPGRADES:
 		var sample: Array[String] = [item.id]
 		game.ui.show_reward(sample)
 		var badge: Label = game.ui.reward.get_node("Card0/IconPlaceholder").get_child(0)
-		check(badge.text == translation.get_message("ITEM_%s_BADGE" % item.id), "reward badge is localized for " + item.id)
+		check(badge.text == translation.get_message("UI_SLOT_%s" % GameData.slot_for(item.id).to_upper()), "reward badge shows the slot for " + item.id)
 	game.ui.show_menu(false)
 	game.ui.menu_start.pressed.emit()
 	check(game.state == game.State.GROUNDS and game.player.can_move and not game.player.has_sword, "new run can explore the grounds")

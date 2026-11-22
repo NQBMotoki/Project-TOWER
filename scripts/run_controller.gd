@@ -11,7 +11,7 @@ const DeathEffect = preload("res://scripts/death_effect.gd")
 
 enum State { MENU, GROUNDS, TRANSITION, COMBAT, SAFE, REWARD, EPILOGUE, GAME_OVER, VICTORY }
 const RUN_STATES := [State.GROUNDS, State.TRANSITION, State.COMBAT, State.SAFE, State.REWARD, State.EPILOGUE]
-const BAG_STATES := [State.GROUNDS, State.TRANSITION, State.COMBAT, State.SAFE]
+const BAG_STATES := [State.GROUNDS, State.TRANSITION, State.COMBAT, State.SAFE, State.REWARD]
 const TRANSITION_TIME := 2.1
 const PICKUP_DISTANCE := 47.0
 

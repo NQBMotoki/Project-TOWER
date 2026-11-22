@@ -470,10 +470,10 @@ func _build_reward() -> void:
 		var item := GameData.upgrade(id)
 		var card := _button(reward, "Card%d" % i, Rect2(130 + i * 345, 226, 330, 310))
 		card.pressed.connect(func(): reward_selected.emit(id))
-		var badge := _color(card, Rect2(24, 24, 66, 56), [Color("9b7755"), Color("617f81"), Color("80667c")][i])
+		var badge := _color(card, Rect2(24, 24, 74, 56), [Color("9b7755"), Color("617f81"), Color("80667c")][i])
 		badge.name = "IconPlaceholder"
-		var badge_key := "ITEM_%s_BADGE" % id if not item.is_empty() else "UI_SUPPLIES"
-		_label(badge, Vector2.ZERO, badge.size, 12, INK, HORIZONTAL_ALIGNMENT_CENTER).text = loc.text(badge_key)
+		var badge_key := "UI_SLOT_%s" % GameData.slot_for(id).to_upper() if not item.is_empty() else "UI_SUPPLIES"
+		_label(badge, Vector2.ZERO, badge.size, 11, INK, HORIZONTAL_ALIGNMENT_CENTER).text = loc.text(badge_key)
 		_label(card, Vector2(24, 91), Vector2(282, 45), 20, GOLD, HORIZONTAL_ALIGNMENT_CENTER, true).text = loc.text(GameData.name_key(id))
 		var description: String
 		if not item.is_empty():
