@@ -9,7 +9,7 @@
 | `keys` | 稳定且唯一的 String ID。修改同一用途的文案沿用原 ID。需要独立翻译的新用途使用新 ID。 |
 | `zh_CN` | 简体中文源文。动态内容使用 `{name}` 变量。 |
 | `en_US` | 美式英语译文。变量名与源文一致，可按译文语序移动。 |
-| `_category` | 主类别取 `menu`、`hud`、`transition`、`narrative`、`equipment`、`reward`、`result`、`input`。共用名称按主要用途分类。 |
+| `_category` | 主类别取 `menu`、`hud`、`transition`、`narrative`、`equipment`、`inventory`、`codex`、`settings`、`result`、`input`。共用名称按主要用途分类。 |
 | `_context` | 界面或对象、触发条件、语气及空间限制。有变量时写清每个变量的含义和示例值。书刊另记作者、年代、拾取位置和打开条件。 |
 | `_status` | `placeholder` 是开发占位，`draft` 是双语待审稿，`approved` 是双方文本经双语负责人确认。任一语言正文修改后回到 `draft`。 |
 
@@ -21,7 +21,7 @@
 | --- | --- |
 | `UI_` | 加上界面或功能和意图。主菜单 `UI_MENU_CONTINUE`，HUD `UI_FLOOR`，重绑 `UI_BIND_CONFLICT`，结算 `UI_VICTORY`。 |
 | `ITEM_` | 使用物品 ID 和字段。以 `ITEM_U01_NAME`、`ITEM_U01_EFFECT`、`ITEM_U01_LORE`、`ITEM_U01_BADGE` 为例。材料、起始武器和药水沿用各自的物品 ID。 |
-| `LORE_` | 使用记录身份或楼层加字段。书刊配对 `_TITLE` 和 `_BODY`，例如 `LORE_KIT_TITLE` / `LORE_KIT_BODY`。独立铭文沿用 `LORE_F5_DOOR`。 |
+| `LORE_` | 使用记录身份或楼层加字段。文稿包含 `_TITLE`、`_DESC`、`_BODY`。标题供拾取、背包和图鉴共用，简述和正文分别显示。 |
 | `TIP_F<n>` | 楼层资源使用的提示，例如 `TIP_F3`。楼层标题复用 `UI_TRANSITION` 的 `{floor}`。 |
 | `TRANSITION_TIP_` | 可供楼层配置选用的通用提示，例如 `TRANSITION_TIP_05`。 |
 
@@ -34,7 +34,7 @@ ID 使用大写英文、数字和下划线。变量名使用小写英文、数�
 1. Engineer 定义 ID、分类、出现条件和变量，开发中的临时双语文字标为 `placeholder`，并保留预期变量。
 2. 双语负责人按术语表完成源文和译文，初稿标为 `draft`，两列确认后标为 `approved`。人物、领主署名、书刊标题和长文在同一轮核对。
 3. Engineer 导入 CSV，提交相关 Godot 导入元数据和生成的两份翻译资源。无头检查核对两列非空、变量一致、上下文和运行时引用。候选检查拦截 `placeholder`，允许 `draft` 进入供审校的候选包。
-4. QA 在所测构建中切换双语，检查塔前互动、暂停与设置、重绑、背包、清场和奖励、F5 门楣与尾声。逐屏检查按钮、字体、动态数字、长文滚动和关闭提示。问题记录附构建号、语言、ID、触发步骤和截图。 [在线 QA 验收表](https://docs.qq.com/sheet/DT2piZmt4T3VIbUFZ?tab=fmlbif)
+4. QA 在所测构建中切换双语，检查塔前互动、暂停与设置、重绑、背包四页、清场与领珠、F10 对话和终点。逐屏检查按钮、字体、动态数字、长文滚动和关闭提示。问题记录附构建号、语言、ID、触发步骤和截图。 [在线 QA 验收表](https://docs.qq.com/sheet/DT2piZmt4T3VIbUFZ?tab=fmlbif)
 
 ```sh
 godot --headless --path . --import
@@ -71,7 +71,7 @@ godot --headless --path . --script res://tests/test_mvp.gd -- --candidate
 | 驻塔军报 | Garrison Dispatch | 第二层可选阅读 |
 | 弓箭手的手记 | The Archer's Notes | 第三层可选阅读 |
 | 法师的调查手记 | The Mage's Investigation | 第四层可选阅读 |
-| 灯前留言 | A Note Left Before the Lamp | 第五层结尾阅读，结算前显示 |
+| 灯前留言 | A Note Left Before the Lamp | F10 战后可选择拾取和阅读 |
 | 骑士的行装册 | The Knight's Kit List | 塔前营地附近拾取 |
 | 旧王国驻防令 | Garrison Order of the Old Kingdom | 塔前东侧拾取 |
 | 废弃营地 | Abandoned Camp | 塔前原地查看的环境信息 |

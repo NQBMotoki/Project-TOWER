@@ -28,25 +28,28 @@ var volumes_dirty := false
 func setup(interface: CanvasLayer, service: Node) -> void:
 	ui = interface
 	loc = service
-	ui._dimmer(self, 0.88)
-	ui._panel(self, Rect2(211, 54, 858, 612), Color("202831"), Color("8c7554"))
-	title = ui._label(self, Vector2(251, 76), Vector2(776, 46), 27, ui.GOLD)
-	ui._color(self, Rect2(251, 133, 778, 1), Color("685943"))
-	ui._color(self, Rect2(618, 155, 1, 400), Color("524d45"))
+	ui._dimmer(self, 0.80)
+	ui._panel(self, Rect2(208, 54, 864, 612))
+	title = ui._label(self, Vector2(245, 75), Vector2(790, 46), 27, ui.INK)
+	ui._color(self, Rect2(245, 129, 790, 1), ui.RULE)
+	ui._color(self, Rect2(604, 152, 1, 406), ui.RULE)
 	quality_label = ui._label(self, Vector2(251, 159), Vector2(315, 26), 17, ui.INK)
 	quality_low = ui._button(self, "QualityLow", Rect2(251, 192, 147, 38))
 	quality_high = ui._button(self, "QualityHigh", Rect2(410, 192, 147, 38))
 	quality_low.pressed.connect(func(): loc.set_quality(false))
 	quality_high.pressed.connect(func(): loc.set_quality(true))
-	_add_volume("master", 259)
-	_add_volume("effects", 338)
-	sound_test = ui._button(self, "SoundTest", Rect2(251, 409, 306, 37))
+	_segmented(quality_low, quality_high)
+	_add_volume("master", 245)
+	_add_volume("effects", 307)
+	_add_volume("music", 369)
+	sound_test = ui._button(self, "SoundTest", Rect2(251, 428, 306, 35))
 	sound_test.pressed.connect(func(): ui.sound_preview_requested.emit())
 	language_label = ui._label(self, Vector2(251, 470), Vector2(310, 27), 17, ui.INK)
 	language_zh = ui._button(self, "Chinese", Rect2(251, 505, 147, 40))
 	language_en = ui._button(self, "English", Rect2(410, 505, 147, 40))
 	language_zh.pressed.connect(func(): loc.set_language("zh_CN"))
 	language_en.pressed.connect(func(): loc.set_language("en_US"))
+	_segmented(language_zh, language_en)
 
 	bindings_title = ui._label(self, Vector2(655, 159), Vector2(374, 26), 17, ui.INK)
 	for i in range(loc.REMAPPABLE.size()):
@@ -59,20 +62,27 @@ func setup(interface: CanvasLayer, service: Node) -> void:
 		action_buttons[action] = button
 	fixed_escape = ui._label(self, Vector2(655, 537), Vector2(374, 22), 13, ui.MUTED)
 	capture_hint = ui._label(self, Vector2(251, 560), Vector2(778, 32), 14, ui.GOLD, HORIZONTAL_ALIGNMENT_LEFT, true)
-	reset = ui._button(self, "ResetBindings", Rect2(655, 599, 375, 41))
+	reset = ui._button(self, "ResetBindings", Rect2(778, 599, 252, 41))
 	reset.pressed.connect(func():
 		_clear_capture()
 		loc.reset_bindings())
-	back = ui._button(self, "Back", Rect2(251, 599, 306, 41))
+	back = ui._button(self, "Back", Rect2(251, 599, 153, 41))
 	back.pressed.connect(func(): ui.close_requested.emit())
 	refresh()
+
+func _segmented(first: Button, second: Button) -> void:
+	var group := ButtonGroup.new()
+	for button in [first, second]:
+		button.theme_type_variation = &"TabButton"
+		button.toggle_mode = true
+		button.button_group = group
 
 func _add_volume(channel: String, y: int) -> void:
 	volume_labels[channel] = ui._label(self, Vector2(251, y), Vector2(242, 26), 16, ui.INK)
 	volume_values[channel] = ui._label(self, Vector2(489, y), Vector2(68, 26), 14, ui.GOLD, HORIZONTAL_ALIGNMENT_RIGHT)
 	var slider := HSlider.new()
 	slider.name = channel.capitalize() + "Volume"
-	slider.position = Vector2(251, y + 34)
+	slider.position = Vector2(251, y + 28)
 	slider.size = Vector2(306, 23)
 	slider.max_value = 1.0
 	slider.step = 0.01
@@ -91,19 +101,21 @@ func refresh() -> void:
 	quality_label.text = loc.text("UI_QUALITY")
 	quality_low.text = loc.text("UI_QUALITY_LOW")
 	quality_high.text = loc.text("UI_QUALITY_HIGH")
-	quality_low.modulate = Color.WHITE if not loc.high_quality else Color("9da1a1")
-	quality_high.modulate = Color.WHITE if loc.high_quality else Color("9da1a1")
+	quality_low.set_pressed_no_signal(not loc.high_quality)
+	quality_high.set_pressed_no_signal(loc.high_quality)
 	volume_labels.master.text = loc.text("UI_VOLUME_MASTER")
 	volume_labels.effects.text = loc.text("UI_VOLUME_EFFECTS")
+	volume_labels.music.text = loc.text("UI_VOLUME_MUSIC")
 	sliders.master.set_value_no_signal(loc.master_volume)
 	sliders.effects.set_value_no_signal(loc.effects_volume)
+	sliders.music.set_value_no_signal(loc.music_volume)
 	_update_volume_labels()
 	sound_test.text = loc.text("UI_SOUND_TEST")
 	language_label.text = loc.text("UI_MENU_LANGUAGE")
 	language_zh.text = loc.text("UI_LANGUAGE_ZH_CN")
 	language_en.text = loc.text("UI_LANGUAGE_EN_US")
-	language_zh.modulate = Color.WHITE if loc.locale == "zh_CN" else Color("9da1a1")
-	language_en.modulate = Color.WHITE if loc.locale == "en_US" else Color("9da1a1")
+	language_zh.set_pressed_no_signal(loc.locale == "zh_CN")
+	language_en.set_pressed_no_signal(loc.locale == "en_US")
 	bindings_title.text = loc.text("UI_CONTROLS")
 	for action in loc.REMAPPABLE:
 		action_labels[action].text = _action_name(action)
@@ -116,6 +128,7 @@ func refresh() -> void:
 func _update_volume_labels() -> void:
 	volume_values.master.text = "%d%%" % roundi(loc.master_volume * 100.0)
 	volume_values.effects.text = "%d%%" % roundi(loc.effects_volume * 100.0)
+	volume_values.music.text = "%d%%" % roundi(loc.music_volume * 100.0)
 
 func _action_name(action: String) -> String:
 	return loc.text("UI_ACTION_%s" % action.to_upper())

@@ -6,11 +6,6 @@ UI_MENU_QUIT,退出游戏,QUIT GAME,menu,主菜单退出按钮。点击后关闭
 UI_MENU_LANGUAGE,语言 / LANGUAGE,LANGUAGE / 语言,menu,语言按钮上方的栏目标签。并列显示中英文，方便玩家找到切换入口。,draft
 UI_LANGUAGE_ZH_CN,简体中文,简体中文,menu,主菜单简体中文选项。两种界面语言都以该语言的自称显示。,draft
 UI_LANGUAGE_EN_US,English (US),English (US),menu,主菜单美式英语选项。两种界面语言都以该语言的自称显示。,draft
-UI_MENU_CONTROLS,"{move}：移动  ·  鼠标：瞄准
-{attack}：剑击  ·  {magic}：魔法
-{interact}：互动  ·  {next}：继续","{move}: Move  ·  Mouse: Aim
-{attack}: Sword  ·  {magic}: Magic
-{interact}: Interact  ·  {next}: Continue",menu,主菜单键鼠说明。{move} 为方向键，例如 W A S D。{attack} 为剑击键，例如鼠标左键。{magic} 为魔法键，例如鼠标右键。{interact} 为互动键，例如 E。{next} 为继续键，例如 Enter。,draft
 UI_MOUSE_LEFT,鼠标左键,Left mouse,input,鼠标左键的名称，嵌入主菜单剑击说明等按键提示。,draft
 UI_MOUSE_RIGHT,鼠标右键,Right mouse,input,鼠标右键的名称，嵌入主菜单魔法说明，也显示在 HUD 魔法标签旁。,draft
 UI_MOUSE_MIDDLE,鼠标中键,Middle mouse,input,鼠标中键的名称，供使用中键绑定的按键提示。,draft
@@ -21,12 +16,8 @@ UI_HEALTH,生命  {hp} / {max},HEALTH  {hp} / {max},hud,战斗 HUD 左上角的�
 UI_MAGIC,魔法,MAGIC,hud,战斗 HUD 左下角的魔法技能标签，左侧有魔法按键，单行。,draft
 UI_MAGIC_READY,已就绪,READY,hud,魔法冷却结束时显示在 HUD 魔法标签下，单行。,draft
 UI_MAGIC_WAIT,{time} 秒,{time}s,hud,魔法冷却期间显示在 HUD 魔法标签下。{time} 为剩余秒数，例如 1.2。单行。,draft
-UI_SAFE,清场后可拾取与阅读  ·  {next}：领奖,Collect items and read  ·  {next}: Rewards,hud,前四层清场后显示。{next} 为继续键，例如 Enter。,draft
 UI_LORE_CLOSE,{interact} / {close}：关闭,{interact} / {close}: close,narrative,可选记录面板底部的关闭提示。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
 UI_EPILOGUE_RESULTS,按 {next} / {interact} / {close} 查看结算,{next} / {interact} / {close}: View results,narrative,尾声面板底部。按任一键关闭留言并进入胜利结算。{next} 为继续键，例如 Enter。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
-UI_REWARD_TITLE,选择一件奖励,CHOOSE A REWARD,reward,三张奖励卡上方的标题。卡片可能是装备、药水或材料。,draft
-UI_REWARD_SUBTITLE,所选物品放入背包。装备可在背包穿戴。,Your choice goes to your bag. Equip gear from the bag to use it.,reward,前四层三选一面板副标题，说明获得奖励及穿戴规则。,draft
-UI_REWARD_CHOOSE,领取,TAKE,reward,每张奖励卡的操作提示，点击将一件所示物品加入背包。,draft
 UI_VICTORY,守塔者已倒下,THE KEEPER FALLS,result,尾声关闭后出现的胜利结算标题，单行。,draft
 UI_DEFEAT,旅途暂时结束,YOUR JOURNEY ENDS,result,玩家死亡后出现的失败结算标题，单行。,draft
 UI_VICTORY_SUB,灯换了守塔人，仍在燃烧。,"The lamp has a new keeper, and still it burns.",result,胜利标题下方的叙事短句，延续守塔人与灯的意象，单行。,draft
@@ -46,11 +37,11 @@ TRANSITION_TIP_02,第 1 至第 4 层清场后，可以领取三件奖励中的�
 TRANSITION_TIP_03,塔中的遗物，仍保留着曾经到访者的痕迹。,Relics in the tower still bear traces of those who came before.,transition,通用过渡短句备选。配置为楼层提示时，介绍遗物与前任来访者的关系，可换行。,draft
 TRANSITION_TIP_04,哥布林攻击前会停下并发出预警。,Goblins stop and telegraph their attacks before striking.,transition,通用过渡提示备选。配置为楼层提示时，说明哥布林停步预警，可换行。,draft
 TRANSITION_TIP_05,穿戴后的装备才会生效。可在背包里随时换装。,Gear takes effect when equipped. Use your bag to swap equipment.,transition,通用过渡提示备选，介绍装备与背包。,draft
-TIP_F1,剑与魔法都朝鼠标所指的方向。史莱姆会先鼓起身体，才扑出来。,Sword and spell follow the cursor. A slime swells up before it lunges.,transition,第一层开战前的玩法提示，介绍鼠标瞄准和史莱姆突进前的鼓胀，可换行。,draft
+TIP_F1,攻击朝向鼠标。史莱姆会先鼓起身体，再向前突进。,Aim with the cursor. A slime swells before it lunges.,transition,转场主标题或提示，支持换行。,draft
 TIP_F2,哥布林会在动手前停住。它停住的那一瞬，就是你要动的时候。,A goblin halts before it strikes. That halt is your cue to move.,transition,第二层开战前的玩法提示，说明哥布林会在攻击前停步，可换行。,draft
-TIP_F3,墙上的箭孔都朝里。弓手拉弦时不必急，弦响之后才有空隙。,The arrow slits face inward. Do not rush an archer's draw; the opening comes after the string sings.,transition,第三层开战前的玩法提示，以箭孔引出弓手，提示玩家观察拉弦与射出的节奏，可换行。,draft
+TIP_F3,盯住骷髅法师的咏唱方向。石柱可以挡住它的魔法弹。,Watch where the skeleton mage aims its spell. Stone pillars block its bolts.,transition,转场主标题或提示，支持换行。,draft
 TIP_F4,法师咏唱时不要靠近，弓手拉弦时不要跑直线。,"Do not close in while a mage chants, and never run straight while an archer draws.",transition,第四层开战前的玩法提示，帮助玩家区分法师咏唱与弓手拉弦，可换行。,draft
-TIP_F5,守塔人的灯在塔顶。他总先照亮自己要打的地方。,The keeper's lamp waits at the summit. He always lights the place he means to strike.,transition,第五层开战前的玩法提示，借灯光暗示守塔人的攻击方向。位于门楣刻字上方，可换行。,draft
+TIP_F5,精锐骷髅会扇形散射。等预警落定，再从弹道之间穿过。,"Elite skeletons fire in a fan. Read the warning, then slip between the bolts.",transition,转场主标题或提示，支持换行。,draft
 LORE_F1_TITLE,领主亲笔信,A Letter in the Lord's Hand,narrative,百余年前旧王国领主埃德里克·沃恩在夺舍前写给哈伦，第一层东侧清场后拾取。署名与 LORE_RESEARCH_BODY 一致。阅读面板标题，也用作拾取与背包名称。,draft
 LORE_F1_BODY,"哈伦，南岗昨夜交班晚了。明天让夜班多领一罐灯油，再叫厨房把汤留到最后一班回来。名册上的出塔时间写清楚。谁该回来还没回来，就留着那一栏空白，晨钟前交给我。
 
@@ -75,7 +66,7 @@ In the second month the royal guard marched along the road by which the host had
 By late summer the capital had ceased to answer. Before winter the last two gates that flew the royal banner were taken. Less than a year had passed from the first disturbance to the fall of the kingdom. We checked the foot of every wall and every beam we could reach. One tread on the west stair is broken. The tower itself has scarcely suffered. All eleven of today's relief have reported. Please confirm how much oil and grain they can draw.
 
 Harlan, for the south watch",narrative,约八十年前的灾变年，由领主下属哈伦写成，第二层西北侧清场后拾取。用军报口吻，按异变、精锐失踪及王国灭亡推进，保留古塔几乎无损的反常。正文可分段和滚动。,draft
-LORE_F3_TITLE,弓箭手的手记,The Archer's Notes,narrative,十年前弓箭手艾妲所写，第三层东侧清场后拾取。保留朝内的箭孔和旧焦痕。阅读面板标题，也用作拾取与背包名称。,draft
+LORE_F3_TITLE,弓箭手的手记,The Archer's Notes,narrative,F3 清场后可拾取的文稿，名称用于拾取、背包、图鉴和阅读面板。,draft
 LORE_F3_BODY,"回声总比我快半步，像有人在前头替我数台阶。三层往上，墙上的箭孔都朝里开。守卫站在孔后，射得到上楼的人，照应不到塔外。
 
 我把火把插进一个孔里，想测量回身向下时能避开的角度。孔边有更旧的焦痕。最深的一块在里墙上，低得像有人贴着地面爬过去。下次停步，把弓留在手里。
@@ -84,8 +75,8 @@ LORE_F3_BODY,"回声总比我快半步，像有人在前头替我数台阶。三
 
 I wedged my torch into a slit to find the angle I could get clear of when turning downhill. There were older scorch marks on the stone. The deepest was on the inner wall, low enough for someone crawling. Next time we stop, keep the bow in hand.
 
-Ada",narrative,十年前弓箭手艾妲所写，第三层东侧清场后拾取。保留朝内的箭孔和旧焦痕。正文可分段和滚动。,draft
-LORE_F4_TITLE,法师的调查手记,The Mage's Investigation,narrative,十年前法师索伦对照领主任内文书后的手记，第四层东南侧清场后拾取。阅读面板标题，也用作拾取与背包名称。,draft
+Ada",narrative,F3 清场后可拾取的文稿正文，主动打开后阅读。,draft
+LORE_F4_TITLE,法师的调查手记,The Mage's Investigation,narrative,F4 清场后可拾取的文稿，名称用于拾取、背包、图鉴和阅读面板。,draft
 LORE_F4_BODY,"哈伦的军报写了十一人。下一份还能查到的值夜记录里，十一行都是空栏。可领主的名字一直签了下去。同一个钩笔，连最后一划都压在同一个地方。以前每页都有灯油和换岗。到了后来的几册，签名上面全是灰重、持续时间和能否重复。
 
 我试着照军报上的日期排这些记录。最早一次试验，紧接在王都最后一次回令后。灰的味道，和我装进半只水瓶的那把一模一样。明天请莱昂提灯上去，我要看看名册的空栏里有没有擦掉的字。
@@ -94,8 +85,8 @@ LORE_F4_BODY,"哈伦的军报写了十一人。下一份还能查到的值夜记
 
 I put the records in order using the dates in the dispatch. The first trial followed the capital's last reply. The ash smells exactly like the handful I put in my half-empty bottle. Tomorrow I'll ask Leon to bring the lamp upstairs. I want to look for erased names in the empty lines of the roll.
 
-Soren",narrative,十年前法师索伦对照领主任内文书后的手记，第四层东南侧清场后拾取。正文可分段和滚动。,draft
-LORE_F5_TITLE,灯前留言,A Note Left Before the Lamp,narrative,守塔人沿用领主署名留下的尾声，年代不明。第五层清场后玩家主动继续时显示，关闭后进入胜利结算。阅读面板标题，也用作拾取与背包名称。,draft
+Soren",narrative,F4 清场后可拾取的文稿正文，主动打开后阅读。,draft
+LORE_F5_TITLE,灯前留言,A Note Left Before the Lamp,narrative,F10 清场后可拾取的文稿，名称用于拾取、背包、图鉴和阅读面板。,draft
 LORE_F5_BODY,"灯芯我一共剪短过十七次。有人提灯上来过，想看清名册上的空栏。那一夜来了四个人。灯底下还压着一根旧弓弦，浸过油，我一直没换。
 
 你的名字在最下一行，进塔前我就写好了。你还站着，说明我写得早了些。替我把灯转向台阶，再翻过这一页。
@@ -104,40 +95,23 @@ LORE_F5_BODY,"灯芯我一共剪短过十七次。有人提灯上来过，想看
 
 Your name is on the last line. I wrote it before you came into the tower. You are still standing, so I wrote it early. Turn the lamp toward the stair for me, then turn the page.
 
-Edric Vane",narrative,守塔人沿用领主署名留下的尾声，年代不明。第五层清场后玩家主动继续时显示，关闭后进入胜利结算。正文可分段和滚动。,draft
-LORE_F5_DOOR,门楣上有几道很浅的划痕，像用指甲刻的：若你读到这里，请替我把灯芯剪短一寸。,"Shallow scratches cross the lintel, as if cut with a fingernail: if you have read this far, trim the wick an inch for me.",narrative,第五层开战前，在过渡提示下方显示的门楣刻字。语气像留给来访者的私人嘱托，面板停等并可换行。,draft
-ITEM_U01_NAME,锋利长剑,Sharpened Longsword,equipment,装备名称，用于战利品、背包、奖励卡和结算清单。奖励卡标题可换行。,draft
-ITEM_U01_BADGE,剑击,SWORD,reward,锋利长剑奖励卡的图标占位短标签，提示剑击强化。66 × 56 像素内单行。,draft
-ITEM_U01_EFFECT,剑击伤害 +{value},Sword damage +{value},equipment,奖励卡的强化说明，可换行。增加剑击伤害。{value} 为加成点数，例如 6。,draft
-ITEM_U01_LORE,剑刃上的细小缺口，是每一次挥砍留下的记号。,Tiny nicks along the blade mark every swing.,equipment,奖励卡效果下方的遗物短句，写剑刃上的战斗痕迹，可换行。,draft
-ITEM_U02_NAME,疾风手套,Swiftwind Gloves,equipment,装备名称，用于战利品、背包、奖励卡和结算清单。奖励卡标题可换行。,draft
-ITEM_U02_BADGE,剑击,SWORD,reward,疾风手套奖励卡的图标占位短标签，提示剑击强化。66 × 56 像素内单行。,draft
-ITEM_U02_EFFECT,剑击冷却降低 {value}%,Sword cooldown reduced by {value}%,equipment,奖励卡的强化说明，可换行。按比例缩短剑击冷却。{value} 为名义降幅的百分数，例如 20。实际冷却受下限约束。,draft
-ITEM_U02_LORE,轻薄的手套让持剑的手如风般敏捷。,These light gloves let a sword hand move as swiftly as the wind.,equipment,奖励卡效果下方的遗物短句，写手套的轻薄与挥剑速度，可换行。,draft
-ITEM_U03_NAME,烈焰法杖,Flame Staff,equipment,装备名称，用于战利品、背包、奖励卡和结算清单。奖励卡标题可换行。,draft
-ITEM_U03_BADGE,魔法,MAGIC,reward,烈焰法杖奖励卡的图标占位短标签，提示魔法强化。66 × 56 像素内单行。,draft
-ITEM_U03_EFFECT,魔法弹伤害 +{value},Magic damage +{value},equipment,奖励卡的强化说明，可换行。增加魔法弹伤害。{value} 为加成点数，例如 12。,draft
-ITEM_U03_LORE,杖尖残留的温度，像一团不肯熄灭的余烬。,"Warmth lingers at the tip, like an ember that refuses to die.",equipment,奖励卡效果下方的遗物短句，写法杖的余温，可换行。,draft
-ITEM_U04_NAME,奥术戒指,Arcane Ring,equipment,装备名称，用于战利品、背包、奖励卡和结算清单。奖励卡标题可换行。,draft
-ITEM_U04_BADGE,魔法,MAGIC,reward,奥术戒指奖励卡的图标占位短标签，提示魔法强化。66 × 56 像素内单行。,draft
-ITEM_U04_EFFECT,魔法冷却降低 {value}%,Magic cooldown reduced by {value}%,equipment,奖励卡的强化说明，可换行。按比例缩短魔法冷却。{value} 为名义降幅的百分数，例如 25。实际冷却受下限约束。,draft
-ITEM_U04_LORE,戒面刻着一圈细密符文，微光随呼吸起伏。,"Fine runes circle the ring, their glow rising and falling with each breath.",equipment,奖励卡效果下方的遗物短句，写戒指上的符文与微光，可换行。,draft
-ITEM_U05_NAME,幸运徽章,Lucky Emblem,equipment,装备名称，用于战利品、背包、奖励卡和结算清单。奖励卡标题可换行。,draft
-ITEM_U05_BADGE,暴击,CRIT,reward,幸运徽章奖励卡的图标占位短标签，提示暴击率强化。66 × 56 像素内单行。,draft
-ITEM_U05_EFFECT,暴击率 +{value}%,Critical chance +{value}%,equipment,奖励卡的强化说明，可换行。增加暴击率。{value} 为百分比数值，例如 15。实际暴击率受上限约束。,draft
-ITEM_U05_LORE,磨损的徽章被无数次攥紧，仿佛能为旅人留住好运。,"Worn smooth by countless anxious grips, this emblem seems to hold a traveler's luck.",equipment,奖励卡效果下方的遗物短句，写被反复攥紧的徽章，可换行。,draft
-ITEM_U06_NAME,吸血剑刃,Lifedrinker Blade,equipment,装备名称，用于战利品、背包、奖励卡和结算清单。奖励卡标题可换行。,draft
-ITEM_U06_BADGE,回血,HEAL,reward,吸血剑刃奖励卡的图标占位短标签，提示击杀恢复生命。66 × 56 像素内单行。,draft
-ITEM_U06_EFFECT,剑击击杀恢复 {value} HP,Sword kills restore {value} HP,equipment,奖励卡的强化说明，可换行。剑击击杀时恢复生命。{value} 为每次触发恢复的 HP，例如 5。,draft
-ITEM_U06_LORE,暗红的纹路沿刃脊延伸，仿佛仍在脉动。,"Dark red lines run along the blade, as if they still pulse.",equipment,奖励卡效果下方的遗物短句，写像在跳动的剑刃暗纹，可换行。,draft
-ITEM_U07_NAME,骑士铠甲,Knight's Armor,equipment,装备名称，用于战利品、背包、奖励卡和结算清单。奖励卡标题可换行。,draft
-ITEM_U07_BADGE,生命,HP,reward,骑士铠甲奖励卡的图标占位短标签，提示生命上限强化。66 × 56 像素内单行。,draft
-ITEM_U07_EFFECT,最大 HP +{value},Max HP +{value},equipment,骑士铠甲的效果。{value} 为增加的最大 HP，例如 25。穿上时当前 HP 保持原值，脱下时受新的上限约束。,draft
-ITEM_U07_LORE,铠甲上布满修补痕迹，却依旧可靠。,"Repairs cover this armor, but it remains dependable.",equipment,奖励卡效果下方的遗物短句，写反复修补的铠甲，可换行。,draft
-ITEM_U08_NAME,迅捷长靴,Swift Boots,equipment,装备名称，用于战利品、背包、奖励卡和结算清单。奖励卡标题可换行。,draft
-ITEM_U08_BADGE,移速,SPEED,reward,迅捷长靴奖励卡的图标占位短标签，提示移动速度强化。66 × 56 像素内单行。,draft
-ITEM_U08_EFFECT,移动速度 +{value}%,Movement speed +{value}%,equipment,奖励卡的强化说明，可换行。按比例提高移动速度。{value} 为增加的百分数，例如 15。,draft
-ITEM_U08_LORE,鞋底的磨痕，记录着一位旅人走过的漫长道路。,The worn soles tell of the long road a traveler once walked.,equipment,奖励卡效果下方的遗物短句，写长年行走留下的鞋底磨痕，可换行。,draft
+Edric Vane",narrative,F10 清场后可拾取的文稿正文，主动打开后阅读。,draft
+ITEM_U01_NAME,锋利长剑,Sharpened Longsword,equipment,装备名称，用于拾取、背包、图鉴和结算。,draft
+ITEM_U01_EFFECT,剑击伤害 +{value},Sword damage +{value},equipment,背包与图鉴的装备效果。{value} 来自数值设定。变动百分数以百分数整数显示。,draft
+ITEM_U02_NAME,疾风手套,Swiftwind Gloves,equipment,装备名称，用于拾取、背包、图鉴和结算。,draft
+ITEM_U02_EFFECT,剑击冷却降低 {value}%,Sword cooldown reduced by {value}%,equipment,背包与图鉴的装备效果。{value} 来自数值设定。变动百分数以百分数整数显示。,draft
+ITEM_U03_NAME,烈焰法杖,Flame Staff,equipment,装备名称，用于拾取、背包、图鉴和结算。,draft
+ITEM_U03_EFFECT,魔法弹伤害 +{value},Magic damage +{value},equipment,背包与图鉴的装备效果。{value} 来自数值设定。变动百分数以百分数整数显示。,draft
+ITEM_U04_NAME,奥术戒指,Arcane Ring,equipment,装备名称，用于拾取、背包、图鉴和结算。,draft
+ITEM_U04_EFFECT,魔法冷却降低 {value}%,Magic cooldown reduced by {value}%,equipment,背包与图鉴的装备效果。{value} 来自数值设定。变动百分数以百分数整数显示。,draft
+ITEM_U05_NAME,幸运徽章,Lucky Emblem,equipment,装备名称，用于拾取、背包、图鉴和结算。,draft
+ITEM_U05_EFFECT,暴击率 +{value}%,Critical chance +{value}%,equipment,背包与图鉴的装备效果。{value} 来自数值设定。变动百分数以百分数整数显示。,draft
+ITEM_U06_NAME,吸血剑刃,Lifedrinker Blade,equipment,装备名称，用于拾取、背包、图鉴和结算。,draft
+ITEM_U06_EFFECT,剑击击杀恢复 {value} HP,Sword kills restore {value} HP,equipment,背包与图鉴的装备效果。{value} 来自数值设定。变动百分数以百分数整数显示。,draft
+ITEM_U07_NAME,骑士铠甲,Knight's Armor,equipment,装备名称，用于拾取、背包、图鉴和结算。,draft
+ITEM_U07_EFFECT,最大 HP +{value},Max HP +{value},equipment,背包与图鉴的装备效果。{value} 来自数值设定。变动百分数以百分数整数显示。,draft
+ITEM_U08_NAME,迅捷长靴,Swift Boots,equipment,装备名称，用于拾取、背包、图鉴和结算。,draft
+ITEM_U08_EFFECT,移动速度 +{value}%,Movement speed +{value}%,equipment,背包与图鉴的装备效果。{value} 来自数值设定。变动百分数以百分数整数显示。,draft
 UI_MENU_CONTINUE,继续游戏,CONTINUE,menu,主菜单仅在有有效单局存档时显示。,draft
 UI_SETTINGS,设置,SETTINGS,menu,主菜单、暂停菜单的设置按钮与共用面板标题。,draft
 UI_BACK,返回,BACK,menu,关闭当前设置、背包或合成面板，返回下面一层。,draft
@@ -171,14 +145,13 @@ UI_BIND_INVALID,请选择单个键或鼠标按钮。,Choose a single key or mous
 UI_MOUSE_BACK,鼠标侧键 1,Mouse button 4,input,第一个鼠标侧键的名称，可用于控制提示。,draft
 UI_MOUSE_FORWARD,鼠标侧键 2,Mouse button 5,input,第二个鼠标侧键的名称，可用于控制提示。,draft
 UI_TOWER_GROUNDS,塔前,TOWER GROUNDS,hud,塔前 HUD 的区域名称。,draft
-UI_GROUND_GOAL,先拾起塔门两侧的武器。,Collect the two weapons beside the gate.,hud,塔前缺少一件或两件武器时显示的行动提示。,draft
-UI_GROUND_READY,武器已备齐。可以进塔了。,Both weapons are ready. Head to the gate.,hud,拾齐起始武器后显示。,draft
+UI_GROUND_GOAL,塔门旁有剑和杖。先拾起一把。,A sword and staff lie by the gate. Pick up either one.,hud,决定版流程提示、反馈或设置标签。,draft
+UI_GROUND_READY,已装备武器。可以进塔了。,You have a weapon equipped. Head to the gate.,hud,决定版流程提示、反馈或设置标签。,draft
 UI_GATE_NEAR,{interact}  进入塔门,{interact}  Enter the tower,hud,靠近塔门时显示，互动后检查武器。{interact} 为互动键，例如 E。,draft
 UI_CAMP_NEAR,{interact}  查看营地,{interact}  Inspect camp,hud,塔前靠近营地时显示。{interact} 为互动键，例如 E。,draft
-UI_NEED_WEAPONS,拾齐长剑和法杖后，就可以进塔。,Collect the sword and staff to enter the tower.,hud,幽灵已经出现过且仍缺少武器时再次尝试入塔。,draft
+UI_NEED_WEAPONS,装备任意一把武器就可以进塔。,Equip any weapon to enter the tower.,hud,决定版流程提示、反馈或设置标签。,draft
 UI_PICKUP_NEAR,{interact}  拾取 {item},{interact}  Pick up {item},hud,接近任意可拾取物时显示。{interact} 为互动键，例如 E。{item} 为地面物品名称，例如 蘑菇。,draft
 UI_PICKED_UP,已拾取 {item},Picked up {item},hud,拾取非书刊物品时的短提示。{item} 为本地化物品名称，例如 水瓶。,draft
-UI_SAFE_EPILOGUE,清场后可拾取  ·  {next}：阅读尾声,Collect items  ·  {next}: Read the epilogue,hud,第五层清场探索的提示。{next} 为继续键，例如 Enter。,draft
 UI_VIEW_RESULTS,查看结算,VIEW RESULTS,result,阅读尾声后的主操作按钮。,draft
 UI_BAG_HUD,{bag}  背包,{bag}  BAG,hud,塔前与楼层 HUD 的背包入口提示。{bag} 为背包键，例如 B。,draft
 UI_QUICK_HUD,{quick}  治疗药水 ×{count},{quick}  Healing Potion ×{count},hud,已绑定药水快捷栏时显示。{quick} 为快捷键，例如 Q。{count} 为药水剩余数量，例如 2。,draft
@@ -206,7 +179,6 @@ UI_NO_POTIONS,背包里没有治疗药水。,No Healing Potions in your bag.,hud
 UI_QUICK_ASSIGN,放入快捷栏（{quick}）,ASSIGN TO QUICK SLOT ({quick}),equipment,背包里将药水放入快捷栏。{quick} 为快捷键，例如 Q。,draft
 UI_QUICK_REMOVE,移出快捷栏（{quick}）,REMOVE FROM QUICK SLOT ({quick}),equipment,解除药水快捷栏。{quick} 为快捷键，例如 Q。,draft
 UI_ITEM_INGREDIENT,用于合成治疗药水。,Ingredient for Healing Potions.,equipment,蘑菇和水瓶的用途，显示在背包详情和奖励卡。,draft
-UI_SUPPLIES,补给,SUPPLY,reward,药水和材料奖励卡的小图标标签。,draft
 ITEM_START_SWORD_NAME,起始长剑,Starter Sword,equipment,塔门左侧拾取物和默认近战武器。,draft
 ITEM_START_STAFF_NAME,起始法杖,Starter Staff,equipment,塔门右侧拾取物和默认魔法武器。,draft
 ITEM_MUSHROOM_NAME,蘑菇,Mushroom,equipment,可堆叠的合成材料。,draft
@@ -217,14 +189,11 @@ UI_ACTION_MOVE_UP,向上移动,Move up,input,按键设置中可重绑的操作�
 UI_ACTION_MOVE_LEFT,向左移动,Move left,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
 UI_ACTION_MOVE_DOWN,向下移动,Move down,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
 UI_ACTION_MOVE_RIGHT,向右移动,Move right,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
-UI_ACTION_ATTACK,剑击,Sword attack,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
-UI_ACTION_MAGIC,魔法,Magic,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
+UI_ACTION_ATTACK,攻击,Attack,hud,决定版流程提示、反馈或设置标签。,draft
 UI_ACTION_INTERACT,互动,Interact,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
 UI_ACTION_NEXT,继续,Continue,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
 UI_ACTION_INVENTORY,背包,Bag,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
 UI_ACTION_QUICK_ITEM,快捷栏,Quick slot,input,按键设置中可重绑的操作名称，也用于输入冲突提示。,draft
-UI_SLOT_SWORD,剑,Sword,equipment,背包中已穿戴清单的装备槽标签。,draft
-UI_SLOT_MAGIC,法杖,Staff,equipment,背包中已穿戴清单的装备槽标签。,draft
 UI_SLOT_GLOVES,手套,Gloves,equipment,背包中已穿戴清单的装备槽标签。,draft
 UI_SLOT_ACCESSORY,饰品,Accessory,equipment,背包中已穿戴清单的装备槽标签。,draft
 UI_SLOT_ARMOR,护甲,Armor,equipment,背包中已穿戴清单的装备槽标签。,draft
@@ -265,7 +234,7 @@ LORE_PRAYER_BODY,"请让莱昂今夜睡到换班。昨夜他两次把手伸向�
 I counted the steps we brought with us. Four of us came up the stairs. Afterward one set of footsteps always stopped just behind us.
 
 Mira",narrative,十年前牧师米拉记录进塔后最初的异样，第二层东南侧清场后拾取。正文可分段和滚动。,draft
-LORE_RESEARCH_TITLE,领主的研究笔记,The Lord's Research Notes,narrative,约八十年前灾变之后，夺舍者沿用领主的署名。第四层西侧清场后拾取。署名与 LORE_F1_BODY 一致，笔记留下重启召唤的线索。阅读面板标题，也用作拾取与背包名称。,draft
+LORE_RESEARCH_TITLE,领主的研究笔记,The Lord's Research Notes,narrative,F5 清场后可拾取的文稿，名称用于拾取、背包、图鉴和阅读面板。,draft
 LORE_RESEARCH_BODY,"第十七次。连灯芯一同称灰。余烬保持了四息，回声仍迟一步。将名册摊在灯下，以旧字迹落笔，换一份新灰，明夜重试。
 
 借来的手已经能维持小规模召唤。山口那一次需要的量记在另一页。再积一季，先在一层开一个口。门开时，把能回声的每条路都留着。
@@ -274,4 +243,157 @@ LORE_RESEARCH_BODY,"第十七次。连灯芯一同称灰。余烬保持了四息
 
 The borrowed hand can now sustain a small summoning. The quantities for what came through the mountain gap are on a separate page. Another season to build up the supply, then open a breach on the first floor. When the gate opens, leave every road that can carry the echo open.
 
-Edric Vane",narrative,约八十年前灾变之后，夺舍者沿用领主的署名。第四层西侧清场后拾取。署名与 LORE_F1_BODY 一致，笔记留下重启召唤的线索。正文可分段和滚动。,draft
+Edric Vane",narrative,F5 清场后可拾取的文稿正文，主动打开后阅读。,draft
+UI_WEAPON_UNARMED,空手,Unarmed,hud,HUD 当前武器。,draft
+UI_WEAPON_HUD,{attack} · {mode},{attack} · {mode},hud,HUD 显示攻击键和当前武器攻击方式。 替换变量 {attack}、{mode}。,draft
+UI_WEAPON_TYPES,{range} · {damage}伤害,{range} · {damage} damage,inventory,武器说明分别列出攻击距离类型和伤害类型。 替换变量 {damage}、{range}。,draft
+UI_ATTACK_MELEE,近战,Melee,inventory,近战武器的攻击距离类型。,draft
+UI_ATTACK_RANGED,远程,Ranged,inventory,远程武器的攻击距离类型。,draft
+UI_DAMAGE_PHYSICAL,物理,Physical,inventory,攻击伤害类型。,draft
+UI_DAMAGE_MAGIC,魔法,Magic,inventory,攻击伤害类型。,draft
+UI_SET_CURRENT_WEAPON,设为当前武器,Equip Weapon,inventory,点击将选中的武器作为当前武器。,draft
+UI_PICKED_UP_COUNT,拾取 {item} ×{count},Picked up {item} ×{count},hud,非打断提示。合并短时间内获得的同类物品。 替换变量 {count}、{item}。,draft
+UI_ITEM_UNREAD,{item} · 未读,{item} · Unread,inventory,背包或图鉴列表中未读文稿。 替换变量 {item}。,draft
+UI_CODEX_TITLE,图鉴,CODEX,inventory,主菜单和局内图鉴入口。,draft
+UI_CODEX_SUPPLIES,道具,Supplies,inventory,图鉴道具分类。,draft
+UI_CODEX_EQUIPMENT,装备,Equipment,inventory,图鉴装备分类。,draft
+UI_CODEX_MANUSCRIPTS,文稿,Manuscripts,inventory,图鉴文稿分类。,draft
+UI_CODEX_ENEMIES,敌人,Enemies,inventory,图鉴敌人分类。,draft
+UI_CODEX_EMPTY,本类尚无发现,No discoveries yet,inventory,尚未发现该类别中的任何条目。,draft
+UI_CODEX_ENEMY_HP,最大生命 {hp},Max HP {hp},inventory,已发现敌人的生命上限，数值来自设定。 替换变量 {hp}。,draft
+UI_CORRUPTION_TITLE,魔化,CORRUPTION,inventory,消耗血珠的魔化页。,draft
+UI_CORRUPTION_BALANCE,血珠余额 · {count},Blood beads · {count},inventory,本局可用血珠数量。 替换变量 {count}。,draft
+UI_CORRUPTION_PREVIEW,"当前 {current}
+升一级后 {preview}","Current {current}
+After one level {preview}",inventory,魔化前后属性比较。 替换变量 {current}、{preview}。,draft
+UI_CORRUPTION_CONFIRM,消耗 1 颗血珠,Spend 1 Blood Bead,inventory,按下后确认一次魔化并消耗一颗血珠。,draft
+UI_CORRUPTION_EMPTY,需要 1 颗血珠,Requires 1 blood bead,inventory,未持有血珠时显示的原因。,draft
+UI_CORRUPTION_MAX,已达等级上限,Rank limit reached,inventory,该属性已达最大等级。,draft
+UI_STAT_PHYSICAL,物理攻击力,Physical Attack,inventory,魔化六维之一。,draft
+UI_STAT_MAGIC,魔法攻击力,Magic Attack,inventory,魔化六维之一。,draft
+UI_STAT_MAX_HP,生命值上限,Max HP,inventory,魔化六维之一。,draft
+UI_STAT_SPEED,移动速度,Movement Speed,inventory,魔化六维之一。,draft
+UI_STAT_CRITICAL,暴击率,Critical Chance,inventory,魔化六维之一。,draft
+UI_STAT_INTERVAL,攻击间隔／魔法冷却,Attack Interval / Spell Cooldown,inventory,未装备武器时第六维的通用名称。,draft
+UI_STAT_MELEE_INTERVAL,攻击间隔,Attack Interval,inventory,第六维对近战武器的效果。,draft
+UI_STAT_MAGIC_INTERVAL,魔法冷却,Spell Cooldown,inventory,第六维对远程法杖的效果。,draft
+UI_INTERVAL_VALUE,{time} 秒,{time} s,inventory,武器剩余或预计冷却。 替换变量 {time}。,draft
+UI_SPEED_VALUE,{speed} 像素/秒,{speed} px/s,inventory,魔化预览的移动速度单位。 替换变量 {speed}。,draft
+UI_CRAFT_MATERIAL,{item} · 持有 {have} / 需要 {need},{item} · Have {have} / Need {need},inventory,一行配方材料库存与需求。 替换变量 {have}、{item}、{need}。,draft
+UI_CRAFT_MISSING,缺少 {items},Missing {items},inventory,材料不足时列出缺项。 替换变量 {items}。,draft
+UI_CRAFT_YIELD,每次产出 1 瓶 · 当前持有 {count} 瓶,Makes 1 potion · {count} in your bag,inventory,治疗药水产量及当前库存。 替换变量 {count}。,draft
+UI_DIALOGUE_TITLE,塔顶相遇,Meeting at the Summit,narrative,没有显式人物署名的塔顶对话备用标题。,draft
+UI_DIALOGUE_CONTINUE,继续,Continue,narrative,推进当前对话，最后一步开启领主战。,draft
+UI_FLOOR_CLEARED,本层已清场。祭坛凝结了血珠，楼梯已开放。,Floor clear. A blood bead formed at the altar. The stairs are open.,hud,决定版流程提示、反馈或设置标签。,draft
+UI_ALTAR_EMPTY,楼梯已开放。可先搜集物品或在背包中调整装备。,The stairs are open. You can collect items or adjust your gear before leaving.,hud,决定版流程提示、反馈或设置标签。,draft
+UI_ALTAR_NEAR,{interact} · 吸收血珠,{interact} · Absorb blood bead,hud,决定版流程提示、反馈或设置标签。 替换变量 {interact}。,draft
+UI_PEARL_ABSORBED,已吸收血珠 · 余额 {count},Blood bead absorbed · {count} available,hud,决定版流程提示、反馈或设置标签。 替换变量 {count}。,draft
+UI_STAIR_FORFEIT,继续走上楼梯会放弃本层尚未吸收的血珠。,Climbing the stairs leaves this floor's blood bead behind.,hud,决定版流程提示、反馈或设置标签。,draft
+UI_EXIT_OPEN,领主已败。可以继续探索，或走入终点离开古塔。,The lord has fallen. Explore the summit or walk through the portal to leave the tower.,hud,决定版流程提示、反馈或设置标签。,draft
+UI_CORRUPTION_SUCCESS,魔化已生效。,Corruption applied.,hud,决定版流程提示、反馈或设置标签。,draft
+UI_CODEX_SAVE_ERROR,图鉴写入失败。再次发现物品或阅读时会重试。,The codex could not be saved. The next discovery or reading will retry.,hud,决定版流程提示、反馈或设置标签。,draft
+UI_VOLUME_MUSIC,配乐音量,Music Volume,settings,决定版流程提示、反馈或设置标签。,draft
+TRANSITION_GROUNDS_TITLE,塔前,At the Tower Gate,transition,转场主标题或提示，支持换行。,draft
+TRANSITION_GROUNDS_TIP,旧路走到尽头，塔门还立在原处。,"The old road ends, but the tower gate still stands.",transition,转场主标题或提示，支持换行。,draft
+TRANSITION_END_TITLE,塔外,Beyond the Tower,transition,转场主标题或提示，支持换行。,draft
+TRANSITION_END_TIP,门后的风吹灭了最后一盏灯。,A gust beyond the gate extinguishes the last lamp.,transition,转场主标题或提示，支持换行。,draft
+TIP_F6,鬼魂出手前会显形。避开腐蚀史莱姆留下的痕迹。,Ghosts reveal themselves before striking. Keep clear of the trail left by a corrupted slime.,transition,转场主标题或提示，支持换行。,draft
+TIP_F7,先辨认追击预警，再利用腐蚀哥布林的收招。,"Read the charge warning, then counter while the corrupted goblin recovers.",transition,转场主标题或提示，支持换行。,draft
+TIP_F8,掩体能挡住弹道，但脚下亮起咒印时要立刻离开。,Cover blocks projectiles. Move as soon as a sigil lights up beneath you.,transition,转场主标题或提示，支持换行。,draft
+TIP_F9,腐蚀弓手会接连拉弦。橙色地灯指示机关箭的来向。,Corrupted archers draw repeatedly. Amber floor markings show where trap arrows come from.,transition,转场主标题或提示，支持换行。,draft
+TIP_F10,最后一盏灯还亮着。有人在等你。,The last lamp is still lit. Someone is waiting for you.,transition,转场主标题或提示，支持换行。,draft
+LORE_ROSTER_TITLE,夜班名册,Night Watch Roster,narrative,文稿拾取、背包、图鉴与阅读标题。,draft
+LORE_ROSTER_DESC,一份缺页的值夜记录，凡是留空的名字都被细细描过。,A partial watch roster. Someone carefully traced every empty line.,narrative,文稿简述。,draft
+LORE_ROSTER_BODY,"哈伦替第三班划过一行。那天塔门落了锁，晨钟照常响。自此任何人出塔，都须在我面前把姓名念一遍。
+
+埃德里克·沃恩","Harlan struck a line from the third watch. The gate was locked that day, but the morning bell rang as usual. From now on, anyone leaving the tower must speak their name in my presence.
+
+Edric Vane",narrative,主动打开文稿的正文，可滚动。,draft
+LORE_RETREAT_TITLE,退路草图,Sketch of a Way Back,narrative,文稿拾取、背包、图鉴与阅读标题。,draft
+LORE_RETREAT_DESC,艾妲早先标出的掩体和楼梯都还看得见，墨迹到了第七层突然变深。,Ada's markings for cover and stairs are still legible. The ink darkens suddenly at the seventh floor.,narrative,文稿简述。,draft
+LORE_RETREAT_BODY,"上楼时我在右墙留了一截弓弦。退下来时，它挪到了左边的石缝里。米拉问我能不能原路走回去。我说先到灯底下，再数台阶。
+
+艾妲","I left a length of bowstring by the right wall on our way up. Coming back down, I found it in a crack on the left. Mira asked if we could retrace our steps. I told her to get under the lamp, then count the stairs.
+
+Ada",narrative,主动打开文稿的正文，可滚动。,draft
+LORE_TRIAL_TITLE,复召试验,Resummoning Trial,narrative,文稿拾取、背包、图鉴与阅读标题。,draft
+LORE_TRIAL_DESC,标题下的领主签名盖住了一笔旧字，纸上还有法术灼出的孔。,The lord's signature covers an older stroke. A spell burned holes through the paper.,narrative,文稿简述。,draft
+LORE_TRIAL_BODY,"第二十三次。灰重相同，停留时辰相同。火门还没有开。王廷的法阵需要旧名为引，样本不足，须从塔下再带来一些。
+
+埃德里克·沃恩","Trial twenty-three. Same weight of ash. Same time at rest. The fiery gate has yet to open. The court's circle requires old names as a tether. We need more specimens from below.
+
+Edric Vane",narrative,主动打开文稿的正文，可滚动。,draft
+LORE_LAST_REPORT_TITLE,未递出的报告,The Undelivered Report,narrative,文稿拾取、背包、图鉴与阅读标题。,draft
+LORE_LAST_REPORT_DESC,索伦把报告折成了四折，托队友先带出去。,Soren folded the report into quarters and asked the others to carry it out first.,narrative,文稿简述。,draft
+LORE_LAST_REPORT_BODY,"早年的领主怕值夜的人回不来，后来写研究的人却怕名册不够长。我在王廷旧藏里见过那套法阵。写下试验的人用的是沃恩的手，念的却是宫廷魔法师的咒。
+
+若这页能出塔，请替我们把这两句话带给山下的人。
+
+索伦","The old lord worried his watchmen might never return. The researcher worried his roster wasn't long enough. I saw that circle in the court archives. The hand that wrote the trials was Vane's. The words of the spell belonged to the court mage.
+
+If this page makes it out, take these words to the people below.
+
+Soren",narrative,主动打开文稿的正文，可滚动。,draft
+LORE_KIT_DESC,莱昂出发前的行装和同伴名单。,Leon's checklist of provisions and companions.,narrative,背包与图鉴的文稿简述。,draft
+LORE_ORDER_DESC,旧王国王廷给驻塔领主的政令。,The royal court's orders to the lord of the tower.,narrative,背包与图鉴的文稿简述。,draft
+LORE_CAMP_DESC,营地残骸，留着四位旅人扎营的痕迹。,The remains of a camp once shared by four travelers.,narrative,背包与图鉴的文稿简述。,draft
+LORE_F1_DESC,领主致哈伦的信，叮嘱他照顾值夜人。,A letter from the lord asking Harlan to look after the night watch.,narrative,背包与图鉴的文稿简述。,draft
+LORE_F2_DESC,哈伦记录了旧王国旗帜消失的那几天。,Harlan's account of the days when the Old Kingdom's banners disappeared.,narrative,背包与图鉴的文稿简述。,draft
+LORE_PRAYER_DESC,米拉记下同伴睡梦里听见的名册。,Mira's prayer for companions haunted by names heard in their sleep.,narrative,背包与图鉴的文稿简述。,draft
+LORE_F3_DESC,艾妲记录箭孔的方向，以及几处仍可通行的退路。,Ada notes where the arrow slits point and which routes are still open.,narrative,背包与图鉴的文稿简述。,draft
+LORE_F4_DESC,索伦把不同年代的领主署名对照起来。,Soren compares the lord's signatures from different years.,narrative,背包与图鉴的文稿简述。,draft
+LORE_RESEARCH_DESC,署名未改，记下的却都是召唤试验。,A familiar signature beneath records of summoning trials.,narrative,背包与图鉴的文稿简述。,draft
+LORE_F5_DESC,塔顶灯下留下的字条，提到四名来客。,A note left under the summit lamp mentions four visitors.,narrative,背包与图鉴的文稿简述。,draft
+DIALOGUE_PLAYER,旅人,Traveler,narrative,F10 塔顶相遇对话。对话推进完毕后开战。,draft
+DIALOGUE_F10_1,又一位来替我数名字的人。沃恩守着门，直到我借走了他的手。,Another visitor come to count my names. Vane held the gate until I borrowed his hand.,narrative,F10 塔顶相遇对话。对话推进完毕后开战。,draft
+DIALOGUE_F10_2,山下的人等了十年。莱昂他们的名字，也被你留下了？,The people below have waited ten years. Did you keep Leon and his companions' names too?,narrative,F10 塔顶相遇对话。对话推进完毕后开战。,draft
+DIALOGUE_F10_3,那四个已经记进册里了。我从王廷带来的法术，还差最后一个名字。,Those four are already in my book. The spell I brought from court needs one last name.,narrative,F10 塔顶相遇对话。对话推进完毕后开战。,draft
+DIALOGUE_F10_4,等最后一栏填上，塔门就会为我的军队打开。把你的剑拔出来吧。,"Once the last line is filled, the gate will open for my army. Draw your weapon.",narrative,F10 塔顶相遇对话。对话推进完毕后开战。,draft
+ENEMY_SLIME_NAME,史莱姆,Slime,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_SLIME_DESC,鼓胀 {coil_time} 秒后直线突进，之后会短暂停下。,"Swells for {coil_time} s, lunges in a straight line, then pauses.",codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {coil_time}。,draft
+ENEMY_GOBLIN_NAME,哥布林,Goblin,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_GOBLIN_DESC,挥击前会停步 {telegraph} 秒，随后攻击面前的扇形区域。,Stops for {telegraph} s before swinging in a cone.,codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {telegraph}。,draft
+ENEMY_SKELETON_NAME,骷髅法师,Skeleton Mage,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_SKELETON_DESC,咏唱 {telegraph} 秒后沿预警方向发出魔法弹。掩体可以挡住弹道。,Chants for {telegraph} s before firing along the marked line. Cover blocks the bolt.,codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {telegraph}。,draft
+ENEMY_ARCHER_NAME,骷髅弓手,Skeleton Archer,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_ARCHER_DESC,拉弦 {draw} 秒后射箭。过于接近时会挥弓击退来敌。,Draws for {draw} s before loosing an arrow. It swings its bow at targets close by.,codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {draw}。,draft
+ENEMY_ELITE_NAME,精锐骷髅,Elite Skeleton,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_ELITE_DESC,展示扇形预警 {telegraph} 秒后发射 {shots} 枚弹体。可走入弹道间隙。,"Warns for {telegraph} s, then fires {shots} bolts in a fan. Move between the marked lanes.",codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {shots}、{telegraph}。,draft
+ENEMY_GHOST_NAME,鬼魂,Ghost,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_GHOST_DESC,在攻击前显形 {telegraph} 秒，然后向眼前扑击。,Becomes visible for {telegraph} s before lunging at its target.,codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {telegraph}。,draft
+ENEMY_CORRUPTED_SLIME_NAME,受腐蚀的史莱姆,Corrupted Slime,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_CORRUPTED_SLIME_DESC,突进留下持续 {trail_time} 秒的危险地面。,Leaves a damaging trail that lasts {trail_time} s after lunging.,codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {trail_time}。,draft
+ENEMY_CORRUPTED_GOBLIN_NAME,受腐蚀的哥布林,Corrupted Goblin,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_CORRUPTED_GOBLIN_DESC,追击前有 {rush_telegraph} 秒预警。冲刺结束后有反击机会。,Telegraphs its charge for {rush_telegraph} s. Counter after the rush.,codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {rush_telegraph}。,draft
+ENEMY_CORRUPTED_SKELETON_NAME,受腐蚀的骷髅法师,Corrupted Skeleton Mage,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_CORRUPTED_SKELETON_DESC,施法起手持续 {telegraph} 秒。地面咒印在 {zone_delay} 秒后爆发。,Prepares its spell for {telegraph} s. Ground sigils erupt after {zone_delay} s.,codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {telegraph}、{zone_delay}。,draft
+ENEMY_CORRUPTED_ARCHER_NAME,受腐蚀的骷髅弓手,Corrupted Skeleton Archer,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_CORRUPTED_ARCHER_DESC,首次拉弦 {draw} 秒，连射期间每次再拉弦 {burst_draw} 秒。,"Draws for {draw} s to start its volley, then draws for {burst_draw} s between shots.",codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {burst_draw}、{draw}。,draft
+ENEMY_LORD_NAME,魔化领主,Corrupted Lord,codex,遭遇后解锁的敌人图鉴名称。,draft
+ENEMY_LORD_DESC,在塔顶等待旅人的魔化领主。交替施展近身攻击、扇形齐射和地面法术。,"The lord waiting at the summit alternates close strikes, volleys and ground spells.",codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。,draft
+ITEM_START_SWORD_DESC,塔门左侧的旧长剑，适合近身挥砍。,An old longsword from beside the gate. Use it to strike at close range.,equipment,背包与图鉴的物品说明。,draft
+ITEM_START_STAFF_DESC,塔门右侧的木杖，可向远处发射魔法弹。,A wooden staff from beside the gate. It casts bolts at range.,equipment,背包与图鉴的物品说明。,draft
+ITEM_MUSHROOM_DESC,塔中潮湿处长出的菌类。与水瓶一起可调制治疗药水。,A fungus from the tower's damp corners. Combine it with a water bottle to brew a healing potion.,equipment,背包与图鉴的物品说明。,draft
+ITEM_WATER_DESC,一瓶干净的水，可与蘑菇合成治疗药水。,A bottle of clean water. Combine it with a mushroom to brew a healing potion.,equipment,背包与图鉴的物品说明。,draft
+ITEM_POTION_DESC,饮下后恢复 {value} HP。,Drink to restore {value} HP.,equipment,背包与图鉴的物品说明。 替换变量 {value}。,draft
+ITEM_U01_DESC,剑刃上的细小缺口，是每一次挥砍留下的记号。,Tiny nicks along the blade mark every swing.,equipment,背包与图鉴的装备简述。,draft
+ITEM_U02_DESC,轻薄的手套让持剑的手如风般敏捷。,These light gloves let a sword hand move as swiftly as the wind.,equipment,背包与图鉴的装备简述。,draft
+ITEM_U03_DESC,杖尖残留的温度，像一团不肯熄灭的余烬。,"Warmth lingers at the tip, like an ember that refuses to die.",equipment,背包与图鉴的装备简述。,draft
+ITEM_U04_DESC,戒面刻着一圈细密符文，微光随呼吸起伏。,"Fine runes circle the ring, their glow rising and falling with each breath.",equipment,背包与图鉴的装备简述。,draft
+ITEM_U05_DESC,磨损的徽章被无数次攥紧，仿佛能为旅人留住好运。,"Worn smooth by countless anxious grips, this emblem seems to hold a traveler's luck.",equipment,背包与图鉴的装备简述。,draft
+ITEM_U06_DESC,暗红的纹路沿刃脊延伸，仿佛仍在脉动。,"Dark red lines run along the blade, as if they still pulse.",equipment,背包与图鉴的装备简述。,draft
+ITEM_U07_DESC,铠甲上布满修补痕迹，却依旧可靠。,"Repairs cover this armor, but it remains dependable.",equipment,背包与图鉴的装备简述。,draft
+ITEM_U08_DESC,鞋底的磨痕，记录着一位旅人走过的漫长道路。,The worn soles tell of the long road a traveler once walked.,equipment,背包与图鉴的装备简述。,draft
+ENEMY_LORD_IDENTITY,早年的驻防文字出自埃德里克·沃恩。灾变后，宫廷魔法师夺取了他的身体，继续沿用原来的署名。,"Edric Vane wrote the early garrison orders. After the Cataclysm, the court mage took his body and kept signing Vane's name.",codex,对照领主早期和后期手稿后揭示的身份。,draft
+CHAR_LEON_NAME,莱昂,Leon,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_LEON_DESC,十年前小队的骑士。塔前的幽灵仍记得武器的位置。,The expedition's knight from ten years ago. His ghost still remembers where the weapons lie.,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_MIRA_NAME,米拉,Mira,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_MIRA_DESC,十年前小队的牧师。祷文里记录了同伴的睡梦和塔中的点名声。,The expedition's priest. Her prayers record her companions' troubled sleep and the names called in the tower.,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_SOREN_NAME,索伦,Soren,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_SOREN_DESC,十年前小队的法师。他把前后的署名与法术试验交叉比对。,The expedition's mage. He compared the signatures and spells with earlier court records.,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_ADA_NAME,艾妲,Ada,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_ADA_DESC,十年前小队的弓箭手。她观察箭孔和掩体，标出撤离的退路。,The expedition's archer. She observed arrow slits and cover to chart a retreat.,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_EDRIC_VANE_NAME,埃德里克·沃恩,Edric Vane,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_EDRIC_VANE_DESC,旧王国驻塔领主。早期文书常提灯油、岗哨和应归队的人。,"The Old Kingdom's garrison lord. His early letters concern lamp oil, watch shifts and those due to return.",narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_COURT_MAGE_NAME,宫廷魔法师,court mage,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+CHAR_COURT_MAGE_DESC,灾变时施展黑魔法的王廷法师，死后借领主躯壳继续研究召唤。,The royal mage who unleashed the Cataclysm. After his death he continued his summoning research in the lord's body.,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft

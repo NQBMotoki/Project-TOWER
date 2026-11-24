@@ -5,7 +5,6 @@
 [resource]
 script = ExtResource("1")
 tip_key = "TIP_F2"
-wait_for_confirmation = true
 waves = Array[PackedStringArray]([PackedStringArray("slime", "slime", "goblin"), PackedStringArray("slime", "goblin", "goblin")])
 obstacle_count = 5
-clear_pickups = Dictionary[Vector2, String]({Vector2(300, 220): "LORE_F2", Vector2(945, 480): "LORE_PRAYER"})
+clear_pickups = Dictionary[Vector2, String]({Vector2(300.0, 220.0): "LORE_F2", Vector2(945.0, 480.0): "LORE_PRAYER"})

@@ -5,10 +5,7 @@
 [resource]
 script = ExtResource("1")
 tip_key = "TIP_F5"
-entry_note_key = "LORE_F5_DOOR"
-wait_for_confirmation = true
-waves = Array[PackedStringArray]([PackedStringArray("elite", "slime", "goblin")])
-clear_on_enemy_defeat = "elite"
+waves = Array[PackedStringArray]([PackedStringArray("elite"), PackedStringArray("elite")])
 obstacle_count = 3
 keep_center_open = true
-epilogue = "LORE_F5"
+clear_pickups = Dictionary[Vector2, String]({Vector2(270.0, 295.0): "LORE_RESEARCH"})

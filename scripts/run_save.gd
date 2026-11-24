@@ -1,12 +1,15 @@
 class_name RunSave
 extends RefCounted
 
-const PATH := "user://run.save"
+const PATH := "user://tower_complete.save"
 const MAGIC := 0x544F5752
-const VERSION := 1
+const VERSION := 2
 const MAX_BYTES := 1024 * 1024
 const HEADER_BYTES := 40
 const GameData = preload("res://data/game_data.gd")
+const PlayerStats = preload("res://data/player_stats.gd")
+const FloorFeatures = preload("res://scripts/floor_features.gd")
+const PHASES := ["opening", "grounds", "transition", "dialogue", "combat", "safe", "ending"]
 
 var path: String
 
@@ -35,7 +38,7 @@ func _read(source: String) -> Dictionary:
 		return {"error": ERR_FILE_CORRUPT}
 	return {"error": OK, "data": data}
 
-func write(data: Dictionary) -> Error:
+func write(data: Dictionary, preserve_backup := false) -> Error:
 	var temp := path + ".tmp"
 	var file := FileAccess.open(temp, FileAccess.WRITE)
 	if file == null:
@@ -50,7 +53,7 @@ func write(data: Dictionary) -> Error:
 	file.close()
 	if error == OK:
 		error = _read(temp).error
-	if error == OK:
+	if error == OK and not preserve_backup:
 		error = _rotate_backup(data.seed)
 	if error == OK:
 		error = DirAccess.rename_absolute(temp, path)
@@ -95,14 +98,18 @@ static func prepare_resume(data: Variant, floors: Array[FloorDefinition]) -> Dic
 	if not data is Dictionary or not data.get("seed") is int or not data.get("floor") is int:
 		return {}
 	var phase: Variant = data.get("phase")
-	if phase not in ["grounds", "transition", "combat", "safe", "reward", "epilogue"]:
+	if phase not in PHASES:
 		return {}
 	var floor_index: int = data.floor - 1
-	if (phase == "grounds" and data.floor != 0) or (phase != "grounds" and (floor_index < 0 or floor_index >= floors.size())):
+	var on_grounds: bool = phase in ["opening", "grounds"]
+	if (on_grounds and data.floor != 0) or (not on_grounds and (floor_index < 0 or floor_index >= floors.size())):
 		return {}
 	if not data.get("kills") is int or data.kills < 0 or not _nonnegative(data.get("elapsed")):
 		return {}
-	if not data.get("ghost_seen") is bool or not _nonnegative(data.get("transition")) or data.transition > 2.1:
+	for key in ["ghost_seen", "pearl_available", "stair_notice_seen", "lord_introduced"]:
+		if not data.get(key) is bool:
+			return {}
+	if not _nonnegative(data.get("transition")) or data.transition > 2.1:
 		return {}
 	if not data.get("layouts") is Array or data.layouts.size() != floors.size():
 		return {}
@@ -115,32 +122,45 @@ static func prepare_resume(data: Variant, floors: Array[FloorDefinition]) -> Dic
 	var inventory := RunInventory.new()
 	if not inventory.restore(data.get("inventory")):
 		return {}
-	if phase != "grounds":
-		for id in GameData.STARTERS.values():
-			if not inventory.owned.has(id):
-				return {}
-	var layout := ArenaLayout.new() if phase == "grounds" else layouts[floor_index]
+	if not on_grounds and not _owns_weapon(inventory.owned):
+		return {}
+	var layout := ArenaLayout.new() if on_grounds else layouts[floor_index]
 	if not _valid_player(data.get("player"), layout, inventory) or not _valid_ground(data.get("ground"), layout, inventory.owned):
 		return {}
-	var floor: FloorDefinition = null if phase == "grounds" else floors[floor_index]
-	if not _valid_phase(data, floor, inventory.owned):
+	if not FloorFeatures.validate_snapshot(data.get("features"), layout, data.floor, data.seed):
+		return {}
+	var floor: FloorDefinition = null if on_grounds else floors[floor_index]
+	if not _valid_phase(data, floor, data.floor == floors.size(), inventory):
 		return {}
 	return {"data": data, "inventory": inventory, "layouts": layouts}
+
+static func _owns_weapon(owned: Array[String]) -> bool:
+	for id in owned:
+		if GameData.slot_for(id) == "weapon":
+			return true
+	return false
 
 static func _nonnegative(value: Variant) -> bool:
 	return (value is float or value is int) and is_finite(float(value)) and value >= 0.0
 
 static func _valid_player(hero: Variant, layout: ArenaLayout, inventory: RunInventory) -> bool:
-	if not hero is Dictionary or not hero.get("position") is Vector2 or not hero.get("aim") is Vector2:
+	if not hero is Dictionary or not hero.get("position") is Vector2 or not hero.get("aim") is Vector2 or not hero.get("swing_direction") is Vector2:
 		return false
-	if not layout.is_walkable(hero.position, ArenaLayout.PLAYER_RADIUS) or not hero.aim.is_finite():
+	if not layout.is_walkable(hero.position, ArenaLayout.PLAYER_RADIUS) or not hero.aim.is_finite() or not hero.swing_direction.is_finite():
 		return false
-	var armor := GameData.upgrade(inventory.equipped.get("armor", ""))
-	var hp_limit := 100.0 + float(armor.get("value", 0))
+	var hp_limit: float = PlayerStats.calculate(inventory.equipped, inventory.corruption).max_hp
 	if not _nonnegative(hero.get("hp")) or hero.hp <= 0.0 or hero.hp > hp_limit:
 		return false
-	for key in ["sword_timer", "magic_timer", "invulnerability", "sword_flash"]:
+	for key in ["invulnerability", "sword_flash"]:
 		if not _nonnegative(hero.get(key)):
+			return false
+	if not hero.get("weapon_timers") is Dictionary:
+		return false
+	for id in hero.weapon_timers:
+		var timer: Variant = hero.weapon_timers[id]
+		if not id in PlayerStats.WEAPONS or id not in inventory.owned or not _nonnegative(timer):
+			return false
+		if timer > PlayerStats.attack_interval(id, PlayerStats.BASE):
 			return false
 	return true
 
@@ -151,7 +171,7 @@ static func _valid_ground(ground: Variant, layout: ArenaLayout, owned: Array[Str
 	for entry in ground:
 		if not entry is Dictionary or not entry.get("id") is String or not entry.get("position") is Vector2:
 			return false
-		if not GameData.is_item(entry.id) or not layout.is_walkable(entry.position, ArenaLayout.PLAYER_RADIUS):
+		if not GameData.is_item(entry.id) or not layout.is_walkable(entry.position, 0.0):
 			return false
 		if not entry.id in GameData.STACKABLE:
 			if unique.has(entry.id):
@@ -159,38 +179,42 @@ static func _valid_ground(ground: Variant, layout: ArenaLayout, owned: Array[Str
 			unique.append(entry.id)
 	return true
 
-static func _valid_phase(data: Dictionary, floor: FloorDefinition, owned: Array[String]) -> bool:
-	var next_wave: Variant = data.get("next_wave")
-	var drops: Variant = data.get("wave_drops")
-	var choices: Variant = data.get("choices")
-	if not next_wave is int or not drops is Array or not choices is Array:
+static func _valid_phase(data: Dictionary, floor: FloorDefinition, top_floor: bool, inventory: RunInventory) -> bool:
+	if data.phase in ["opening", "transition", "ending"] and data.transition <= 0.0:
 		return false
-	if data.phase == "combat":
-		if next_wave < 0 or next_wave >= floor.waves.size():
-			return false
-		if not drops.is_empty() and drops.size() != floor.waves[next_wave].size():
-			return false
-		var reserved: Array = owned.duplicate()
-		for entry in data.ground:
-			reserved.append(entry.id)
-		for id in drops:
-			if not id is String:
-				return false
-			if id.is_empty() or id in GameData.STACKABLE:
-				continue
-			if GameData.upgrade(id).is_empty() or id in reserved:
-				return false
-			reserved.append(id)
-	elif next_wave != 0 or not drops.is_empty():
+	if data.phase in ["dialogue", "ending"] and not top_floor:
 		return false
-	if data.phase == "reward":
-		if not floor.epilogue.is_empty() or choices.size() != 3:
-			return false
-		var seen := []
-		for id in choices:
-			if not id is String or id in seen or (not id in GameData.REWARD_FILLERS and (GameData.upgrade(id).is_empty() or id in owned)):
-				return false
-			seen.append(id)
-	elif not choices.is_empty():
+	if data.lord_introduced != (top_floor and data.phase in ["combat", "safe", "ending"]):
 		return false
-	return data.phase != "epilogue" or not floor.epilogue.is_empty()
+	if (data.pearl_available or data.stair_notice_seen) and (top_floor or data.phase != "safe"):
+		return false
+	var beads_earned := inventory.blood_beads
+	for level in inventory.corruption.values():
+		beads_earned += level
+	var altar_count: int = maxi(0, data.floor - 1)
+	if data.phase == "safe" and not data.pearl_available and not top_floor:
+		altar_count += 1
+	if beads_earned > altar_count:
+		return false
+	if not data.get("next_wave") is int or not data.get("wave_drops") is Array:
+		return false
+	var next_wave: int = data.next_wave
+	var drops: Array = data.wave_drops
+	if data.phase != "combat":
+		return next_wave == 0 and drops.is_empty()
+	if next_wave < 0 or next_wave >= floor.waves.size():
+		return false
+	if not drops.is_empty() and drops.size() != floor.waves[next_wave].size():
+		return false
+	var reserved: Array = inventory.owned.duplicate()
+	for entry in data.ground:
+		reserved.append(entry.id)
+	for id in drops:
+		if not id is String:
+			return false
+		if id.is_empty() or id in GameData.STACKABLE:
+			continue
+		if GameData.upgrade(id).is_empty() or id in reserved:
+			return false
+		reserved.append(id)
+	return true

@@ -1,7 +1,6 @@
 extends "res://scripts/enemy_base.gd"
 
-# Creep -> coil -> lunge -> recover. Only the recovery phase cannot hurt the player.
-const CONTACT_RANGE := 24.0
+# Creep -> coil -> lunge -> recover. Damage is confined to the warned lunge.
 const PHASE_CREEP := 0
 const PHASE_COIL := 1
 const PHASE_LUNGE := 2
@@ -19,6 +18,8 @@ var lunge_time := 0.2
 var recover_time := 0.55
 var lunge_cooldown := 1.6
 var clock := 0.0
+var contact_range := 24.0
+var lunge_origin := Vector2.ZERO
 
 func _ready() -> void:
 	super._ready()
@@ -28,15 +29,15 @@ func _ready() -> void:
 	lunge_time = float(config.get("lunge_time", lunge_time))
 	recover_time = float(config.get("recover", recover_time))
 	lunge_cooldown = float(config.get("lunge_cooldown", lunge_cooldown))
-	# The coil trigger and the drawn wedge both use the distance the lunge can
+	# The coil trigger and the drawn path both use the distance the lunge can
 	# really cover, so the warning never promises a hit the lunge cannot land.
-	lunge_reach = lunge_speed * lunge_time + CONTACT_RANGE
+	contact_range = float(config.get("contact_range", contact_range))
+	lunge_reach = lunge_speed * lunge_time + contact_range
 
 func _behavior(delta: float) -> void:
 	clock += delta
 	lunge_timer = maxf(0.0, lunge_timer - delta)
-	var to_player: Vector2 = player.global_position - global_position
-	var distance := to_player.length()
+	var distance := global_position.distance_to(player.global_position)
 	if phase == PHASE_RECOVER:
 		body_scale = Vector2(1.30, 0.60)
 		phase_timer -= delta
@@ -44,48 +45,67 @@ func _behavior(delta: float) -> void:
 			phase = PHASE_CREEP
 			lunge_timer = lunge_cooldown
 		return
-	_touch_player()
 	if phase == PHASE_CREEP:
 		var breath := sin(clock * 5.0) * 0.05
 		body_scale = Vector2(1.0 + breath, 1.0 - breath)
-		if distance > CONTACT_RANGE * 0.7:
-			move_towards(player.global_position, creep_speed * delta)
-		if spawn_delay <= 0.0 and lunge_timer <= 0.0 and distance > CONTACT_RANGE and distance <= lunge_reach and sees_player():
-			lunge_dir = to_player.normalized()
+		if lunge_timer <= 0.0 and distance <= lunge_reach and sees_player():
+			lunge_dir = aim_at_player()
 			phase = PHASE_COIL
 			phase_timer = coil_time
+			sound_requested.emit("enemy_telegraph")
+		elif distance > contact_range * 0.7 or not sees_player():
+			move_towards(player.global_position, creep_speed * delta)
 	elif phase == PHASE_COIL:
 		body_scale = Vector2(1.25, 0.72)
 		phase_timer -= delta
 		if phase_timer <= 0.0:
 			phase = PHASE_LUNGE
 			phase_timer = lunge_time
+			lunge_origin = global_position
+			sound_requested.emit("enemy_rush")
 	elif phase == PHASE_LUNGE:
 		body_scale = Vector2(0.82, 1.22)
-		move_by(lunge_dir * lunge_speed * delta)
-		# The landing step can be the one that reaches the player, so contact
-		# is checked again after moving instead of only before it.
-		_touch_player()
+		var previous := global_position
+		move_straight(lunge_dir, lunge_speed * minf(delta, phase_timer))
+		_check_lunge_hit(previous)
 		phase_timer -= delta
 		if phase_timer <= 0.0:
 			phase = PHASE_RECOVER
 			phase_timer = recover_time
+			if config.has("trail_radius"):
+				add_hazard(lunge_origin, global_position, config.trail_radius, 0.0, config.trail_time, config.trail_damage)
+				sound_requested.emit("enemy_zone_burst")
 
-func _touch_player() -> void:
-	if spawn_delay > 0.0 or attack_timer > 0.0:
+func _check_lunge_hit(previous: Vector2) -> void:
+	if attack_timer > 0.0:
 		return
-	if global_position.distance_to(player.global_position) <= CONTACT_RANGE and sees_player():
+	var closest := global_position
+	if not previous.is_equal_approx(global_position):
+		closest = Geometry2D.get_closest_point_to_segment(player.global_position, previous, global_position)
+	if closest.distance_to(player.global_position) <= contact_range and layout.has_clear_line(closest, player.global_position):
 		player.take_damage(damage)
 		attack_timer = cooldown
 
+func _prepare_action_pose() -> void:
+	match phase:
+		PHASE_COIL:
+			set_action_pose(ActorMotion.Phase.WINDUP, phase_timer, coil_time)
+		PHASE_LUNGE:
+			set_action_pose(ActorMotion.Phase.STRIKE, phase_timer, lunge_time)
+		PHASE_RECOVER:
+			set_action_pose(ActorMotion.Phase.RECOVERY, phase_timer, recover_time)
+
 func _draw() -> void:
 	super._draw()
-	if phase == PHASE_COIL:
-		var progress := 1.0 - phase_timer / maxf(0.01, coil_time)
-		var alpha := lerpf(0.06, 0.30, progress)
-		var points := PackedVector2Array([Vector2.ZERO])
-		for i in range(9):
-			var angle := lunge_dir.angle() - 0.42 + 0.84 * float(i) / 8.0
-			points.append(Vector2.from_angle(angle) * lunge_reach)
-		draw_colored_polygon(points, Color(0.55, 0.95, 0.65, alpha))
-		draw_arc(Vector2.ZERO, 10.0 + 6.0 * progress, 0.0, TAU, 18, Color(0.62, 0.95, 0.70, 0.30 + 0.45 * progress), 2.0)
+	if phase != PHASE_COIL:
+		return
+	var progress := 1.0 - phase_timer / maxf(0.01, coil_time)
+	var travel := clear_reach(lunge_dir, lunge_reach - contact_range, hit_radius)
+	var endpoint := lunge_dir * travel
+	var color := Color("abf39a") if config.has("trail_radius") else Color("dcf89d")
+	draw_line(Vector2.ZERO, endpoint, Color(color, 0.12 + 0.18 * progress), contact_range * 2.0)
+	draw_circle(Vector2.ZERO, contact_range, Color(color, 0.12 + 0.18 * progress))
+	draw_circle(endpoint, contact_range, Color(color, 0.12 + 0.18 * progress))
+	draw_arc(endpoint, contact_range, 0.0, TAU, 22, Color(color, 0.46 + 0.44 * progress), 2.0)
+	draw_line(lunge_dir * 14.0, endpoint, Color(color, 0.53 + 0.42 * progress), 2.0)
+	draw_arc(Vector2.ZERO, 10.0 + 6.0 * progress, 0.0, TAU, 18, Color(color, 0.56 + 0.44 * progress), 2.0)
