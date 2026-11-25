@@ -172,7 +172,11 @@ static func _valid_offer(data: Dictionary, departure: ArenaLayout, inventory: Ru
 	history.erase(data.floor)
 	if not chosen.is_empty() and chosen not in data.stair_offer:
 		return false
-	return data.stair_offer == Boons.offer(data.seed, data.floor, inventory.owned, history, PlayerStats.WEAPONS)
+	if data.stair_offer == Boons.offer(data.seed, data.floor, inventory.owned, history,
+			PlayerStats.WEAPONS, inventory.equipped.get("weapon", "")):
+		return true
+	# Keep the already-visible three cards in any saved 0.4.0-developer stairway.
+	return data.stair_offer == Boons.legacy_offer(data.seed, data.floor, inventory.owned, history, PlayerStats.WEAPONS)
 
 static func _owns_weapon(owned: Array[String]) -> bool:
 	for id in owned:
@@ -203,7 +207,7 @@ static func _valid_player(hero: Variant, layout: ArenaLayout, inventory: RunInve
 		if key in ["ward_used", "reprisal", "recovery_used"]:
 			if not triggers[key] is bool:
 				return false
-		elif key not in ["kill_speed", "cast_speed", "step_speed", "step_cooldown", "reprisal_cooldown",
+		elif key not in ["kill_speed", "cast_speed", "step_speed", "step_delay", "step_cooldown", "reprisal_cooldown",
 				"echo_cooldown", "shards_time", "edges", "echo_hits"] or not _nonnegative(triggers[key]) or triggers[key] > 8.0:
 			return false
 	for id in hero.weapon_timers:

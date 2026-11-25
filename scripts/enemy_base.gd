@@ -69,6 +69,8 @@ var _release_pose_age := INF
 var _warning: Node2D
 var _trail: Array[Dictionary] = []
 var _hazards: Array[Node2D] = []
+var _rush_outline_key: Array = []
+var _rush_outline_points := PackedVector2Array()
 
 @onready var art: Sprite2D = get_node_or_null("Sprite2D")
 
@@ -338,20 +340,89 @@ func draw_sector(heading: Vector2, reach: float, half_angle: float, progress: fl
 
 func draw_rush_path(heading: Vector2, distance: float, radius: float, progress: float, color: Color) -> void:
 	var reach := clear_reach(heading, distance, hit_radius)
-	var endpoint := heading * reach
+	if reach < distance:
+		reach = maxf(0.0, reach - ArenaLayout.MOTION_MARGIN)
 	var edge := heading.orthogonal() * radius
 	var fill := Color(color, 0.07 + 0.14 * progress)
 	var line := Color(color, 0.56 + 0.38 * progress)
-	_warning.draw_line(Vector2.ZERO, endpoint, fill, radius * 2.0)
-	_warning.draw_arc(endpoint, radius, heading.angle() - PI / 2.0, heading.angle() + PI / 2.0, 16, line, 2.0)
-	for flank in [-edge, edge]:
-		var edge_reach := layout.first_block(global_position + flank, global_position + endpoint + flank)
-		var edge_end := endpoint if edge_reach == INF else endpoint * edge_reach
-		_warning.draw_line(flank, edge_end + flank, line, 1.5)
+	var outline_key := [layout, global_position, heading, reach, radius]
+	if _rush_outline_key != outline_key:
+		_rush_outline_key = outline_key
+		_rush_outline_points = _rush_outline(heading, reach, radius)
+	_warning.draw_colored_polygon(_rush_outline_points, fill)
+	_warning.draw_polyline(_rush_outline_points, line, 1.5)
+	_warning.draw_line(_rush_outline_points[-1], _rush_outline_points[0], line, 1.5)
 	for mark in range(1, floori(reach / 23.0) + 1):
 		var center := heading * (mark * 23.0)
 		_warning.draw_polyline(PackedVector2Array([center - heading * 5.0 + edge * 0.30,
 			center + heading * 3.0, center - heading * 5.0 - edge * 0.30]), line, 1.8)
+
+func _rush_outline(heading: Vector2, reach: float, radius: float) -> PackedVector2Array:
+	var vertices := PackedVector2Array(ArenaLayout.VERTICES)
+	for entry in layout.obstacles:
+		var rect: Rect2 = entry.rect
+		vertices.append_array(PackedVector2Array([rect.position, rect.end,
+			Vector2(rect.position.x, rect.end.y), Vector2(rect.end.x, rect.position.y)]))
+	var angle := heading.angle()
+	var near := _rush_cap(Vector2.ZERO, angle + PI / 2.0, radius, vertices)
+	var far := _rush_cap(heading * reach, angle - PI / 2.0, radius, vertices)
+	if is_zero_approx(reach):
+		# With no travel the two semicircles share their endpoints.
+		near.resize(near.size() - 1)
+		far.resize(far.size() - 1)
+		near.append_array(far)
+		return near
+	var cuts := PackedFloat64Array()
+	var sections := ceili(reach / 8.0)
+	for index in range(1, sections):
+		cuts.append(reach * index / sections)
+	for vertex in vertices:
+		var along := heading.dot(vertex - global_position)
+		if along > 0.02 and along < reach - 0.02:
+			# Sample both sides of corners, where an edge can change abruptly.
+			cuts.append(along - 0.02)
+			cuts.append(along + 0.02)
+	cuts.sort()
+	var flank := heading.rotated(PI / 2.0)
+	var other_edge := PackedVector2Array()
+	var previous := -1.0
+	for along in cuts:
+		if is_equal_approx(along, previous):
+			continue
+		var center := heading * along
+		near.append(_rush_rim_point(center, -flank, radius))
+		other_edge.append(_rush_rim_point(center, flank, radius))
+		previous = along
+	near.append_array(far)
+	other_edge.reverse()
+	near.append_array(other_edge)
+	return near
+
+func _rush_cap(center: Vector2, start_angle: float, radius: float, vertices: PackedVector2Array) -> PackedVector2Array:
+	var angles := PackedFloat64Array()
+	for index in range(17):
+		angles.append(PI * index / 16.0)
+	for vertex in vertices:
+		var offset := vertex - (global_position + center)
+		if offset.length_squared() > radius * radius:
+			continue
+		var angle := fposmod(offset.angle() - start_angle, TAU)
+		if angle > 0.001 and angle < PI - 0.001:
+			angles.append(angle - 0.001)
+			angles.append(angle + 0.001)
+	angles.sort()
+	var cap := PackedVector2Array()
+	for angle in angles:
+		var point := _rush_rim_point(center, Vector2.from_angle(start_angle + angle), radius)
+		if cap.is_empty() or not cap[-1].is_equal_approx(point):
+			cap.append(point)
+	return cap
+
+func _rush_rim_point(center: Vector2, ray: Vector2, radius: float) -> Vector2:
+	# Like swept_attack, measure sight from the closest point on the path.
+	var source := global_position + center
+	var block := layout.first_block(source, source + ray * radius)
+	return center + ray * radius * (block if block < INF else 1.0)
 
 func draw_magic_guides(heading: Vector2, reach: float, shots: int, spread: float, progress: float,
 		tint := Color("ed9fc9")) -> void:

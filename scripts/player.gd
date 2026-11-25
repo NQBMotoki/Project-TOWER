@@ -87,6 +87,13 @@ func _physics_process(delta: float) -> void:
 	sword_flash = maxf(0.0, sword_flash - delta)
 	cast_flash = maxf(0.0, cast_flash - delta)
 	var origin := global_position
+	if (can_move or can_attack) and boon_triggers.has("step_delay"):
+		var delay: float = boon_triggers.step_delay - delta
+		if delay <= 0.0:
+			boon_triggers.erase("step_delay")
+			boon_triggers.step_speed = 1.4
+		else:
+			boon_triggers.step_delay = delay
 	if can_move:
 		var movement := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		var speed_bonus: float = (0.12 if boon_triggers.get("kill_speed", 0.0) > 0.0 else 0.0)
@@ -147,8 +154,9 @@ func attack() -> void:
 		if stats.aftercast_speed > 0.0:
 			boon_triggers.cast_speed = 0.9
 	if boon_levels.has("AFTERSTEP") and boon_triggers.get("step_cooldown", 0.0) <= 0.0:
-		boon_triggers.step_speed = 1.4
-		boon_triggers.step_cooldown = 6.0
+		var recovery := SWORD_FLASH_TIME if data.range_type == "melee" else CAST_FLASH_TIME
+		boon_triggers.step_delay = recovery
+		boon_triggers.step_cooldown = 6.0 + recovery
 
 func _swing(damage: float) -> void:
 	swing_origin = global_position

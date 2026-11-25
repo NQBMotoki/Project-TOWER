@@ -30,6 +30,11 @@ func setup(origin: Vector2, heading: Vector2, amount: float, is_friendly: bool, 
 	remaining_distance = max_travel if max_travel >= 0.0 else INF
 	lifetime = maxf(2.3, max_travel / speed + 0.02)
 
+func cancel() -> void:
+	consumed = true
+	hide()
+	queue_free()
+
 func _physics_process(delta: float) -> void:
 	if consumed:
 		return

@@ -42,7 +42,16 @@ static func valid_history(history: Variant) -> bool:
 	return true
 
 static func offer(seed: int, floor: int, owned: Array[String], history: Dictionary,
+		weapons: Dictionary, equipped: String) -> Array[String]:
+	return _offer(seed, floor, owned, history, weapons, equipped, false)
+
+static func legacy_offer(seed: int, floor: int, owned: Array[String], history: Dictionary,
 		weapons: Dictionary) -> Array[String]:
+	return _offer(seed, floor, owned, history, weapons, "", true)
+
+static func _offer(seed: int, floor: int, owned: Array[String], history: Dictionary,
+		weapons: Dictionary, equipped: String, legacy: bool) -> Array[String]:
+	var active_mode: String = weapons.get(equipped, {}).get("range_type", "")
 	var owned_modes := {}
 	for item in owned:
 		if weapons.has(item):
@@ -54,7 +63,8 @@ static func offer(seed: int, floor: int, owned: Array[String], history: Dictiona
 		var card: Dictionary = CARDS[id]
 		if bought.get(id, 0) >= card.limit or floor < card.get("floor", 2):
 			continue
-		if card.has("weapon") and not owned_modes.has(card.weapon):
+		var mode := _weapon_mode(id, legacy)
+		if not mode.is_empty() and not owned_modes.has(mode):
 			continue
 		var pool := numerical if card.has("stats") else mechanical
 		pool.append(id)
@@ -62,18 +72,40 @@ static func offer(seed: int, floor: int, owned: Array[String], history: Dictiona
 	rng.seed = hash([seed, "floor_boons", floor])
 	var result: Array[String] = []
 	if not mechanical.is_empty():
-		result.append(mechanical.pop_at(rng.randi_range(0, mechanical.size() - 1)))
+		result.append(_take(mechanical, rng, active_mode, legacy))
 	if not numerical.is_empty():
-		result.append(numerical.pop_at(rng.randi_range(0, numerical.size() - 1)))
+		var neutral_only := not legacy and not result.is_empty() and not _weapon_mode(result[0], false).is_empty()
+		result.append(_take(numerical, rng, active_mode, legacy, neutral_only))
 	var rest := mechanical + numerical
 	while result.size() < 3 and not rest.is_empty():
-		result.append(rest.pop_at(rng.randi_range(0, rest.size() - 1)))
+		result.append(_take(rest, rng, active_mode, legacy))
 	for index in range(result.size() - 1, 0, -1):
 		var other := rng.randi_range(0, index)
 		var card := result[index]
 		result[index] = result[other]
 		result[other] = card
 	return result
+
+static func _weapon_mode(id: String, legacy: bool) -> String:
+	if not legacy:
+		if id == "KEEN":
+			return "melee"
+		if id == "RUNE":
+			return "ranged"
+	return CARDS[id].get("weapon", "")
+
+static func _take(pool: Array[String], rng: RandomNumberGenerator, active_mode: String,
+		legacy: bool, neutral_only := false) -> String:
+	var choices: Array[String] = pool.duplicate()
+	if not legacy and neutral_only:
+		var neutral := pool.filter(func(id: String): return _weapon_mode(id, false).is_empty())
+		if not neutral.is_empty():
+			choices = neutral
+	elif not legacy and not active_mode.is_empty():
+		choices.append_array(pool.filter(func(id: String): return _weapon_mode(id, false) == active_mode))
+	var chosen: String = choices[rng.randi_range(0, choices.size() - 1)]
+	pool.erase(chosen)
+	return chosen
 
 static func benefits(bought: Dictionary) -> Dictionary:
 	var result := {}

@@ -225,6 +225,20 @@ func _test_cover() -> void:
 			if shots.count > 0:
 				break
 		check(shots.count > 0 and shots.clear, kind + " repositions to find a firing line")
+	goblin.position = Vector2(415, 300)
+	var rush_radius := 24.0
+	var stopped_reach: float = goblin.clear_reach(Vector2.RIGHT, 120.0, goblin.hit_radius) - ArenaLayout.MOTION_MARGIN
+	var outline: PackedVector2Array = goblin._rush_outline(Vector2.RIGHT, stopped_reach, rush_radius)
+	check(not Geometry2D.triangulate_polygon(outline).is_empty()
+		and Geometry2D.is_point_in_polygon(Vector2(stopped_reach + 5.0, 0), outline)
+		and not Geometry2D.is_point_in_polygon(Vector2(67, 0), outline),
+		"charge warning follows the hit area up to the wall and trims the blocked tip")
+	goblin.position = Vector2(449, 388)
+	outline = goblin._rush_outline(Vector2.RIGHT, 120.0, rush_radius)
+	check(not Geometry2D.triangulate_polygon(outline).is_empty()
+		and Geometry2D.is_point_in_polygon(Vector2(42, -15), outline)
+		and not Geometry2D.is_point_in_polygon(Vector2(42, -21), outline),
+		"charge warning clips the entire flank along cover and keeps open ground visible")
 	arena.queue_free()
 	await process_frame
 
@@ -325,11 +339,15 @@ func _test_corruption_cards() -> void:
 			var inventory := RunInventory.new()
 			inventory.add(weapon)
 			for floor_number in range(2, 11):
-				var options := Boons.offer(run_seed, floor_number, inventory.owned, inventory.boon_history, PlayerStats.WEAPONS)
+				var options := Boons.offer(run_seed, floor_number, inventory.owned, inventory.boon_history, PlayerStats.WEAPONS, weapon)
 				check(options.size() == 3 and options[0] != options[1] and options[1] != options[2] and options[2] != options[0],
 					"three unique corruption options at every stair")
-				check(options == Boons.offer(run_seed, floor_number, inventory.owned, inventory.boon_history, PlayerStats.WEAPONS),
+				check(options == Boons.offer(run_seed, floor_number, inventory.owned, inventory.boon_history, PlayerStats.WEAPONS, weapon),
 					"corruption options repeat on identical inputs")
+				var unavailable := "RUNE" if weapon == "START_SWORD" else "KEEN"
+				check(unavailable not in options, "a single weapon never offers unusable weapon damage")
+				check(options.any(func(id: String): return Boons._weapon_mode(id, false).is_empty()),
+					"all corruption offers include a benefit independent of loadout")
 				var tactical := options.filter(func(id: String): return not Boons.CARDS[id].has("stats"))
 				var numerical := options.filter(func(id: String): return Boons.CARDS[id].has("stats"))
 				check(not tactical.is_empty() and not numerical.is_empty(), "stacked mechanics retain both card families")
@@ -356,6 +374,17 @@ func _test_corruption_cards() -> void:
 	check(player.hp == 64.0, "dusk recovery only applies on the first eligible drink")
 	player.reset_floor_effects()
 	check(player.boon_triggers.is_empty(), "room-limited mechanisms reset on arrival")
+	for weapon: String in ["START_SWORD", "START_STAFF"]:
+		player.reset_floor_effects()
+		player.set_loadout({"weapon": weapon}, {}, {"AFTERSTEP": 1})
+		player.can_attack = true
+		player.attack()
+		var recovery: float = player.boon_triggers.get("step_delay", 0.0)
+		check(recovery > 0.0 and not player.boon_triggers.has("step_speed"), "Afterstep waits for weapon recovery")
+		player._physics_process(recovery * 0.5)
+		check(not player.boon_triggers.has("step_speed"), "no speed increase during the attack animation")
+		player._physics_process(recovery * 0.51)
+		check(player.boon_triggers.get("step_speed", 0.0) > 1.25, "Afterstep activates at the end of weapon recovery")
 	player.free()
 	await process_frame
 
@@ -529,6 +558,21 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 				check(not migrated.is_empty() and migrated.data.next_wave == 0, "legacy second elite wave restores the single boss")
 		for wave_idx in range(game.current_floor.waves.size()):
 			_spawn_wave(game)
+			if floor_number == 5:
+				var boss: Node2D = game.floor_manager.boss()
+				boss.set_spawn_delay(0.0)
+				game._spawn_projectile(game.player.position, Vector2.RIGHT, 12.0, false)
+				game._spawn_projectile(game.player.position, Vector2.RIGHT, 12.0, true)
+				game._spawn_projectile(game.player.position, Vector2.RIGHT, 12.0, false)
+				var shots: Array[Node] = game.projectiles.get_children()
+				shots[2].trap_arrow = true
+				var hp: float = game.player.hp
+				boss.take_damage(boss.max_hp * 0.46)
+				shots[0]._physics_process(0.01)
+				check(boss.boss_stage == 2 and shots[0].consumed and not shots[0].visible and game.player.hp == hp,
+					"boss phase transition hides and disarms the previous phase shots immediately")
+				check(not shots[1].consumed and not shots[2].consumed,
+					"boss phase transition leaves player shots and trap arrows active")
 			if floor_number == 10:
 				check(game.floor_manager.enemies[0].position == ArenaLayout.LORD_INTRO_POSITION, "boss enters combat at its dialogue position")
 			if checkpoints and floor_number == 2 and wave_idx == 0:
@@ -572,6 +616,11 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 			game._interact()
 			check(game.state == RunController.State.ENDING, "interacting with the crystal begins the ending")
 			if checkpoints:
+				var defeated_at: Vector2 = game.lord_preview.position
+				game = await _restart_game(game, locale)
+				check(game.state == RunController.State.ENDING and is_instance_valid(game.lord_preview)
+					and game.lord_preview.position == defeated_at,
+					"resuming before the crystal impact keeps the defeated lord at the saved position")
 				game._process(1.7)
 				game = await _restart_game(game, locale)
 				check(game.state == RunController.State.ENDING, "final transition is resumable without replaying combat")
@@ -639,6 +688,11 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 			var offer: Array[String] = game._stair_offer.duplicate()
 			game = await _restart_game(game, locale)
 			check(game.ui.boon_panel.visible and game._stair_offer == offer, "three candidates and waiting step restore exactly")
+			var old_checkpoint: Dictionary = game.saves.load_latest().data.duplicate(true)
+			old_checkpoint.stair_offer = Boons.legacy_offer(game.seed, 2, game.inventory.owned,
+				game.inventory.boon_history, PlayerStats.WEAPONS)
+			check(not RunSave.prepare_resume(old_checkpoint, game.floors).is_empty(),
+				"saved offers from the first 0.4.0-dev build keep their exact cards")
 			game.ui.boon_chosen.emit(offer[0])
 			game = await _restart_game(game, locale)
 			check(game.inventory.boon_history.get(2) == offer[0] and not game.ui.boon_panel.visible,

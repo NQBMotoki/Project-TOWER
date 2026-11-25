@@ -418,7 +418,8 @@ func _start_floor_transition() -> void:
 	if floor_number > 1:
 		_climb_origin = player.position
 		_climb_active = true
-		_stair_offer = Boons.offer(seed, floor_number, inventory.owned, inventory.boon_history, PlayerStats.WEAPONS)
+		_stair_offer = Boons.offer(seed, floor_number, inventory.owned, inventory.boon_history,
+			PlayerStats.WEAPONS, inventory.equipped.get("weapon", ""))
 	else:
 		_arrive_on_floor()
 	_enter_transition(State.TRANSITION)
@@ -779,7 +780,7 @@ func _on_boss_phase(_kind: String, phase: int) -> void:
 	sound.set_boss_stage(phase)
 	for projectile in projectiles.get_children():
 		if not projectile.friendly and not projectile.trap_arrow:
-			projectile.queue_free()
+			projectile.cancel()
 
 func _add_pickup(id: String, position: Vector2) -> void:
 	if id not in GameData.STACKABLE:
@@ -1128,6 +1129,7 @@ func resume_run() -> void:
 				_show_defeated_lord()
 			_enter_safe()
 		"ending":
+			_show_defeated_lord()
 			features.set_landmark_state(true, false)
 			_enter_transition(State.ENDING, data.transition)
 	_resume.clear()

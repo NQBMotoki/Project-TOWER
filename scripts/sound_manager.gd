@@ -9,6 +9,7 @@ const PRIORITY_BUS := &"TowerWarnings"
 const LAYERS := ["bed", "theme", "pulse", "color"]
 const LAYERED_SCORES := ["tower", "elite", "rift", "lord"]
 const BOSS_SCORES := ["elite", "lord"]
+const ELITE_ENTRANCE_BEAT := 60.0 / 108.0
 const DANGER := [
 	"trap_warn", "trap_arrow", "hurt", "enemy_telegraph", "enemy_chant", "enemy_zone_warning",
 	"slime_coil", "goblin_windup", "skeleton_chant", "archer_draw", "ghost_manifest",
@@ -41,6 +42,7 @@ var _boss_stage_due := -1.0
 var _layers: AudioStreamSynchronized
 var _transition: Tween
 var _transition_gain := -60.0
+var _elite_entrance_rest := 0.0
 var _combat := false
 var _quiet := false
 var _paused := false
@@ -139,6 +141,8 @@ func set_music(kind: String) -> void:
 	if kind == music_kind:
 		return
 	music_kind = kind
+	if kind != "elite" and _active_score != "elite":
+		_elite_entrance_rest = 0.0
 	_quiet = false
 	_boss_stage = 1
 	_target_boss_stage = 1
@@ -192,6 +196,8 @@ func _start_score(kind: String) -> void:
 	music_player.stop()
 	music_player.stream = null
 	_active_score = kind
+	if kind != "elite":
+		_elite_entrance_rest = 0.0
 	_layers = null
 	if kind.is_empty():
 		return
@@ -209,7 +215,7 @@ func _start_score(kind: String) -> void:
 		music_player.stream = _read_ogg("music", kind)
 	if music_player.stream == null:
 		return
-	music_player.volume_db = -70
+	music_player.volume_db = -80.0 if _elite_entrance_rest > 0.0 else -70.0
 	music_player.play()
 
 func _layer_db(index: int) -> float:
@@ -368,6 +374,10 @@ func _play_effect(kind: String, where: Vector2, preview: bool) -> void:
 	_voices.append(source)
 	source.finished.connect(source.queue_free)
 	source.tree_exiting.connect(_voices.erase.bind(source), CONNECT_ONE_SHOT)
+	if kind == "elite_entrance" and music_kind == "elite":
+		# Leave a beat for the armor while the four score layers stay in sync.
+		_elite_entrance_rest = ELITE_ENTRANCE_BEAT
+		music_player.volume_db = -80.0
 	source.play()
 	_duck = maxf(_duck, float(SCORE_DUCK.get(kind, .30 if danger else 0.0)))
 
@@ -392,7 +402,11 @@ func _process(delta: float) -> void:
 	var score_step := 1.0 if _transition and _transition.is_running() else step
 	if _quiet:
 		score_step = 1.0 - exp(-delta * 1.8)
-	music_player.volume_db = lerpf(music_player.volume_db, top, score_step)
+	if _elite_entrance_rest > 0.0:
+		_elite_entrance_rest = maxf(0.0, _elite_entrance_rest - delta)
+		music_player.volume_db = -80.0 if _elite_entrance_rest > 0.0 else top
+	else:
+		music_player.volume_db = lerpf(music_player.volume_db, top, score_step)
 	if _boss_stage_due >= 0.0:
 		_boss_stage_due -= delta
 		if _boss_stage_due <= 0.0:
