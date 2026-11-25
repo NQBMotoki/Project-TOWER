@@ -1,21 +1,30 @@
 # 完全体美术与音频交接
 
-0.3.0-dev · 2026-11-22
+2026-11-24 视听改版新增 15 张角色图集及 24 张场景、地图与书册纹理。新增资源的画格、握点、建筑遮挡、原画提示与离线重建步骤见[视听改版美术制作与交接](art-production.md)。
+
+0.4.0-dev 改版候选 · 2026-11-25
+
+角色、建筑、书册与塔剖面的原画、绘制方法和图集索引见[美术制作记录](art-production.md)。可编辑乐谱、无损分轨、拟音录音来源和混音事件见[声音制作记录](audio-production.md)。
 
 | 资源 | 挂点、规格与触发 |
 | --- | --- |
-| `assets/edition/actors.png` | 原始 1254 × 1254 透明 PNG 图集。通过 [EditionArt](../data/edition_art.gd) 读取裁切区。玩家 `HeroArt` 约 52 px，`WeaponArt` 按剑约 34 px、杖约 40 px 缩放并沿握柄枢轴转动。敌人使用各场景根节点的 `Sprite2D`，尺寸随敌人碰撞体半径。拾取、图鉴和 F10 对话前的领主也复用图集。 |
-| `assets/edition/props.png` | 1448 × 1086 透明 PNG。对应 `FloorFeatures` 的 `pot_texture`、`plate_texture`、`altar_texture`、`stairs_texture`、`exit_texture`、`pearl_texture`，以及道具图标。地标名义显示尺寸约 32–96 px。F1 清场可依序看到祭坛凝珠、吸收和楼梯通行。 |
+| `assets/upgrade/actors/` | 15 张透明动画图集，64 × 64 px 一格。按角色、方向、招式和阶段取帧。主角含空手、持剑、持杖三套八向图，塔前骑士使用独立的指剑、指杖姿势。武器使用逐帧握点。[动画与地标资源读取](../data/upgrade_art.gd) |
+| `assets/edition/actors.png` | 基线 1254 × 1254 透明图集，保留武器、拾取图标及图鉴等旧资源引用。[旧图集索引](../data/edition_art.gd) |
+| `assets/upgrade/props/` | 十层地面、灰石墙与碎墙、罐、灯、箭板和出箭口、北墙拱道的关闭／开放及前景遮挡、装备册、图鉴、塔剖面。灯具与实际火源共用位置，箭板按预警状态切图，楼梯切图由楼层清场事件驱动。 |
+| `assets/edition/props.png` | 1448 × 1086 透明 PNG。保留血珠、道具图标与基础地标的后备资源。新版祭坛沿用原画，拆为接受环境光的 90 × 85 石座与符文发光层。清场凝珠后亮起局部红光，吸收后淡出。 |
 | `assets/edition/environment.png` | 1536 × 1024 PNG，六格 512 px 石材。塔前苔石、低层蓝灰旗石、精锐与中层旧驻防石、高层深紫裂石、塔顶仪式石及掩体石墙。材质裁在六边形内，装饰和照明按楼层变化。 |
 | `assets/edition/grounds.png` | 1263 × 1246 透明 PNG。通过 `TowerGrounds` 的四个贴图槽读取。帐篷 144 × 124 px、火塘 56 × 54 px、主路两段各 166 × 306 px、塔门 210 × 193 px。火光动画绘制在火塘上，营地与入塔交互沿用对应 Marker2D。 |
-| `assets/edition/floor_scenery.png` | 1448 × 1086 透明 PNG，10 个楼层布景加石灯和碎墙。场景围绕碰撞掩体及房间边缘放置，按 `floor_01` 至 `floor_10` 裁切。 |
+| `assets/edition/floor_scenery.png` | 0.3.0 归档图集，1448 × 1086 透明 PNG，含十层布景、石灯和碎墙。旧 F5 地图台位于 (20, 400, 327, 303)。新版十层由建筑像素画接管，归档图集不进入候选包。 |
+| `assets/upgrade/props/fixture_*.png` 等 | 十层设施按掩体脚印或地面嵌纹锚点绘制。篝灯有点光，高画质选相机附近两盏计算掩体投影。两档保留接触阴影、祭坛局部发光与独立机关提示。 [像素规格及制图工具](art-production.md#十层原生像素建筑塔顶与点光) |
+| 腐化、魔化和追加装备 | 28 × 28 卡框按九宫格绘制，168 × 24 图标含七格属性符号，192 × 48 演出图集含紫能量与粒子序列，144 × 48 装备图集含 U09–U20 的十二格 24 × 24 图标。腐化首次触发由上楼阶段驱动，魔化在成功扣珠后播放，装备格按稳定 ID 取图。 [原创像素绘制工具](../tools/art/paint_progression.py) |
 | `assets/edition/title.png` | 1672 × 941 PNG 用于独立标题场景等比铺满。标题与按钮覆盖左侧背景留白。 |
 | `assets/edition/ui_icons.png` | 1774 × 887 透明 PNG。由 `EditionArt` 裁切继续、新局、设置、图鉴、背包、血珠、合成、生命 8 个图标，以 18–24 px 显示。 |
 | `assets/edition/portraits.png` | 1536 × 1024 PNG，六位人物的设定表预览。每格 512 px。 |
-| [actor_motion.gd](../scripts/actor_motion.gd) | 根据实际速度、方向和攻击状态驱动待机、步态、前摇、挥击、收势和受击变形。消散特效在死亡事件上触发。替换贴图以原始脚点和持握轴为准。 |
-| 配乐 `grounds`、`tower`、`lord`、`ending` | [retro_score.gd](../scripts/retro_score.gd) 将 Codex 生成的音序和波形合成为 22.05 kHz、16-bit、单声道循环 WAV。依次在塔前、塔内、塔顶对话与战斗及终场触发。可用 `Sound.music_assets` 覆盖同一 ID。 |
-| 短音效 | [sound_manager.gd](../scripts/sound_manager.gd) 合成 22.05 kHz、16-bit、单声道短 WAV。可用 `Sound.effect_assets` 覆盖。挥击 `sword`、命中 `hit`、施法 `magic`、敌方预警 `enemy_telegraph` / `enemy_chant` / `enemy_zone_warning`、箭板 `trap_warn` / `trap_arrow`、破罐 `pot_break`、拾取 `pickup`、凝珠 `pearl_form`、吸收 `pearl_pickup`、魔化 `corrupt`。 |
+| [actor_motion.gd](../scripts/actor_motion.gd) | 根据位移、方向及玩法状态选择待机、移动、前摇、攻击、收势和受击帧。死亡事件触发消散。替换贴图时核对脚点和逐帧握点。 |
+| 配乐与祭坛 | F1–F4、F5、F6–F9、F10 四个塔内区段各有四路同步 Vorbis 分轨，战斗和探索按阶段调整混音。塔前、终幕、清场和祭坛有独立乐句。共 8 份 [MIDI](../audio_project/scores)、26 路 [24-bit 无损分轨](../audio_project/stems)。 |
+| 动作音效 | 87 个事件、262 个单声道 PCM WAV，44.1 kHz、16-bit。脚步、挥剑、按材质命中、预警、机关、书页等使用独立变体。可按事件 ID 覆盖 Sound.effect_assets。[逐变体录音明细](../audio_project/foley-sources.tsv) |
+| 环境声 | 5 组区域底声，另有灯火和楼梯气流两种局部循环，跟随实际灯具与通路坐标。音乐、拟音、环境及危险提示的触发和验收见[音频制作与来源](audio-production.md)。 |
 
-图集于 2026-11-22 在本任务使用 OpenAI ImageGen 从文本生成，来源记录在此任务的生成结果。角色动作、音序和音效为本项目的 Codex 生成代码。使用生成内容依据账户适用的 OpenAI 条款。字体随包附带 [SIL Open Font License 1.1](../assets/fonts/OFL.txt)。[OpenAI Terms of Use](https://openai.com/policies/terms-of-use/#content)
+图集于 2026-11-22 在本任务使用 OpenAI ImageGen 从文本生成，来源记录在此任务的生成结果。角色动作由本项目的游戏代码驱动。乐谱与混音由本项目制作，第三方管弦、拟音、风声与火声的原作者及 CC0 许可见[音频制作记录](audio-production.md)。使用生成内容依据账户适用的 OpenAI 条款。字体随包附带 [SIL Open Font License 1.1](../assets/fonts/OFL.txt)。[OpenAI Terms of Use](https://openai.com/policies/terms-of-use/#content)
 
 回归录制优先检查低画质、镜头边缘、掩体后和连续攻击。在同一帧观察预警终点、实际弹道与命中反馈；在实际包中分别调低 Music 与 Effects 验证混音。

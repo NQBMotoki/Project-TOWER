@@ -6,10 +6,12 @@ const MAGIC := 0x544F5752
 const VERSION := 2
 const MAX_BYTES := 1024 * 1024
 const HEADER_BYTES := 40
+const Cinematics = preload("res://scripts/run_cinematics.gd")
 const GameData = preload("res://data/game_data.gd")
 const PlayerStats = preload("res://data/player_stats.gd")
 const FloorFeatures = preload("res://scripts/floor_features.gd")
-const PHASES := ["opening", "grounds", "transition", "dialogue", "combat", "safe", "ending"]
+const Boons = preload("res://data/run_boons.gd")
+const PHASES := ["opening", "grounds", "transition", "dialogue", "combat", "safe", "ending", "aftermath"]
 
 var path: String
 
@@ -100,6 +102,11 @@ static func prepare_resume(data: Variant, floors: Array[FloorDefinition]) -> Dic
 	var phase: Variant = data.get("phase")
 	if phase not in PHASES:
 		return {}
+	if phase == "combat" and data.floor == 5 and data.get("next_wave") == 1 and floors.size() > 4 and floors[4].waves.size() == 1:
+		# V2 saves from the former second elite wave resume the new single encounter.
+		data = data.duplicate(true)
+		data.next_wave = 0
+		data.wave_drops = []
 	var floor_index: int = data.floor - 1
 	var on_grounds: bool = phase in ["opening", "grounds"]
 	if (on_grounds and data.floor != 0) or (not on_grounds and (floor_index < 0 or floor_index >= floors.size())):
@@ -109,7 +116,14 @@ static func prepare_resume(data: Variant, floors: Array[FloorDefinition]) -> Dic
 	for key in ["ghost_seen", "pearl_available", "stair_notice_seen", "lord_introduced"]:
 		if not data.get(key) is bool:
 			return {}
-	if not _nonnegative(data.get("transition")) or data.transition > 2.1:
+	if data.has("ghost_time") and (phase != "grounds" or data.ghost_seen
+			or not _nonnegative(data.ghost_time) or data.ghost_time >= Cinematics.KNIGHT_TIME):
+		return {}
+	var line_count := Cinematics.LORD_DEFEATED.size() if phase == "aftermath" else Cinematics.LORD_DIALOGUE.size()
+	if data.has("dialogue_line") and (phase not in ["dialogue", "aftermath"] or not data.dialogue_line is int
+			or data.dialogue_line < 0 or data.dialogue_line >= line_count):
+		return {}
+	if not _nonnegative(data.get("transition")) or data.transition > Cinematics.duration(phase, data.floor, floors.size()):
 		return {}
 	if not data.get("layouts") is Array or data.layouts.size() != floors.size():
 		return {}
@@ -125,6 +139,20 @@ static func prepare_resume(data: Variant, floors: Array[FloorDefinition]) -> Dic
 	if not on_grounds and not _owns_weapon(inventory.owned):
 		return {}
 	var layout := ArenaLayout.new() if on_grounds else layouts[floor_index]
+	for destination in inventory.boon_history:
+		if destination > data.floor:
+			return {}
+	if data.has("stair_offer") and (phase != "transition" or data.floor < 2
+			or not _valid_offer(data, layouts[floor_index - 1], inventory)):
+		return {}
+	if data.has("defeated_lord"):
+		if data.floor != floors.size() or phase not in ["aftermath", "safe", "ending"] or not data.defeated_lord is Vector2:
+			return {}
+		if not layout.is_walkable(data.defeated_lord, 0.0):
+			return {}
+	if data.has("crystal_origin") and (phase != "ending" or not data.crystal_origin is Vector2
+			or not layout.is_walkable(data.crystal_origin, ArenaLayout.PLAYER_RADIUS)):
+		return {}
 	if not _valid_player(data.get("player"), layout, inventory) or not _valid_ground(data.get("ground"), layout, inventory.owned):
 		return {}
 	if not FloorFeatures.validate_snapshot(data.get("features"), layout, data.floor, data.seed):
@@ -133,6 +161,18 @@ static func prepare_resume(data: Variant, floors: Array[FloorDefinition]) -> Dic
 	if not _valid_phase(data, floor, data.floor == floors.size(), inventory):
 		return {}
 	return {"data": data, "inventory": inventory, "layouts": layouts}
+
+static func _valid_offer(data: Dictionary, departure: ArenaLayout, inventory: RunInventory) -> bool:
+	if not data.stair_offer is Array or data.stair_offer.size() != 3:
+		return false
+	if not data.get("climb_origin") is Vector2 or not departure.is_walkable(data.climb_origin, 0.0):
+		return false
+	var history := inventory.boon_history.duplicate()
+	var chosen: String = history.get(data.floor, "")
+	history.erase(data.floor)
+	if not chosen.is_empty() and chosen not in data.stair_offer:
+		return false
+	return data.stair_offer == Boons.offer(data.seed, data.floor, inventory.owned, history, PlayerStats.WEAPONS)
 
 static func _owns_weapon(owned: Array[String]) -> bool:
 	for id in owned:
@@ -148,7 +188,7 @@ static func _valid_player(hero: Variant, layout: ArenaLayout, inventory: RunInve
 		return false
 	if not layout.is_walkable(hero.position, ArenaLayout.PLAYER_RADIUS) or not hero.aim.is_finite() or not hero.swing_direction.is_finite():
 		return false
-	var hp_limit: float = PlayerStats.calculate(inventory.equipped, inventory.corruption).max_hp
+	var hp_limit: float = PlayerStats.calculate(inventory.equipped, inventory.corruption, inventory.boon_levels()).max_hp
 	if not _nonnegative(hero.get("hp")) or hero.hp <= 0.0 or hero.hp > hp_limit:
 		return false
 	for key in ["invulnerability", "sword_flash"]:
@@ -156,6 +196,16 @@ static func _valid_player(hero: Variant, layout: ArenaLayout, inventory: RunInve
 			return false
 	if not hero.get("weapon_timers") is Dictionary:
 		return false
+	var triggers: Variant = hero.get("boon_triggers", {})
+	if not triggers is Dictionary:
+		return false
+	for key in triggers:
+		if key in ["ward_used", "reprisal", "recovery_used"]:
+			if not triggers[key] is bool:
+				return false
+		elif key not in ["kill_speed", "cast_speed", "step_speed", "step_cooldown", "reprisal_cooldown",
+				"echo_cooldown", "shards_time", "edges", "echo_hits"] or not _nonnegative(triggers[key]) or triggers[key] > 8.0:
+			return false
 	for id in hero.weapon_timers:
 		var timer: Variant = hero.weapon_timers[id]
 		if not id in PlayerStats.WEAPONS or id not in inventory.owned or not _nonnegative(timer):
@@ -182,9 +232,9 @@ static func _valid_ground(ground: Variant, layout: ArenaLayout, owned: Array[Str
 static func _valid_phase(data: Dictionary, floor: FloorDefinition, top_floor: bool, inventory: RunInventory) -> bool:
 	if data.phase in ["opening", "transition", "ending"] and data.transition <= 0.0:
 		return false
-	if data.phase in ["dialogue", "ending"] and not top_floor:
+	if data.phase in ["dialogue", "ending", "aftermath"] and not top_floor:
 		return false
-	if data.lord_introduced != (top_floor and data.phase in ["combat", "safe", "ending"]):
+	if data.lord_introduced != (top_floor and data.phase in ["combat", "safe", "ending", "aftermath"]):
 		return false
 	if (data.pearl_available or data.stair_notice_seen) and (top_floor or data.phase != "safe"):
 		return false

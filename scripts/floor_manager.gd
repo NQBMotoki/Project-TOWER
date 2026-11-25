@@ -7,7 +7,8 @@ signal counts_changed(remaining: int, wave: int, total_waves: int)
 signal before_wave(index: int)
 signal between_waves(next_index: int)
 signal projectile_requested(origin: Vector2, direction: Vector2, damage: float, shot_speed: float, travel_range: float)
-signal sound_requested(kind: String)
+signal sound_requested(kind: String, position: Vector2)
+signal boss_phase_changed(kind: String, phase: int)
 
 const CompleteEnemies = preload("res://data/complete_enemies.gd")
 const SCENES := {
@@ -22,6 +23,8 @@ const SCENES := {
 const WAVE_TIMING := CompleteEnemies.WAVE_TIMING
 const SPAWN_DELAY := WAVE_TIMING.spawn_warning
 const SPAWN_STAGGER := WAVE_TIMING.spawn_stagger
+const CONCURRENT_ATTACKS := 2
+const ELITE_ENTRY := Vector2(640, 220)
 var floor: FloorDefinition
 var wave_index := -1
 var enemies: Array = []
@@ -66,19 +69,51 @@ func _spawn_wave() -> void:
 		var behavior: String = CompleteEnemies.ENEMIES[kind].behavior
 		var enemy = SCENES.get(kind, SCENES[behavior]).instantiate()
 		enemy.setup(kind, player)
-		enemy.position = ArenaLayout.LORD_INTRO_POSITION if kind == "lord" else _spawn_position(rotation)
+		enemy.position = _entry_point(kind, rotation)
 		enemy.drop_id = wave_drops[order] if order < wave_drops.size() else ""
 		# Staggered arrival keeps four enemies from acting on the same frame.
 		enemy.set_spawn_delay(SPAWN_DELAY + SPAWN_STAGGER * float(order))
 		enemy.died.connect(_on_enemy_died)
 		enemy.projectile_requested.connect(_on_enemy_projectile.bind(enemy))
-		enemy.sound_requested.connect(sound_requested.emit)
+		enemy.sound_requested.connect(_on_enemy_sound.bind(enemy))
 		enemy.hazard_sound = sound_requested.emit
+		enemy.attack_permitted = _attack_available
+		enemy.boss_phase_changed.connect(_on_boss_phase_changed.bind(kind))
 		actors.add_child(enemy)
 		enemies.append(enemy)
 		enemy_encountered.emit(kind)
 		order += 1
 	counts_changed.emit(enemies.size(), wave_index + 1, waves.size())
+
+func boss() -> Node2D:
+	for enemy in enemies:
+		if is_instance_valid(enemy) and enemy.alive and enemy.boss_stage_total > 0:
+			return enemy
+	return null
+
+func _entry_point(kind: String, rotation: int) -> Vector2:
+	if kind == "lord":
+		return ArenaLayout.LORD_INTRO_POSITION
+	if kind == "elite" and player.layout.is_walkable(ELITE_ENTRY, ArenaLayout.ELITE_RADIUS):
+		return ELITE_ENTRY
+	return _spawn_position(rotation)
+
+func _attack_available() -> bool:
+	var slots_used := 0
+	for enemy in enemies:
+		if not is_instance_valid(enemy) or not enemy.alive or not enemy.active:
+			continue
+		if enemy.holding_attack_slot():
+			slots_used += 1
+			if slots_used >= CONCURRENT_ATTACKS:
+				return false
+	return true
+
+func _on_boss_phase_changed(phase: int, kind: String) -> void:
+	boss_phase_changed.emit(kind, phase)
+
+func _on_enemy_sound(kind: String, enemy: Node2D) -> void:
+	sound_requested.emit(kind, enemy.global_position)
 
 func _on_enemy_projectile(origin: Vector2, direction: Vector2, damage: float, enemy: Node) -> void:
 	projectile_requested.emit(origin, direction, damage, enemy.shot_speed, enemy.config.reach)

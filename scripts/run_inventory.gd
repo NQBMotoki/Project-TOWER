@@ -3,6 +3,7 @@ extends RefCounted
 
 const GameData = preload("res://data/game_data.gd")
 const PlayerStats = preload("res://data/player_stats.gd")
+const Boons = preload("res://data/run_boons.gd")
 const WEAPON_SLOT := "weapon"
 const POTION_RECIPE := GameData.POTION_RECIPE
 
@@ -13,6 +14,7 @@ var read: Array[String] = []
 var potion_on_quick_slot := false
 var blood_beads := 0
 var corruption: Dictionary = {}
+var boon_history: Dictionary = {}
 
 func add(id: String) -> bool:
 	if id in GameData.STACKABLE:
@@ -70,6 +72,17 @@ func enhance(dimension: String) -> bool:
 	corruption[dimension] = corruption.get(dimension, 0) + 1
 	return true
 
+func boon_levels() -> Dictionary:
+	return Boons.levels(boon_history)
+
+func choose_boon(floor: int, id: String) -> bool:
+	if boon_history.has(floor) or id not in Boons.CARDS or not Boons.valid_history({floor: id}):
+		return false
+	if boon_levels().get(id, 0) >= Boons.CARDS[id].limit:
+		return false
+	boon_history[floor] = id
+	return true
+
 func can_craft() -> bool:
 	for id in POTION_RECIPE:
 		if count(id) < POTION_RECIPE[id]:
@@ -88,7 +101,7 @@ func drink(player: Node2D) -> bool:
 	if count("POTION") == 0 or not player.alive or player.hp >= player.max_hp:
 		return false
 	_consume("POTION", 1)
-	player.heal(GameData.POTION_HEAL)
+	player.drink_potion()
 	return true
 
 func _consume(id: String, amount: int) -> void:
@@ -106,6 +119,7 @@ func snapshot() -> Dictionary:
 		"stacks": stacks.duplicate(), "owned": owned.duplicate(), "equipped": equipped.duplicate(),
 		"read": read.duplicate(), "quick_potion": potion_on_quick_slot,
 		"blood_beads": blood_beads, "corruption": corruption.duplicate(),
+		"boon_history": boon_history.duplicate(),
 	}
 
 func restore(data: Variant) -> bool:
@@ -114,6 +128,8 @@ func restore(data: Variant) -> bool:
 	if not data.get("stacks") is Dictionary or not data.get("equipped") is Dictionary or not data.get("quick_potion") is bool:
 		return false
 	if not data.get("blood_beads") is int or data.blood_beads < 0 or not data.get("corruption") is Dictionary:
+		return false
+	if not Boons.valid_history(data.get("boon_history", {})):
 		return false
 	var used_beads: int = data.blood_beads
 	for dimension in data.corruption:
@@ -147,4 +163,5 @@ func restore(data: Variant) -> bool:
 	potion_on_quick_slot = data.quick_potion
 	blood_beads = data.blood_beads
 	corruption = data.corruption.duplicate()
+	boon_history = data.get("boon_history", {}).duplicate()
 	return true

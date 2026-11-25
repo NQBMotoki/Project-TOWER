@@ -1,6 +1,12 @@
 extends Node2D
 
-const DURATION := 3.8
+const UpgradeArt = preload("res://data/upgrade_art.gd")
+const ActorMotion = preload("res://scripts/actor_motion.gd")
+const Cinematics = preload("res://scripts/run_cinematics.gd")
+const DURATION := Cinematics.KNIGHT_TIME
+const FIRST_POINT := 1.05
+const SECOND_POINT := 2.55
+const FADE_START := 4.10
 var targets: Array[Vector2] = []
 var elapsed := 0.0
 var gather := 0.0
@@ -13,9 +19,29 @@ func _ready() -> void:
 func show_at(time: float) -> void:
 	elapsed = time
 	gather = smoothstep(0.0, 0.95, elapsed)
-	fade = 1.0 - smoothstep(2.9, DURATION, elapsed)
+	fade = 1.0 - smoothstep(FADE_START, DURATION, elapsed)
+	var phase := "appear"
+	var progress := elapsed / FIRST_POINT
+	if elapsed >= FADE_START:
+		phase = "fade"
+		progress = inverse_lerp(FADE_START, DURATION, elapsed)
+	elif elapsed >= SECOND_POINT:
+		phase = "point_staff"
+		progress = minf(1.0, (elapsed - SECOND_POINT) / 0.62)
+	elif elapsed >= FIRST_POINT:
+		phase = "point_sword"
+		progress = minf(1.0, (elapsed - FIRST_POINT) / 0.62)
+	var facing := ActorMotion.direction_name(global_position.direction_to(look_target()))
+	var index := ActorMotion.frame_index(progress, UpgradeArt.frame_count("knight", facing, phase))
+	sprite.texture = UpgradeArt.frame("knight", facing, phase, index)
+	sprite.position = Vector2(0, -24)
 	sprite.modulate.a = gather * fade
 	queue_redraw()
+
+func look_target() -> Vector2:
+	if elapsed < FIRST_POINT or elapsed >= FADE_START or targets.is_empty():
+		return global_position + Vector2.UP * 16.0
+	return targets[mini(1 if elapsed >= SECOND_POINT else 0, targets.size() - 1)]
 
 func _draw() -> void:
 	for i in range(26):
@@ -25,20 +51,11 @@ func _draw() -> void:
 			Color(0.36, 0.77, 1.0, fade * (0.25 + 0.32 * (1.0 - gather * fade))))
 	var opacity := gather * fade
 	var hand := Vector2(14, -13)
-	for i in range(targets.size()):
-		var start := 1.0 + float(i) * 0.88
-		var gesture := smoothstep(start, start + 0.27, elapsed)
-		if gesture <= 0.0:
-			continue
-		var direction := (targets[i] - global_position).normalized()
+	if elapsed >= FIRST_POINT and elapsed < FADE_START and not targets.is_empty():
+		var start := FIRST_POINT if elapsed < SECOND_POINT else SECOND_POINT
+		var gesture := smoothstep(start, start + 0.58, elapsed)
+		var direction := global_position.direction_to(look_target())
 		hand = Vector2(0, -12) + direction * (14.0 + gesture * 28.0)
-		var end := targets[i] - global_position
-		var tip := end - direction * 23.0
-		draw_dashed_line(direction * 50.0, tip, Color(0.50, 0.83, 1.0, opacity * gesture * 0.5), 2.0, 7.0)
-		draw_polyline(PackedVector2Array([
-			tip - direction * 9.0 + direction.orthogonal() * 5.0, tip,
-			tip - direction * 9.0 - direction.orthogonal() * 5.0,
-		]), Color(0.64, 0.89, 1.0, opacity * gesture), 2.0, true)
 	if sprite.texture != null:
 		return
 	draw_circle(Vector2(0, -10), 32.0, Color(0.22, 0.66, 1.0, opacity * 0.17))

@@ -140,11 +140,13 @@ ENEMY_FIELDS = {
                      "melee_windup melee_damage melee_cooldown melee_arc") | fields("burst_shots", whole),
     "ghost": fields("strike_trigger strike_reach telegraph recover"),
     "lord": fields("strike_trigger strike_reach strike_angle telegraph cast_telegraph reach "
-                   "spread shot_speed zone_radius zone_delay zone_damage zone_reach") |
-            fields("shots", whole) | fields("phase_threshold phase_delay_factor", fraction),
+                   "spread shot_speed zone_radius zone_delay zone_damage zone_reach phase_transition long_recovery") |
+            fields("shots", whole) | fields("phase_threshold phase_delay_factor final_phase_threshold", fraction),
 }
 ENEMY_EXTRA = {
-    "elite": fields("spread"),
+    "elite": fields("spread strike_trigger strike_reach strike_angle sweep_telegraph sweep_followup "
+                    "rush_telegraph rush_speed rush_time rush_recover phase_transition") |
+             fields("phase_threshold", fraction),
     "corrupted_slime": fields("trail_radius trail_time trail_damage"),
     "corrupted_goblin": fields("rush_trigger rush_telegraph rush_speed rush_time rush_recover"),
     "corrupted_skeleton": fields("zone_radius zone_delay zone_damage zone_reach"),
@@ -156,10 +158,12 @@ WEAPON_FIELDS = {
     "damage_type": option("physical", "magic"),
     **fields("interval minimum"),
 }
+WEAPON_GEOMETRY = fields("reach angle projectile_speed")
 ITEM_FIELDS = {
     "slot": option("weapon", "gloves", "accessory", "armor", "shoes"),
     "type": option("sword_damage", "magic_damage", "sword_cooldown", "magic_cooldown",
-                   "critical", "lifesteal", "health", "speed"),
+                   "critical", "lifesteal", "health", "speed", "magic_damage_scale",
+                   "aftercast_speed", "first_guard", "low_health_attack", "focus_bonus"),
     "value": positive,
 }
 FIXED_GROUPS = {
@@ -183,7 +187,7 @@ FIXED_GROUPS = {
     "LOOT": {"-": {"DROP_CUTOFFS": json_array, "POTION_HEAL": positive}},
     "RECIPE": {"-": fields("MUSHROOM WATER", whole)},
 }
-DYNAMIC_GROUPS = {"WEAPONS": WEAPON_FIELDS, "ITEMS": ITEM_FIELDS}
+DYNAMIC_GROUPS = {"WEAPONS": WEAPON_FIELDS | WEAPON_GEOMETRY, "ITEMS": ITEM_FIELDS}
 
 
 def workbook_rows(archive: ZipFile, names: tuple[str, ...]) -> dict:
@@ -297,7 +301,7 @@ def parse_settings(rows: list) -> tuple[dict, dict]:
     for group, schema in DYNAMIC_GROUPS.items():
         require(bool(settings.get(group)), "参数", f"缺少分组 {group}")
         for entity in settings[group]:
-            require_fields(settings, group, entity, schema, source)
+            require_fields(settings, group, entity, WEAPON_FIELDS if group == "WEAPONS" else schema, source)
     return settings, source
 
 
@@ -334,6 +338,8 @@ def validate_settings(settings: dict, source: dict, texts: dict) -> set[str]:
         if kind == "lord":
             require(config["phase_delay_factor"] > 0.0, source["ENEMIES", kind, "phase_delay_factor"],
                     "阶段前摇倍率必须大于 0")
+            require(0.0 < config["final_phase_threshold"] < config["phase_threshold"] < 1.0,
+                    context, "领主两次阶段阈值应按生命百分比依次递减")
         if "band_min" in config:
             require(config["band_min"] < config["band_max"] <= config["reach"],
                     source["ENEMIES", kind, "band_max"], "射程需覆盖交战距离带")
@@ -422,6 +428,7 @@ def parse_floors(rows: list, item_ids: set[str], texts: dict) -> dict:
         kinds = set().union(*waves)
         require(kinds <= allowed, context, "本层包含计划外敌人")
         require(required <= kinds, context, "本层缺少计划中的敌人")
+        require(index != 5 or waves == [["elite"]], context, "第五层只有一次精锐守关战")
         require(index != 10 or waves == [["lord"]], context, "塔顶只有一名魔化领主")
         pickups = parse_pickups(pickup_cell, item_ids, texts, context)
         floors[index] = (obstacles, center_open, tip, note, waves, pickups)
@@ -484,7 +491,7 @@ def render_settings(settings: dict) -> str:
     weapons = settings["WEAPONS"]
     lines += ["", "const WEAPONS := {"]
     for entity in sorted(weapons):
-        data = {field: weapons[entity][field] for field in WEAPON_FIELDS}
+        data = {field: weapons[entity][field] for field in WEAPON_FIELDS | WEAPON_GEOMETRY if field in weapons[entity]}
         lines.append(f'\t"{entity}": {gd_value(data)},')
     lines += ["}", "", "const ITEMS := ["]
     for entity, item in sorted(settings["ITEMS"].items()):

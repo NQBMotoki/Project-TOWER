@@ -54,10 +54,10 @@ func _behavior(delta: float) -> void:
 		return
 	if distance <= melee_range and sees_player():
 		# The bow's recovery leaves the player a chance to close in safely.
-		if spawn_delay <= 0.0 and melee_timer <= 0.0 and attack_timer <= 0.0:
+		if melee_timer <= 0.0 and attack_timer <= 0.0 and can_begin_attack():
 			melee_windup = melee_windup_time
 			melee_dir = aim_at_player()
-			sound_requested.emit("enemy_chant")
+			sound_requested.emit("archer_melee_warn")
 		return
 	if not sees_player(ArenaLayout.PROJECTILE_RADIUS):
 		move_to_sight((band_min + band_max) * 0.5, speed * delta)
@@ -70,20 +70,21 @@ func _behavior(delta: float) -> void:
 			move_to_sight((band_min + band_max) * 0.5, speed * delta)
 	elif distance > band_max:
 		move_towards(player.global_position, speed * delta)
-	if spawn_delay <= 0.0 and attack_timer <= 0.0 and distance >= band_min and distance < reach:
+	if attack_timer <= 0.0 and can_begin_attack() and distance >= band_min and distance < reach:
 		shots_left = config.burst_shots
 		_begin_draw(draw_time)
 
 func _begin_draw(duration: float) -> void:
+	_attack_art = "volley" if kind == "corrupted_archer" else ""
 	current_draw_duration = duration
 	draw_timer = duration
 	aim_dir = aim_at_player()
-	sound_requested.emit("enemy_chant")
+	sound_requested.emit("archer_draw")
 
 func _release() -> void:
 	show_attack_release()
 	projectile_requested.emit(global_position, aim_dir, damage)
-	sound_requested.emit("enemy_arrow")
+	sound_requested.emit("archer_release")
 	shots_left -= 1
 	if shots_left > 0:
 		_begin_draw(config.burst_draw)
@@ -91,19 +92,26 @@ func _release() -> void:
 		attack_timer = cooldown
 
 func _melee_strike() -> void:
+	_attack_art = "melee"
 	show_attack_release()
 	melee_timer = melee_cooldown
+	attack_timer = maxf(attack_timer, 0.40)
 	if target_in_sector(melee_dir, melee_reach, melee_half_angle):
-		player.take_damage(melee_damage)
+		player.take_damage(melee_damage, "enemy")
+	sound_requested.emit("archer_melee")
+
+func holding_attack_slot() -> bool:
+	return draw_timer > 0.0 or melee_windup > 0.0
 
 func _prepare_action_pose() -> void:
 	if melee_windup > 0.0:
+		_attack_art = "melee"
 		set_action_pose(ActorMotion.Phase.WINDUP, melee_windup, melee_windup_time)
 	elif draw_timer > 0.0:
 		set_action_pose(ActorMotion.Phase.WINDUP, draw_timer, current_draw_duration)
 
-func _draw() -> void:
-	super._draw()
+func _draw_warning() -> void:
+	super._draw_warning()
 	if melee_windup > 0.0:
 		draw_sector(melee_dir, melee_reach, melee_half_angle,
 			1.0 - melee_windup / melee_windup_time, Color("ff9a71"))
@@ -114,8 +122,8 @@ func _draw() -> void:
 	var alpha := lerpf(0.47, 0.94, progress)
 	var color := Color(1.0, 0.76, 0.40, alpha)
 	var extent := clear_reach(aim_dir, reach, ArenaLayout.PROJECTILE_RADIUS)
-	draw_dashed_line(Vector2.ZERO, aim_dir * extent, color, 2.5, 12.0)
-	draw_line(aim_dir * minf(20.0, extent), aim_dir * minf(34.0, extent), Color(0.98, 0.93, 0.82, alpha), 3.0)
-	draw_arc(Vector2.ZERO, 22.0 + 6.0 * progress, 0.0, TAU, 24, Color(color, alpha * 0.75), 2.0)
+	_warning.draw_dashed_line(Vector2.ZERO, aim_dir * extent, color, 2.3, 12.0)
+	_warning.draw_line(aim_dir * minf(20.0, extent), aim_dir * minf(34.0, extent), Color(0.98, 0.93, 0.82, alpha), 3.0)
+	_warning.draw_arc(Vector2.ZERO, 22.0 + 6.0 * progress, 0.0, TAU, 24, Color(color, alpha * 0.75), 2.0)
 	for i in range(shots_left):
-		draw_rect(Rect2((i - (shots_left - 1) * 0.5) * 7.0 - 2.0, 23.0, 4.0, 4.0), color)
+		_warning.draw_rect(Rect2((i - (shots_left - 1) * 0.5) * 7.0 - 2.0, 23.0, 4.0, 4.0), color)
