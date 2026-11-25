@@ -466,6 +466,8 @@ func _enter_transition(phase: State, remaining := -1.0) -> void:
 			sound.set_music("grounds")
 			ui.show_special_transition("TRANSITION_GROUNDS_TITLE", "TRANSITION_GROUNDS_TIP")
 		State.ENDING:
+			features.disarm_traps()
+			_clear_projectiles()
 			ui.show_ending_story()
 			if transition_duration - transition_remaining >= Cinematics.CREDITS_TIME:
 				sound.set_music("ending")

@@ -613,8 +613,17 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 			game.player.position = ArenaLayout.EXIT_POSITION
 			game._update_world_interactions()
 			check(game.state == RunController.State.SAFE, "approaching the crystal does not trigger it")
+			var live_arrow := ProjectileScene.instantiate()
+			game.features.add_child(live_arrow)
+			live_arrow.trap_arrow = true
+			live_arrow.setup(game.player.position, Vector2.DOWN, 40.0, false, game.player)
+			game.features.arrows.append(live_arrow)
+			var before_touch: float = game.player.hp
 			game._interact()
 			check(game.state == RunController.State.ENDING, "interacting with the crystal begins the ending")
+			live_arrow._physics_process(0.05)
+			check(live_arrow.consumed and game.features.arrows.is_empty() and game.player.hp == before_touch,
+				"touching the crystal cancels in-flight trap arrows before the locked ending")
 			if checkpoints:
 				var defeated_at: Vector2 = game.lord_preview.position
 				game = await _restart_game(game, locale)

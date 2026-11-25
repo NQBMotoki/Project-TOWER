@@ -240,6 +240,16 @@ func _fire(index: int, origin: Vector2, distance: float) -> void:
 	arrow.setup(origin, plates[index].direction, WorldData.ARROW_DAMAGE, false, player, WorldData.ARROW_SPEED, distance)
 	arrows.append(arrow)
 
+func disarm_traps() -> void:
+	for plate in plates:
+		plate.windup = 0.0
+	for arrow in arrows:
+		if is_instance_valid(arrow):
+			arrow.cancel()
+	arrows.clear()
+	_warnings.queue_redraw()
+	queue_redraw()
+
 func snapshot() -> Dictionary:
 	var broken: Array[int] = []
 	for index in pots.size():
