@@ -7,6 +7,7 @@ const STONE_RECT := Rect2(-45, -49, 90, 85)
 var stone_texture: Texture2D
 var bead_texture: Texture2D
 var _bead: Sprite2D
+var _rim: Sprite2D
 var _runes: Sprite2D
 var _light: PointLight2D
 var _transition: Tween
@@ -24,13 +25,24 @@ func _ready() -> void:
 		add_child(_runes)
 	_bead = Sprite2D.new()
 	_bead.texture = bead_texture
-	_bead.position = Vector2(0, -56)
+	_bead.position = Vector2(0, -32)
 	_bead.material = Lighting.unshaded()
 	if bead_texture != null:
-		_bead.scale = Vector2(26, 26) / bead_texture.get_size()
+		_bead.scale = Vector2(22, 22) / bead_texture.get_size()
 	_bead.hide()
 	add_child(_bead)
-	_light = Lighting.point_light(Vector2(0, -52), Color("da5a75"), 138.0, 0.0)
+	# The bowl lip is part of the stone art, so redrawing that exact band on top of the
+	# bead hides its lower edge and makes the bead read as sitting inside the bowl.
+	if stone_texture != null:
+		_rim = Sprite2D.new()
+		_rim.texture = stone_texture
+		_rim.centered = false
+		_rim.region_enabled = true
+		_rim.region_rect = Rect2(0, 22, 90, 9)
+		_rim.position = Vector2(-45, -27)
+		_rim.z_index = 1
+		add_child(_rim)
+	_light = Lighting.point_light(Vector2(0, -32), Color("da5a75"), 124.0, 0.0)
 	add_child(_light)
 
 func set_bead(active: bool) -> void:
