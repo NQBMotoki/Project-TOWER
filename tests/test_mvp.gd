@@ -468,6 +468,9 @@ func _finish_transition(game: Node) -> void:
 		game.ui.boon_chosen.emit(choice)
 		check(game.inventory.boon_history.get(game.floor_number) == choice, "a destination grants exactly one corruption")
 		game._process(game.TRANSITION_TIME)
+	if game.transition_waiting:
+		check(game.state == RunController.State.TRANSITION, "a floor holds until the player confirms")
+		game._finish_transition()
 	await process_frame
 
 func _spawn_wave(game: Node) -> void:

@@ -4,6 +4,8 @@ extends Resource
 @export_group("Entry")
 @export var tip_key := ""
 @export var entry_note_key := ""
+## When true the floor waits for confirm before the fight starts.
+@export var wait_for_confirmation := true
 
 @export_group("Combat")
 ## Lists enemy type IDs for each wave, in spawn order.

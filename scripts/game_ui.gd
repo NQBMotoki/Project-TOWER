@@ -131,6 +131,8 @@ var _magic_tween: Tween
 var transition_floor: Label
 var transition_tip: Label
 var transition_note: Label
+var transition_hint: Label
+var transition_hint_bg: ColorRect
 var transition_shade: ColorRect
 var transition_chapter: Label
 var transition_reveal: Node2D
@@ -264,6 +266,11 @@ func _build_ui() -> void:
 	transition_floor = _label(transition, Vector2(280, 240), Vector2(720, 80), 43, INK, HORIZONTAL_ALIGNMENT_CENTER, true)
 	transition_tip = _label(transition, Vector2(310, 368), Vector2(660, 75), 18, INK, HORIZONTAL_ALIGNMENT_CENTER, true)
 	transition_note = _label(transition, Vector2(300, 465), Vector2(680, 95), 16, GOLD, HORIZONTAL_ALIGNMENT_CENTER, true)
+	transition_hint_bg = _color(transition, Rect2(430, 596, 420, 46), Color(0.05, 0.04, 0.07, 0.78))
+	transition_hint_bg.modulate.a = 0.0
+	transition_hint = _label(transition, Vector2(430, 604), Vector2(420, 30), 17, GOLD, HORIZONTAL_ALIGNMENT_CENTER)
+	transition_hint.text = ""
+	transition_hint.modulate.a = 0.0
 	story_effects = StoryEffects.new()
 	transition.add_child(story_effects)
 	_skip_ending = _text_button(transition, "SkipEnding", Rect2(1006, 648, 226, 41), "UI_END_SKIP",
@@ -580,7 +587,7 @@ func _input(event: InputEvent) -> void:
 		elif event.is_action_pressed("next") or event.is_action_pressed("interact"):
 			get_viewport().set_input_as_handled()
 			_advance_dialogue()
-		elif event.is_action_pressed("move_left") or event.is_action_pressed("ui_left"):
+		elif event.is_action_pressed("ui_left"):
 			get_viewport().set_input_as_handled()
 			dialogue_line = maxi(0, dialogue_line - 1)
 			_refresh_dialogue()
@@ -824,6 +831,14 @@ func set_ending_progress(time: float, crystal_anchor: Vector2) -> void:
 	transition_reveal.show_at(0.0, -1, 0.0)
 	_skip_ending.z_index = 2
 
+func set_transition_waiting(active: bool) -> void:
+	transition_hint.text = loc.text("UI_TRANSITION_READY", {"next": loc.binding("next")}) if active else ""
+	transition_hint.modulate.a = 1.0 if active else 0.0
+	transition_hint_bg.modulate.a = 1.0 if active else 0.0
+	if active:
+		# dim the arena so the hold reads as "not started yet"
+		transition_shade.modulate.a = 0.55
+
 func show_transition(floor_number: int, title_key: String, tip_key: String, note_key: String,
 		show_map: bool, follows_stairs: bool) -> void:
 	_show_base(transition)
@@ -845,8 +860,10 @@ func _refresh_transition() -> void:
 	transition_floor.text = loc.text(data.title)
 	transition_tip.text = "" if data.tip.is_empty() else loc.text(data.tip)
 	transition_note.text = "" if data.note.is_empty() else loc.text(data.note)
-	var title_x := 612.0 if data.map else 280.0
-	var title_width := 550.0 if data.map else 720.0
+	# The floor art sits at x = 385 and is about 510 px wide, so the text column
+	# has to start past its right edge instead of on top of it.
+	var title_x := 676.0 if data.map else 280.0
+	var title_width := 536.0 if data.map else 720.0
 	for label in [transition_chapter, transition_floor, transition_tip, transition_note]:
 		label.z_index = 0
 		label.position.x = title_x

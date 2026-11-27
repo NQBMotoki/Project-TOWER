@@ -189,21 +189,24 @@ func _draw_brazier(point: Vector2) -> void:
 
 func _draw_obstacle(rect: Rect2, pillar: bool) -> void:
 	_draw_contact_shadow(rect)
-	draw_rect(rect, Color("23252a"))
-	draw_rect(rect.grow(-2), Color("716b72") if pillar else Color("645e6a"))
+	# The walk collision grows by the actor radius, so paint a little outside the
+	# blocking rect: otherwise the wall stops the player before it looks solid.
+	var visual := rect.grow(3.0)
+	draw_rect(visual, Color("23252a"))
+	draw_rect(visual.grow(-2), Color("716b72") if pillar else Color("645e6a"))
 	if _wall_texture != null:
-		draw_texture_rect(_wall_texture, rect.grow(-2), false, Color("c2bac5"))
+		draw_texture_rect(_wall_texture, visual.grow(-2), false, Color("c2bac5"))
 	var edge_light := Color(0.78, 0.70, 0.71, 0.42) if _wall_texture != null else Color("989097")
 	var edge_shadow := Color(0.11, 0.10, 0.15, 0.43) if _wall_texture != null else Color("4b4552")
-	draw_rect(Rect2(rect.position + Vector2(2, 2), Vector2(rect.size.x - 4, 8)), edge_light)
-	draw_rect(Rect2(rect.position + Vector2(2, rect.size.y - 8), Vector2(rect.size.x - 4, 6)), edge_shadow)
+	draw_rect(Rect2(visual.position + Vector2(2, 2), Vector2(visual.size.x - 4, 8)), edge_light)
+	draw_rect(Rect2(visual.position + Vector2(2, visual.size.y - 8), Vector2(visual.size.x - 4, 6)), edge_shadow)
 	if pillar:
-		draw_rect(rect.grow(-8), Color(0.60, 0.52, 0.58, 0.27) if _wall_texture != null else Color("817583"))
-		draw_rect(rect.grow(-8), edge_shadow, false, 2.0)
+		draw_rect(visual.grow(-8), Color(0.60, 0.52, 0.58, 0.27) if _wall_texture != null else Color("817583"))
+		draw_rect(visual.grow(-8), edge_shadow, false, 2.0)
 	else:
 		for offset in [0.26, 0.61, 0.85]:
-			var x: float = rect.position.x + rect.size.x * offset
-			draw_line(Vector2(x + 3, rect.position.y + 5), Vector2(x - 5, rect.end.y - 6), Color("473f49"), 2.0)
+			var x: float = visual.position.x + visual.size.x * offset
+			draw_line(Vector2(x + 3, visual.position.y + 5), Vector2(x - 5, visual.end.y - 6), Color("473f49"), 2.0)
 	if floor_number in [6, 7, 8, 9]:
 		var edge := rect.position + Vector2(3, rect.size.y * 0.38)
 		var stain := Color(0.27, 0.17, 0.26, 0.53 + float(floor_number - 6) * 0.05)

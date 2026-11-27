@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1")
+wait_for_confirmation = true
 tip_key = "TIP_F6"
 waves = Array[PackedStringArray]([PackedStringArray("ghost", "corrupted_slime"), PackedStringArray("corrupted_slime", "ghost", "corrupted_slime")])
 obstacle_count = 5

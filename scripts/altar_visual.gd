@@ -24,13 +24,13 @@ func _ready() -> void:
 		add_child(_runes)
 	_bead = Sprite2D.new()
 	_bead.texture = bead_texture
-	_bead.position = Vector2(0, -25)
+	_bead.position = Vector2(0, -56)
 	_bead.material = Lighting.unshaded()
 	if bead_texture != null:
 		_bead.scale = Vector2(26, 26) / bead_texture.get_size()
 	_bead.hide()
 	add_child(_bead)
-	_light = Lighting.point_light(Vector2(0, -22), Color("da5a75"), 138.0, 0.0)
+	_light = Lighting.point_light(Vector2(0, -52), Color("da5a75"), 138.0, 0.0)
 	add_child(_light)
 
 func set_bead(active: bool) -> void:

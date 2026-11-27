@@ -29,6 +29,7 @@ UI_RESULT_ITEMS,获得的装备,RELICS COLLECTED,result,胜负结算的已获装
 UI_RESULT_NONE,无,None,result,结算时本局尚未取得装备，在清单位置显示。,draft
 UI_RESTART,重新开始,PLAY AGAIN,result,胜负结算的主按钮。点击后立即开始新的一局，单行。,draft
 UI_BACK_MENU,返回主菜单,MAIN MENU,result,胜负结算的次按钮。点击后返回主菜单，单行。,draft
+UI_TRANSITION_READY,按 {next} 开始,Press {next} to start,transition,楼层转场结束后等待玩家确认时显示的提示。{next} 为继续键，例如 Enter。,draft
 UI_TRANSITION,第 {floor} 层,FLOOR {floor},transition,开战前的过渡界面主标题。{floor} 为即将进入的楼层序号，例如 5。单行。,draft
 UI_TRANSITION_LABEL,向上前进,ASCEND THE TOWER,transition,开战前的过渡界面主标题上方，提示正在登塔。,draft
 UI_TRANSITION_CONTINUE,按 {next} 继续,Press {next} to continue,transition,等待确认的楼层过渡面板底部，提示展示满最短阅读时间后出现。{next} 为继续按键，例如 Enter。单行。,draft
@@ -453,7 +454,7 @@ BOON_RUNE_EFFECT,魔攻 +7%。,Magic damage +7%.,transition,腐化卡片的触�
 BOON_LIGHTFOOT_NAME,轻步,Lightfoot,transition,腐化卡片标题。,draft
 BOON_LIGHTFOOT_EFFECT,移速 +5%。,Move speed +5%.,transition,腐化卡片的触发条件、数值和限制。,draft
 BOON_SIGHT_NAME,锐感,Keen Sight,transition,腐化卡片标题。,draft
-BOON_SIGHT_EFFECT,暴击率 +3 个百分点。,Critical chance +3 percentage points.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_SIGHT_EFFECT,暴击率 +3%,Critical chance +3%,transition,腐化卡片的触发条件、数值和限制。,draft
 BOON_TEMPO_NAME,疾转,Quick Turn,transition,腐化卡片标题。,draft
 BOON_TEMPO_EFFECT,攻击间隔缩短 4%，保留武器下限。,"Attack interval −4%, subject to the weapon minimum.",transition,腐化卡片的触发条件、数值和限制。,draft
 BOON_SURVIVOR_NAME,剩者,Survivor,transition,腐化卡片标题。,draft
@@ -461,7 +462,7 @@ BOON_SURVIVOR_EFFECT,药水额外恢复 4 HP。,Potions restore an extra 4 HP.,t
 BOON_NIGHTWATCH_NAME,巡夜,Night Watch,transition,腐化卡片标题。,draft
 BOON_NIGHTWATCH_EFFECT,最大生命 +5，移速 +2%。,"Maximum health +5, move speed +2%.",transition,腐化卡片的触发条件、数值和限制。,draft
 BOON_VULNERABILITY_NAME,破甲眼,Armor's Eye,transition,腐化卡片标题。,draft
-BOON_VULNERABILITY_EFFECT,暴击伤害系数 +0.08。,Critical damage multiplier +0.08.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_VULNERABILITY_EFFECT,暴击伤害 +8%,Critical damage +8%,transition,腐化卡片的触发条件、数值和限制。,draft
 ITEM_U09_NAME,渡阶短刃,Stair Knife,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
 ITEM_U09_EFFECT,物攻 +{value}。快出手，挥击距离较短。,Physical damage +{value}. Quick swings with a shorter reach.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
 ITEM_U09_DESC,渡阶短刃。物攻 +1。快出手，挥击距离较短。,Stair Knife. Physical damage +1. Quick swings with a shorter reach.,equipment,对应装备的实际效果与限制。,draft

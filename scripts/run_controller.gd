@@ -47,8 +47,11 @@ var current_floor: FloorDefinition:
 	get:
 		return floors[floor_number - 1]
 var kills := 0
+var _dialogue_camera_pushed := false
+var _camera_tween: Tween
 var elapsed := 0.0
 var transition_remaining := 0.0
+var transition_waiting := false
 var transition_duration := 0.0
 var _climb_origin := Vector2.ZERO
 var _climb_active := false
@@ -147,7 +150,7 @@ func _process(delta: float) -> void:
 		transition_remaining = maxf(minimum, transition_remaining - delta)
 		_update_transition(before)
 		if transition_remaining <= 0.0:
-			_finish_transition()
+			_hold_or_finish_transition()
 	if is_instance_valid(ghost):
 		ghost.show_at(ghost.elapsed + delta)
 		_update_ghost_reaction()
@@ -158,7 +161,14 @@ func _process(delta: float) -> void:
 	_update_hud()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_echo() or state not in PLAY_STATES or is_instance_valid(ghost):
+	if event.is_echo() or state not in RUN_STATES:
+		return
+	if transition_waiting and state == State.TRANSITION:
+		if event.is_action_pressed("next") or event.is_action_pressed("interact"):
+			_finish_transition()
+			get_viewport().set_input_as_handled()
+		return
+	if state not in PLAY_STATES or is_instance_valid(ghost):
 		return
 	if event.is_action_pressed("inventory"):
 		ui.bag.magic_allowed = state != State.COMBAT
@@ -449,6 +459,8 @@ func _choose_boon(id: String) -> void:
 
 func _enter_transition(phase: State, remaining := -1.0) -> void:
 	state = phase
+	transition_waiting = false
+	ui.set_transition_waiting(false)
 	player.can_move = false
 	player.can_attack = false
 	features.enabled = false
@@ -542,7 +554,17 @@ func _update_ending(time: float, previous: float) -> void:
 			sound.set_music("ending")
 			sound.clear_environment()
 
+## Keeps the floor on screen until the player confirms, when the floor asks for it.
+func _hold_or_finish_transition() -> void:
+	if state == State.TRANSITION and current_floor.wait_for_confirmation and not transition_waiting:
+		transition_waiting = true
+		ui.set_transition_waiting(true)
+		return
+	_finish_transition()
+
 func _finish_transition() -> void:
+	transition_waiting = false
+	ui.set_transition_waiting(false)
 	match state:
 		State.OPENING:
 			_enter_grounds()
@@ -587,6 +609,7 @@ func _enter_dialogue(start_line := 0, aftermath := false) -> void:
 	sound.set_combat(false)
 	_crystal_state("dormant")
 	_check_codex(codex.discover_enemy("lord"))
+	_dialogue_camera_pushed = false
 	_spawn_lord_preview(aftermath)
 	if aftermath:
 		_frame_aftermath()
@@ -668,9 +691,18 @@ func _update_lord_pose(line: int) -> void:
 	animate.call(0.0)
 	_lord_animation = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	_lord_animation.tween_method(animate, 0.0, 1.0, 0.7 if state == State.AFTERMATH else 0.48)
-	if state == State.DIALOGUE and line == 0 and loc.high_quality:
-		camera.offset = Vector2(0, -125)
-		_lord_animation.parallel().tween_property(camera, "offset", Vector2.ZERO, 0.72).set_trans(Tween.TRANS_SINE)
+	if state == State.DIALOGUE and line == 0 and loc.high_quality and not _dialogue_camera_pushed:
+		_dialogue_camera_pushed = true
+		_push_dialogue_camera()
+
+## Eases the camera up before settling back. Assigning the offset directly made the
+## whole frame jump when a line was re-staged.
+func _push_dialogue_camera() -> void:
+	if _camera_tween != null and _camera_tween.is_valid():
+		_camera_tween.kill()
+	_camera_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_camera_tween.tween_property(camera, "offset", Vector2(0, -125), 0.18).set_trans(Tween.TRANS_SINE)
+	_camera_tween.tween_property(camera, "offset", Vector2.ZERO, 0.72).set_trans(Tween.TRANS_SINE)
 
 func _finish_lord_dialogue() -> void:
 	if _lord_animation != null:
