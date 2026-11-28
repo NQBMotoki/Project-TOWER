@@ -20,7 +20,7 @@ UI_LORE_CLOSE,{interact} / {close}：关闭,{interact} / {close}: close,narrativ
 UI_EPILOGUE_RESULTS,按 {next} / {interact} / {close} 查看结算,{next} / {interact} / {close}: View results,narrative,尾声面板底部。按任一键关闭留言并进入胜利结算。{next} 为继续键，例如 Enter。{interact} 为互动键，例如 E。{close} 为关闭键，例如 Esc。单行。,draft
 UI_VICTORY,守塔者已倒下,THE KEEPER FALLS,result,尾声关闭后出现的胜利结算标题，单行。,draft
 UI_DEFEAT,旅途暂时结束,YOUR JOURNEY ENDS,result,玩家死亡后出现的失败结算标题，单行。,draft
-UI_VICTORY_SUB,灯换了守塔人，仍在燃烧。,"The lamp has a new keeper, and still it burns.",result,胜利标题下方的叙事短句，延续守塔人与灯的意象，单行。,draft
+UI_VICTORY_SUB,塔仍立着。山外的天色开始变暗。,"The tower still stands. Beyond the hills, the sky begins to darken.",result,触晶与天际线演出后，胜利结算副句。,draft
 UI_DEFEAT_SUB,台阶还在原处，灯也还亮着。,The steps are where you left them; the lamp still burns.,result,失败标题下方的叙事短句，呼应台阶与仍然亮着的灯，单行。,draft
 UI_RESULT_FLOOR,到达层数,FLOOR REACHED,result,胜负结算的统计栏标签。对应的楼层序号另显示在下方。,draft
 UI_RESULT_KILLS,击败敌人,ENEMIES DEFEATED,result,胜负结算的统计栏标签。对应的本局击败敌人数另显示在下方。,draft
@@ -41,7 +41,7 @@ TIP_F1,攻击朝向鼠标。史莱姆会先鼓起身体，再向前突进。,Aim
 TIP_F2,哥布林会在动手前停住。它停住的那一瞬，就是你要动的时候。,A goblin halts before it strikes. That halt is your cue to move.,transition,第二层开战前的玩法提示，说明哥布林会在攻击前停步，可换行。,draft
 TIP_F3,盯住骷髅法师的咏唱方向。石柱可以挡住它的魔法弹。,Watch where the skeleton mage aims its spell. Stone pillars block its bolts.,transition,转场主标题或提示，支持换行。,draft
 TIP_F4,法师咏唱时不要靠近，弓手拉弦时不要跑直线。,"Do not close in while a mage chants, and never run straight while an archer draws.",transition,第四层开战前的玩法提示，帮助玩家区分法师咏唱与弓手拉弦，可换行。,draft
-TIP_F5,精锐骷髅会扇形散射。等预警落定，再从弹道之间穿过。,"Elite skeletons fire in a fan. Read the warning, then slip between the bolts.",transition,转场主标题或提示，支持换行。,draft
+TIP_F5,精锐骷髅会连挥两下。等它冲撞后停住，再上前。,The guard swings twice. Move in after it crashes and stops.,transition,F5 入层转场提示。,draft
 LORE_F1_TITLE,领主亲笔信,A Letter in the Lord's Hand,narrative,百余年前旧王国领主埃德里克·沃恩在夺舍前写给哈伦，第一层东侧清场后拾取。署名与 LORE_RESEARCH_BODY 一致。阅读面板标题，也用作拾取与背包名称。,draft
 LORE_F1_BODY,"哈伦，南岗昨夜交班晚了。明天让夜班多领一罐灯油，再叫厨房把汤留到最后一班回来。名册上的出塔时间写清楚。谁该回来还没回来，就留着那一栏空白，晨钟前交给我。
 
@@ -120,8 +120,6 @@ UI_CANCEL,取消,CANCEL,menu,覆盖存档确认面板上的取消按钮。,draft
 UI_PAUSED,游戏暂停,PAUSED,menu,暂停菜单标题。,draft
 UI_RESUME,继续当前游戏,RESUME,menu,暂停菜单按钮，关闭面板并恢复当前游戏。,draft
 UI_SAVE_MENU,保存并返回主菜单,SAVE AND RETURN TO MENU,menu,暂停菜单按钮，成功保存后返回主菜单。,draft
-UI_SAVE_HERE,保存后可从当前阶段继续。,Continue from this stage after saving.,menu,暂停菜单在塔前、楼层提示、波间、清场或领奖时的说明。,draft
-UI_SAVE_ROLLBACK,续档从本波开战前继续。本波的受伤、击杀、拾取、换装、合成、消耗和用时都会回退。,"Continuing restarts this wave. Damage taken, kills, pickups, gear swaps, crafting, items used and time spent during this wave are rolled back.",menu,暂停菜单在战斗波次中显示的多行存档说明。,draft
 UI_OVERWRITE_TITLE,覆盖现有存档？,REPLACE YOUR SAVE?,menu,已有有效存档时选择开始游戏，显示确认标题。,draft
 UI_OVERWRITE_BODY,新一局保存后会覆盖上一局。,Saving a new run will replace your previous run.,menu,有有效存档时开始新局前的确认内容。,draft
 UI_OVERWRITE_CONFIRM,开始新局,START NEW RUN,menu,确认开始新一局并覆盖旧档。,draft
@@ -145,7 +143,7 @@ UI_BIND_INVALID,请选择单个键或鼠标按钮。,Choose a single key or mous
 UI_MOUSE_BACK,鼠标侧键 1,Mouse button 4,input,第一个鼠标侧键的名称，可用于控制提示。,draft
 UI_MOUSE_FORWARD,鼠标侧键 2,Mouse button 5,input,第二个鼠标侧键的名称，可用于控制提示。,draft
 UI_TOWER_GROUNDS,塔前,TOWER GROUNDS,hud,塔前 HUD 的区域名称。,draft
-UI_GROUND_GOAL,塔门旁有剑和杖。先拾起一把。,A sword and staff lie by the gate. Pick up either one.,hud,决定版流程提示、反馈或设置标签。,draft
+UI_GROUND_GOAL,塔门旁有剑和杖。靠近后按互动键拾取。,A sword and staff lie by the gate. Approach and press the interact key to take one.,hud,塔前 HUD 无武器时提示。,draft
 UI_GROUND_READY,已装备武器。可以进塔了。,You have a weapon equipped. Head to the gate.,hud,决定版流程提示、反馈或设置标签。,draft
 UI_GATE_NEAR,{interact}  进入塔门,{interact}  Enter the tower,hud,靠近塔门时显示，互动后检查武器。{interact} 为互动键，例如 E。,draft
 UI_CAMP_NEAR,{interact}  查看营地,{interact}  Inspect camp,hud,塔前靠近营地时显示。{interact} 为互动键，例如 E。,draft
@@ -289,19 +287,19 @@ UI_ALTAR_EMPTY,楼梯已开放。可先搜集物品或在背包中调整装备�
 UI_ALTAR_NEAR,{interact} · 吸收血珠,{interact} · Absorb blood bead,hud,决定版流程提示、反馈或设置标签。 替换变量 {interact}。,draft
 UI_PEARL_ABSORBED,已吸收血珠 · 余额 {count},Blood bead absorbed · {count} available,hud,决定版流程提示、反馈或设置标签。 替换变量 {count}。,draft
 UI_STAIR_FORFEIT,继续走上楼梯会放弃本层尚未吸收的血珠。,Climbing the stairs leaves this floor's blood bead behind.,hud,决定版流程提示、反馈或设置标签。,draft
-UI_EXIT_OPEN,领主已败。可以继续探索，或走入终点离开古塔。,The lord has fallen. Explore the summit or walk through the portal to leave the tower.,hud,决定版流程提示、反馈或设置标签。,draft
+UI_EXIT_OPEN,领主已经倒下。你可以调查北侧的紫晶。,The lord has fallen. You can examine the crystal to the north.,hud,F10 战后气泡结束时的 HUD 提示。,draft
 UI_CORRUPTION_SUCCESS,魔化已生效。,Corruption applied.,hud,决定版流程提示、反馈或设置标签。,draft
 UI_CODEX_SAVE_ERROR,图鉴写入失败。再次发现物品或阅读时会重试。,The codex could not be saved. The next discovery or reading will retry.,hud,决定版流程提示、反馈或设置标签。,draft
 UI_VOLUME_MUSIC,配乐音量,Music Volume,settings,决定版流程提示、反馈或设置标签。,draft
 TRANSITION_GROUNDS_TITLE,塔前,At the Tower Gate,transition,转场主标题或提示，支持换行。,draft
 TRANSITION_GROUNDS_TIP,旧路走到尽头，塔门还立在原处。,"The old road ends, but the tower gate still stands.",transition,转场主标题或提示，支持换行。,draft
-TRANSITION_END_TITLE,塔外,Beyond the Tower,transition,转场主标题或提示，支持换行。,draft
-TRANSITION_END_TIP,门后的风吹灭了最后一盏灯。,A gust beyond the gate extinguishes the last lamp.,transition,转场主标题或提示，支持换行。,draft
+TRANSITION_END_TITLE,天色已变,THE SKY HAS TURNED,transition,F10 外部天际线镜头后的结束标题。,draft
+TRANSITION_END_TIP,阴云之下，塔里的灯一盏一盏熄灭。,"Under the clouds, the tower lamps go out one by one.",transition,终场标题下的单句。,draft
 TIP_F6,鬼魂出手前会显形。避开腐蚀史莱姆留下的痕迹。,Ghosts reveal themselves before striking. Keep clear of the trail left by a corrupted slime.,transition,转场主标题或提示，支持换行。,draft
 TIP_F7,先辨认追击预警，再利用腐蚀哥布林的收招。,"Read the charge warning, then counter while the corrupted goblin recovers.",transition,转场主标题或提示，支持换行。,draft
 TIP_F8,掩体能挡住弹道，但脚下亮起咒印时要立刻离开。,Cover blocks projectiles. Move as soon as a sigil lights up beneath you.,transition,转场主标题或提示，支持换行。,draft
-TIP_F9,腐蚀弓手会接连拉弦。橙色地灯指示机关箭的来向。,Corrupted archers draw repeatedly. Amber floor markings show where trap arrows come from.,transition,转场主标题或提示，支持换行。,draft
-TIP_F10,最后一盏灯还亮着。有人在等你。,The last lamp is still lit. Someone is waiting for you.,transition,转场主标题或提示，支持换行。,draft
+TIP_F9,腐蚀弓手会接连拉弦。机关亮起时，沿橙色箭头看清来箭方向。,"Corrupted archers draw repeatedly. When a trap lights up, its amber arrows show where the shot will travel.",transition,转场主标题或提示，支持换行。,draft
+TIP_F10,北侧的晶体早已立在这里。领主挡住了路。,The crystal was here before you arrived. The lord stands in the way.,transition,F10 入层提示，可换行。,draft
 LORE_ROSTER_TITLE,夜班名册,Night Watch Roster,narrative,文稿拾取、背包、图鉴与阅读标题。,draft
 LORE_ROSTER_DESC,一份缺页的值夜记录，凡是留空的名字都被细细描过。,A partial watch roster. Someone carefully traced every empty line.,narrative,文稿简述。,draft
 LORE_ROSTER_BODY,"哈伦替第三班划过一行。那天塔门落了锁，晨钟照常响。自此任何人出塔，都须在我面前把姓名念一遍。
@@ -358,7 +356,7 @@ ENEMY_SKELETON_DESC,咏唱 {telegraph} 秒后沿预警方向发出魔法弹。�
 ENEMY_ARCHER_NAME,骷髅弓手,Skeleton Archer,codex,遭遇后解锁的敌人图鉴名称。,draft
 ENEMY_ARCHER_DESC,拉弦 {draw} 秒后射箭。过于接近时会挥弓击退来敌。,Draws for {draw} s before loosing an arrow. It swings its bow at targets close by.,codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {draw}。,draft
 ENEMY_ELITE_NAME,精锐骷髅,Elite Skeleton,codex,遭遇后解锁的敌人图鉴名称。,draft
-ENEMY_ELITE_DESC,展示扇形预警 {telegraph} 秒后发射 {shots} 枚弹体。可走入弹道间隙。,"Warns for {telegraph} s, then fires {shots} bolts in a fan. Move between the marked lanes.",codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {shots}、{telegraph}。,draft
+ENEMY_ELITE_DESC,镇守第五层关口。骨矛锁定后散射，连斩和冲刺之后有还手的空当。,"Guards the fifth floor. Its bone spears fan out after locking on, and its double sweep and charge leave an opening.",codex,精锐骷髅图鉴条目。,draft
 ENEMY_GHOST_NAME,鬼魂,Ghost,codex,遭遇后解锁的敌人图鉴名称。,draft
 ENEMY_GHOST_DESC,在攻击前显形 {telegraph} 秒，然后向眼前扑击。,Becomes visible for {telegraph} s before lunging at its target.,codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {telegraph}。,draft
 ENEMY_CORRUPTED_SLIME_NAME,受腐蚀的史莱姆,Corrupted Slime,codex,遭遇后解锁的敌人图鉴名称。,draft
@@ -370,7 +368,7 @@ ENEMY_CORRUPTED_SKELETON_DESC,施法起手持续 {telegraph} 秒。地面咒印�
 ENEMY_CORRUPTED_ARCHER_NAME,受腐蚀的骷髅弓手,Corrupted Skeleton Archer,codex,遭遇后解锁的敌人图鉴名称。,draft
 ENEMY_CORRUPTED_ARCHER_DESC,首次拉弦 {draw} 秒，连射期间每次再拉弦 {burst_draw} 秒。,"Draws for {draw} s to start its volley, then draws for {burst_draw} s between shots.",codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。 替换变量 {burst_draw}、{draw}。,draft
 ENEMY_LORD_NAME,魔化领主,Corrupted Lord,codex,遭遇后解锁的敌人图鉴名称。,draft
-ENEMY_LORD_DESC,在塔顶等待旅人的魔化领主。交替施展近身攻击、扇形齐射和地面法术。,"The lord waiting at the summit alternates close strikes, volleys and ground spells.",codex,遭遇后解锁的敌人招式说明。变量来自游戏设定。,draft
+ENEMY_LORD_DESC,先用横斩、魔弹和咒印封住走位。生命降低时相继加快攻势。,"The lord controls space with sweeps, magic volleys, and seals. His attacks build through three phases.",codex,领主图鉴条目。,draft
 ITEM_START_SWORD_DESC,塔门左侧的旧长剑，适合近身挥砍。,An old longsword from beside the gate. Use it to strike at close range.,equipment,背包与图鉴的物品说明。,draft
 ITEM_START_STAFF_DESC,塔门右侧的木杖，可向远处发射魔法弹。,A wooden staff from beside the gate. It casts bolts at range.,equipment,背包与图鉴的物品说明。,draft
 ITEM_MUSHROOM_DESC,塔中潮湿处长出的菌类。与水瓶一起可调制治疗药水。,A fungus from the tower's damp corners. Combine it with a water bottle to brew a healing potion.,equipment,背包与图鉴的物品说明。,draft
@@ -397,3 +395,106 @@ CHAR_EDRIC_VANE_NAME,埃德里克·沃恩,Edric Vane,narrative,设定表人物�
 CHAR_EDRIC_VANE_DESC,旧王国驻塔领主。早期文书常提灯油、岗哨和应归队的人。,"The Old Kingdom's garrison lord. His early letters concern lamp oil, watch shifts and those due to return.",narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
 CHAR_COURT_MAGE_NAME,宫廷魔法师,court mage,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
 CHAR_COURT_MAGE_DESC,灾变时施展黑魔法的王廷法师，死后借领主躯壳继续研究召唤。,The royal mage who unleashed the Cataclysm. After his death he continued his summoning research in the lord's body.,narrative,设定表人物稳定名称或概述。身份线索随对应文稿揭示。,draft
+FLOOR_NAME_01,塔门廊,Gate Hall,transition,楼层转场主标题。与楼层序号分开显示。,draft
+FLOOR_NAME_02,断墙路,Broken Passage,transition,楼层转场主标题。与楼层序号分开显示。,draft
+FLOOR_NAME_03,井道,The Shaft,transition,楼层转场主标题。与楼层序号分开显示。,draft
+FLOOR_NAME_04,驻防前哨,Garrison Outpost,transition,楼层转场主标题。与楼层序号分开显示。,draft
+FLOOR_NAME_05,精锐驻地,Guard Quarters,transition,楼层转场主标题。与楼层序号分开显示。,draft
+FLOOR_NAME_06,侵蚀门厅,Blighted Hall,transition,楼层转场主标题。与楼层序号分开显示。,draft
+FLOOR_NAME_07,裂隙回廊,Rift Gallery,transition,楼层转场主标题。与楼层序号分开显示。,draft
+FLOOR_NAME_08,咒印厅,Hall of Seals,transition,楼层转场主标题。与楼层序号分开显示。,draft
+FLOOR_NAME_09,临顶阶,Summit Steps,transition,楼层转场主标题。与楼层序号分开显示。,draft
+FLOOR_NAME_10,领主之座,The Lord’s Seat,transition,楼层转场主标题。与楼层序号分开显示。,draft
+UI_GATE_UNARMED,{interact}  敲响塔门,{interact}  Knock at the gate,hud,空手靠近塔门时的互动提示。{interact} 为当前互动键。,draft
+UI_SETTINGS_DISPLAY,显示,Display,settings,设置窗口的显示选项分组。,draft
+UI_SETTINGS_AUDIO,声音,Audio,settings,设置窗口的音量选项分组。,draft
+UI_DIALOGUE_NEXT_KEY,继续  [{next}],Continue  [{next}],narrative,对话推进按钮。{next} 为当前继续键。,draft
+UI_EQUIPMENT_CURRENT,当前,Current,inventory,装备属性比较表中的当前数值列标题。,draft
+UI_EQUIPMENT_CHANGE,换装差值,Change,inventory,装备属性比较表中的换装差值列标题。,draft
+UI_STAT_LIFESTEAL,剑击击杀回血,HP per Sword Kill,inventory,装备属性比较表中剑击击杀敌人实际回复的生命值。,draft
+UI_CRAFT_MATERIALS,材料,Ingredients,inventory,合成页左侧的配方材料列表标题。,draft
+UI_BOSS_PHASE,第 {phase} / {total} 阶段,Phase {phase} / {total},hud,{phase} 为当前阶段，{total} 为阶段总数。,draft
+DIALOGUE_F10_INTRO_02,十年前，那四个人也看见了它。后来他们的名字都留在了册上。,"The four saw it ten years ago, too. Their names still lie in the roll.",narrative,领主战前第二句。玩家不发言。,draft
+DIALOGUE_F10_DEFEAT_01,你听见了吗？风声从塔外传来。,Can you hear it? The wind is coming from outside the tower.,narrative,领主跪倒后指向北侧紫晶。短句，气泡内可分行。,draft
+DIALOGUE_F10_DEFEAT_02,我数了八十年。它还是不肯认我的手。,I have counted for eighty years. It still won't answer my hand.,narrative,领主跪倒后指向北侧紫晶。短句，气泡内可分行。,draft
+DIALOGUE_F10_DEFEAT_03,把手放上去。它等的不是我。,Put your hand on it. It was never waiting for me.,narrative,领主跪倒后指向北侧紫晶。短句，气泡内可分行。,draft
+UI_F10_CRYSTAL_TOUCH,{interact}：触摸水晶,{interact}: Touch the crystal,hud,{interact} 为重绑互动键，例如 E。,draft
+UI_END_SKIP,跳过演出,Skip scene,result,触摸水晶后的可选演出跳过按钮。,draft
+UI_MAGIC_LEVEL_CUE,{stat} · 第 {level} 级,{stat} · Rank {level},inventory,{stat} 为已升级属性名称，{level} 为升级后等级。,draft
+UI_BOON_TITLE,选择一项腐化,Choose a corruption,transition,楼梯三选一面板标题。,draft
+UI_BOON_CONFIRM,方向键选择 · 按 {next} 或点击确认,Arrow keys to choose · {next} or click to confirm,transition,{next} 是可重绑的继续键。,draft
+UI_BOON_TYPE_MECHANIC,机制,Mechanic,transition,腐化卡类型标签。,draft
+UI_BOON_TYPE_STAT,数值,Attribute,transition,腐化卡类型标签。,draft
+UI_BOON_RANK,第 {level}/{maximum} 级,Rank {level}/{maximum},transition,{level} 是确认后的等级，{maximum} 是该牌上限。,draft
+BOON_EDGE_NAME,余刃,Afteredge,transition,腐化卡片标题。,draft
+BOON_EDGE_EFFECT,每第 3 次近战命中额外造成 30% 物攻伤害。,Every third melee hit adds 30% physical damage.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_FRACTURE_NAME,裂纹弹,Fissure Bolt,transition,腐化卡片标题。,draft
+BOON_FRACTURE_EFFECT,法杖命中后沿弹道短距离裂开，次目标承受 35% 魔攻伤害。,A staff hit forks forward for 35% magic damage to a second target.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_REPRISAL_NAME,伤返,Reprisal,transition,腐化卡片标题。,draft
+BOON_REPRISAL_EFFECT,受伤后下一次命中缩短冷却 0.25 秒，每 8 秒一次。,"After taking damage, the next hit cuts cooldown by 0.25 s. Once every 8 s.",transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_AFTERBREATH_NAME,余息,Afterbreath,transition,腐化卡片标题。,draft
+BOON_AFTERBREATH_EFFECT,击杀后移速 +12%，持续 2 秒。,Kills grant 12% move speed for 2 s.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_WARD_NAME,空鳞,Hollow Scale,transition,腐化卡片标题。,draft
+BOON_WARD_EFFECT,每层首次敌人直击减伤 30%，二级提升至 40%。,"Reduce the first direct enemy hit each floor by 30%, or 40% at rank two.",transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_ECHO_NAME,裂隙回响,Rift Echo,transition,腐化卡片标题。,draft
+BOON_ECHO_EFFECT,每第 4 次命中生成 25% 攻击力的邻近脉冲，每 4 秒一次。,Every fourth landed attack can pulse for 25% power. Once every 4 s.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_SHARDS_NAME,碎骨标记,Shardmark,transition,腐化卡片标题。,draft
+BOON_SHARDS_EFFECT,破罐后 4 秒内下一次命中额外造成 18% 伤害。,Breaking a pot adds 18% damage to the next hit within 4 s.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_RECOVERY_NAME,暮光回生,Dusk Recovery,transition,腐化卡片标题。,draft
+BOON_RECOVERY_EFFECT,半血以下首次饮药额外恢复 8 HP，每层一次。,"Once per floor, a potion at half health or below heals an extra 8 HP.",transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_AFTERSTEP_NAME,回步,Afterstep,transition,腐化卡片标题。,draft
+BOON_AFTERSTEP_EFFECT,攻击后移速 +9%／13%，持续 1.4 秒。每 6 秒一次。,Attacks grant 9% or 13% move speed for 1.4 s. Once every 6 s.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_HIDE_NAME,硬皮,Hardened Hide,transition,腐化卡片标题。,draft
+BOON_HIDE_EFFECT,最大生命 +8。,Maximum health +8.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_KEEN_NAME,锋纹,Keenline,transition,腐化卡片标题。,draft
+BOON_KEEN_EFFECT,物攻 +7%。,Physical damage +7%.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_RUNE_NAME,咒纹,Sigil,transition,腐化卡片标题。,draft
+BOON_RUNE_EFFECT,魔攻 +7%。,Magic damage +7%.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_LIGHTFOOT_NAME,轻步,Lightfoot,transition,腐化卡片标题。,draft
+BOON_LIGHTFOOT_EFFECT,移速 +5%。,Move speed +5%.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_SIGHT_NAME,锐感,Keen Sight,transition,腐化卡片标题。,draft
+BOON_SIGHT_EFFECT,暴击率 +3 个百分点。,Critical chance +3 percentage points.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_TEMPO_NAME,疾转,Quick Turn,transition,腐化卡片标题。,draft
+BOON_TEMPO_EFFECT,攻击间隔缩短 4%，保留武器下限。,"Attack interval −4%, subject to the weapon minimum.",transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_SURVIVOR_NAME,剩者,Survivor,transition,腐化卡片标题。,draft
+BOON_SURVIVOR_EFFECT,药水额外恢复 4 HP。,Potions restore an extra 4 HP.,transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_NIGHTWATCH_NAME,巡夜,Night Watch,transition,腐化卡片标题。,draft
+BOON_NIGHTWATCH_EFFECT,最大生命 +5，移速 +2%。,"Maximum health +5, move speed +2%.",transition,腐化卡片的触发条件、数值和限制。,draft
+BOON_VULNERABILITY_NAME,破甲眼,Armor's Eye,transition,腐化卡片标题。,draft
+BOON_VULNERABILITY_EFFECT,暴击伤害系数 +0.08。,Critical damage multiplier +0.08.,transition,腐化卡片的触发条件、数值和限制。,draft
+ITEM_U09_NAME,渡阶短刃,Stair Knife,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U09_EFFECT,物攻 +{value}。快出手，挥击距离较短。,Physical damage +{value}. Quick swings with a shorter reach.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U09_DESC,渡阶短刃。物攻 +1。快出手，挥击距离较短。,Stair Knife. Physical damage +1. Quick swings with a shorter reach.,equipment,对应装备的实际效果与限制。,draft
+ITEM_U10_NAME,岗墙阔刃,Parapet Cleaver,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U10_EFFECT,物攻 +{value}。长刃扇扫，攻击间隔较长。,Physical damage +{value}. Wide sweeps with a longer attack interval.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U10_DESC,岗墙阔刃。物攻 +9。长刃扇扫，攻击间隔较长。,Parapet Cleaver. Physical damage +9. Wide sweeps with a longer attack interval.,equipment,对应装备的实际效果与限制。,draft
+ITEM_U11_NAME,灯芯法杖,Wick Staff,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U11_EFFECT,魔攻 +{value}。快速直射，遇墙即止。,Magic damage +{value}. A fast straight bolt that stops on walls.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U11_DESC,灯芯法杖。魔攻 +3。快速直射，遇墙即止。,Wick Staff. Magic damage +3. A fast straight bolt that stops on walls.,equipment,对应装备的实际效果与限制。,draft
+ITEM_U12_NAME,裂纹法杖,Fissured Staff,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U12_EFFECT,单发魔攻降低 {value}%，命中后可裂向次目标。,Single-hit magic damage −{value}%. Hits can fork into a second target.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U12_DESC,裂纹法杖。单发魔攻降低 10%，命中后可裂向次目标。,Fissured Staff. Single-hit magic damage −10%. Hits can fork into a second target.,equipment,对应装备的实际效果与限制。,draft
+ITEM_U13_NAME,防滑手套,Grip Gloves,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U13_EFFECT,剑击间隔缩短 {value}%。,Sword attack interval −{value}%.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U13_DESC,防滑手套。剑击间隔缩短 14%。,Grip Gloves. Sword attack interval −14%.,equipment,对应装备的实际效果与限制。,draft
+ITEM_U14_NAME,稳步护腕,Braced Wraps,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U14_EFFECT,施法后 0.9 秒内移速 +{value}%。,Move speed +{value}% for 0.9 s after casting.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U14_DESC,稳步护腕。施法后 0.9 秒内移速 +12%。,Braced Wraps. Move speed +12% for 0.9 s after casting.,equipment,对应装备的实际效果与限制。,draft
+ITEM_U15_NAME,旧灯扣,Old Lamp Clasp,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U15_EFFECT,最大生命 +5。拾取提示距离增加 {value}。,Maximum health +5. Pickup prompt range +{value}.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U15_DESC,旧灯扣。最大生命 +5。拾取提示距离增加 11。,Old Lamp Clasp. Maximum health +5. Pickup prompt range +11.,equipment,对应装备的实际效果与限制。,draft
+ITEM_U16_NAME,封缄石,Sealstone,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U16_EFFECT,生命不高于 35% 时，攻击伤害 +{value}%。,Attack damage +{value}% at 35% health or below.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U16_DESC,封缄石。生命不高于 35% 时，攻击伤害 +14%。,Sealstone. Attack damage +14% at 35% health or below.,equipment,对应装备的实际效果与限制。,draft
+ITEM_U17_NAME,闸门厚甲,Gateplate,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U17_EFFECT,最大生命 +12，移速 −7%。每层首次敌人直击减伤 {value}%。,"Maximum health +12, move speed −7%. Reduce the first direct enemy hit each floor by {value}%.",equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U17_DESC,闸门厚甲。最大生命 +12，移速 −7%。每层首次敌人直击减伤 22%。,"Gateplate. Maximum health +12, move speed −7%. Reduce the first direct enemy hit each floor by 22%.",equipment,对应装备的实际效果与限制。,draft
+ITEM_U18_NAME,巡廊轻甲,Gallery Vest,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U18_EFFECT,移速 +{value}%，最大生命 −4。,"Move speed +{value}%, maximum health −4.",equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U18_DESC,巡廊轻甲。移速 +4%，最大生命 −4。,"Gallery Vest. Move speed +4%, maximum health −4.",equipment,对应装备的实际效果与限制。,draft
+ITEM_U19_NAME,井道履,Shaft Boots,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U19_EFFECT,移速 +{value}%。,Move speed +{value}%.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U19_DESC,井道履。移速 +9%。,Shaft Boots. Move speed +9%.,equipment,对应装备的实际效果与限制。,draft
+ITEM_U20_NAME,铁跟靴,Ironheel Boots,equipment,装备册、图鉴、拾取提示共用装备名称。,draft
+ITEM_U20_EFFECT,每层首次敌人直击减伤 {value}%。,Reduce the first direct enemy hit each floor by {value}%.,equipment,{value} 为显示在当前物品上的基础增益数值。,draft
+ITEM_U20_DESC,铁跟靴。每层首次敌人直击减伤 12%。,Ironheel Boots. Reduce the first direct enemy hit each floor by 12%.,equipment,对应装备的实际效果与限制。,draft

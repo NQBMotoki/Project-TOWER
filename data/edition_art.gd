@@ -3,7 +3,6 @@ extends RefCounted
 const ACTORS := "res://assets/edition/actors.png"
 const PROPS := "res://assets/edition/props.png"
 const UI_ICONS := "res://assets/edition/ui_icons.png"
-const FLOOR_SCENERY := "res://assets/edition/floor_scenery.png"
 
 const ACTOR_KEYS := [
 	"slime", "goblin", "skeleton", "archer",
@@ -31,14 +30,6 @@ const UI_REGIONS := {
 	"ui_inventory": Rect2(153, 549, 236, 227), "ui_blood": Rect2(572, 549, 214, 216),
 	"ui_craft": Rect2(987, 529, 212, 255), "ui_health": Rect2(1392, 552, 241, 210),
 }
-const FLOOR_REGIONS := {
-	"floor_01": Rect2(37, 47, 311, 291), "floor_02": Rect2(386, 62, 313, 284),
-	"floor_03": Rect2(754, 33, 301, 315), "floor_04": Rect2(1109, 22, 299, 326),
-	"floor_05": Rect2(20, 400, 327, 303), "floor_06": Rect2(377, 381, 332, 313),
-	"floor_07": Rect2(748, 414, 318, 271), "floor_08": Rect2(1096, 416, 333, 252),
-	"floor_09": Rect2(26, 747, 321, 320), "floor_10": Rect2(390, 750, 306, 291),
-	"floor_lamp": Rect2(784, 744, 216, 316), "floor_rubble": Rect2(1099, 784, 329, 249),
-}
 const ALIASES := {"U01": "START_SWORD", "U03": "START_STAFF", "U05": "U04", "U06": "START_SWORD"}
 
 static var _textures: Dictionary = {}
@@ -49,6 +40,16 @@ static func icon(id: String) -> Texture2D:
 	id = ALIASES.get(id, id)
 	if _textures.has(id):
 		return _textures[id]
+	if id.begins_with("U") and id.substr(1).is_valid_int():
+		var slot := id.substr(1).to_int() - 9
+		var growth := "res://assets/upgrade/props/gear_growth.png"
+		if slot >= 0 and slot < 12 and ResourceLoader.exists(growth):
+			var gear := AtlasTexture.new()
+			gear.atlas = load(growth)
+			gear.region = Rect2(slot % 6 * 24, floori(slot / 6.0) * 24, 24, 24)
+			gear.filter_clip = true
+			_textures[id] = gear
+			return gear
 	var index := ACTOR_KEYS.find(id)
 	var source: Texture2D
 	var rect: Rect2
@@ -61,9 +62,6 @@ static func icon(id: String) -> Texture2D:
 	elif UI_REGIONS.has(id):
 		source = load(UI_ICONS)
 		rect = UI_REGIONS[id]
-	elif FLOOR_REGIONS.has(id):
-		source = load(FLOOR_SCENERY)
-		rect = FLOOR_REGIONS[id]
 	else:
 		return null
 	if source == null:

@@ -33,23 +33,26 @@ func setup(interface: CanvasLayer, service: Node) -> void:
 	title = ui._label(self, Vector2(245, 75), Vector2(790, 46), 27, ui.INK)
 	ui._color(self, Rect2(245, 129, 790, 1), ui.RULE)
 	ui._color(self, Rect2(604, 152, 1, 406), ui.RULE)
-	quality_label = ui._label(self, Vector2(251, 159), Vector2(315, 26), 17, ui.INK)
-	quality_low = ui._button(self, "QualityLow", Rect2(251, 192, 147, 38))
-	quality_high = ui._button(self, "QualityHigh", Rect2(410, 192, 147, 38))
+	ui._localize(ui._label(self, Vector2(251, 151), Vector2(306, 25), 17, ui.GOLD), "UI_SETTINGS_DISPLAY")
+	quality_label = ui._label(self, Vector2(251, 181), Vector2(126, 34), 15, ui.INK)
+	quality_low = ui._button(self, "QualityLow", Rect2(382, 181, 107, 34))
+	quality_high = ui._button(self, "QualityHigh", Rect2(495, 181, 91, 34))
 	quality_low.pressed.connect(func(): loc.set_quality(false))
 	quality_high.pressed.connect(func(): loc.set_quality(true))
 	_segmented(quality_low, quality_high)
-	_add_volume("master", 245)
-	_add_volume("effects", 307)
-	_add_volume("music", 369)
-	sound_test = ui._button(self, "SoundTest", Rect2(251, 428, 306, 35))
-	sound_test.pressed.connect(func(): ui.sound_preview_requested.emit())
-	language_label = ui._label(self, Vector2(251, 470), Vector2(310, 27), 17, ui.INK)
-	language_zh = ui._button(self, "Chinese", Rect2(251, 505, 147, 40))
-	language_en = ui._button(self, "English", Rect2(410, 505, 147, 40))
+	language_label = ui._label(self, Vector2(251, 220), Vector2(126, 34), 15, ui.INK)
+	language_zh = ui._button(self, "Chinese", Rect2(382, 220, 107, 34))
+	language_en = ui._button(self, "English", Rect2(495, 220, 91, 34))
 	language_zh.pressed.connect(func(): loc.set_language("zh_CN"))
 	language_en.pressed.connect(func(): loc.set_language("en_US"))
 	_segmented(language_zh, language_en)
+	ui._color(self, Rect2(251, 270, 335, 1), ui.RULE)
+	ui._localize(ui._label(self, Vector2(251, 281), Vector2(306, 25), 17, ui.GOLD), "UI_SETTINGS_AUDIO")
+	_add_volume("master", 308)
+	_add_volume("effects", 364)
+	_add_volume("music", 420)
+	sound_test = ui._button(self, "SoundTest", Rect2(251, 487, 306, 35), false, "")
+	sound_test.pressed.connect(func(): ui.sound_preview_requested.emit())
 
 	bindings_title = ui._label(self, Vector2(655, 159), Vector2(374, 26), 17, ui.INK)
 	for i in range(loc.REMAPPABLE.size()):
@@ -76,6 +79,7 @@ func _segmented(first: Button, second: Button) -> void:
 		button.theme_type_variation = &"TabButton"
 		button.toggle_mode = true
 		button.button_group = group
+		button.add_theme_font_size_override("font_size", 14)
 
 func _add_volume(channel: String, y: int) -> void:
 	volume_labels[channel] = ui._label(self, Vector2(251, y), Vector2(242, 26), 16, ui.INK)

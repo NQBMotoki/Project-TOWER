@@ -1,8 +1,8 @@
 # Project TOWER
 
-十层俯视角动作 Roguelite，使用 Godot 4.7.2 / GDScript。玩家在塔前装备武器，进塔战斗、搜集和魔化，击败塔顶领主后亲自走入终点。界面与文稿支持简体中文和美式英语。
+十层俯视角动作 Roguelite，使用 Godot 4.7.2 / GDScript。玩家在塔前装备武器，进塔战斗、搜集和魔化，击败塔顶领主后亲手触摸水晶。界面与文稿支持简体中文和美式英语。
 
-当前完全体候选为 **0.3.0-dev**，实现基线为 **0.2.1**（`031876f`）。[GitHub Releases](https://github.com/NQBMotoki/Project-TOWER/releases)
+当前开发候选为 **0.4.0-dev**，本轮改版以 **0.3.0**（`a3955b6`）为基线。[GitHub Releases](https://github.com/NQBMotoki/Project-TOWER/releases)
 
 ## 启动与操作
 
@@ -16,12 +16,12 @@ godot --path .
 | --- | --- |
 | WASD、鼠标 | 移动与瞄准 |
 | 鼠标左键 | 以当前武器攻击 |
-| E | 互动、吸收血珠、推进对话或关闭阅读 |
+| E | 拾取、吸收血珠、触摸水晶，或与场景物件互动 |
 | B、Q | 打开背包、使用已设到快捷栏的药水 |
 | Enter | 推进塔顶对话 |
 | Esc | 暂停或关闭当前面板 |
 
-走近地面物品即可拾取。塔前拿起任意一把武器后可按 E 进塔。F1–F9 清场后可搜集、领珠、换装、魔化，再走上楼梯。F10 击败领主后，走进终点触发胜利。背包分为背包、魔化、合成与图鉴四页。
+走近地面物品，出现按键提示后按 E 拾取。塔前可直接拿剑或杖，按 E 进塔。空手按 E 敲门时，骑士幽灵会现身指向两把武器。F1–F9 清场后可搜集、领珠、换装、魔化。走上北墙拱道中的楼梯时，从三张腐化牌中选一张。F10 听完领主战后对白后，靠近水晶并按 E 推进尾声。装备册分为背包、魔化、合成与图鉴四页。
 
 ## 设置与续档
 
@@ -48,6 +48,7 @@ godot --headless --path . --script res://tests/test_mvp.gd
 godot --headless --path . --script res://tests/test_mvp.gd -- --candidate
 godot --headless --path . --script res://tests/test_settings.gd
 python3 tools/export_settings.py data/design/Project-TOWER-设定表.xlsx --check
+python3 tools/import_localization.py data/design/Project-TOWER-游戏文本-按场景.xlsx --candidate --check
 ```
 
 使用 [导出预设](export_presets.cfg) 与 Godot 4.7.2 导出模板。正式组包前核对源码、导出元数据、包名和验收版本。
@@ -58,7 +59,7 @@ godot --headless --path . --export-release "Windows Desktop" builds/windows/Proj
 godot --headless --path . --export-release "macOS" builds/ProjectTOWER-macOS.zip
 ```
 
-Windows 的 `.exe` 与 `.pck` 放在同一目录。macOS 预设使用临时签名，交付前记录公证状态与目标设备的启动结果。轻像素贴图来自 ImageGen，动作由玩法状态驱动，配乐与音效由代码合成。随包附 Noto Sans SC 的 [SIL Open Font License 1.1](assets/fonts/OFL.txt)。构建产物放在 `builds/`，QA 对实际候选包记录独立启动、操作、完整通关和听感。
+Windows 的 `.exe` 与 `.pck` 放在同一目录。macOS 预设使用临时签名，交付前记录公证状态与目标设备的启动结果。主角八向逐帧移动，怪物依体型与招式选帧。战斗主题在清场时收束，祭坛和火源按游戏内位置发声。角色与场景图集、音乐和音效的制作来源见[资产交接](docs/asset-handoff.md)。随包附 Noto Sans SC 的 [SIL Open Font License 1.1](assets/fonts/OFL.txt)。构建产物放在 `builds/`，QA 对实际候选包记录启动、操作、通关与听感。
 
 ## 许可
 

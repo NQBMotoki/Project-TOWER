@@ -1,0 +1,79 @@
+score	VSCO-file
+altar	Percussion/Glock/glock_medium_G4.wav
+altar	Strings/Harp/KSHarp_A4_mf.wav
+altar	Strings/Harp/KSHarp_C3_mf.wav
+altar	Strings/Harp/KSHarp_D4_mf.wav
+altar	Strings/Harp/KSHarp_F4_mf.wav
+cadence	Strings/Cello Section/susvib/susvib_B1_v1_1.wav
+cadence	Strings/Harp/KSHarp_C3_mf.wav
+cadence	Woodwinds/Clarinet/susLong/DCClar_susLong_A#3_v1_rr1_sum.wav
+cadence	Woodwinds/Clarinet/susLong/DCClar_susLong_D3_v1_rr1_sum.wav
+cadence	Woodwinds/Clarinet/susLong/DCClar_susLong_F3_v1_rr1_sum.wav
+ending	Percussion/Glock/glock_medium_G4.wav
+ending	Strings/Cello Section/susvib/susvib_B1_v1_1.wav
+ending	Strings/Cello Section/susvib/susvib_D2_v1_1.wav
+ending	Strings/Cello Section/susvib/susvib_F2_v1_1.wav
+ending	Strings/Cello Section/susvib/susvib_G1_v1_1.wav
+ending	Strings/Harp/KSHarp_A2_mf.wav
+ending	Strings/Harp/KSHarp_A4_mf.wav
+ending	Strings/Harp/KSHarp_B3_mf.wav
+ending	Strings/Harp/KSHarp_C3_mf.wav
+ending	Strings/Harp/KSHarp_D4_mf.wav
+ending	Strings/Harp/KSHarp_E3_mf.wav
+ending	Strings/Harp/KSHarp_F4_mf.wav
+ending	Strings/Harp/KSHarp_G3_mf.wav
+ending	Strings/Viola Section/susvib/ViolaEns_susvib_A3_v1_1.wav
+ending	Strings/Viola Section/susvib/ViolaEns_susvib_B2_v1_1.wav
+ending	Strings/Viola Section/susvib/ViolaEns_susvib_C4_v1_1.wav
+ending	Strings/Viola Section/susvib/ViolaEns_susvib_D3_v1_1.wav
+ending	Strings/Viola Section/susvib/ViolaEns_susvib_F3_v1_1.wav
+ending	Woodwinds/Flute/susNV/LDFlute_susNV_A3_v1_1.wav
+ending	Woodwinds/Flute/susNV/LDFlute_susNV_A4_v1_1.wav
+ending	Woodwinds/Flute/susNV/LDFlute_susNV_C4_v1_1.wav
+ending	Woodwinds/Flute/susNV/LDFlute_susNV_E4_v1_1.wav
+grounds	Percussion/Glock/glock_medium_C5.wav
+grounds	Percussion/Glock/glock_medium_G4.wav
+grounds	Strings/Cello Section/susvib/susvib_B1_v1_1.wav
+grounds	Strings/Cello Section/susvib/susvib_D2_v1_1.wav
+grounds	Strings/Cello Section/susvib/susvib_F2_v1_1.wav
+grounds	Strings/Harp/KSHarp_A2_mf.wav
+grounds	Strings/Harp/KSHarp_A4_mf.wav
+grounds	Strings/Harp/KSHarp_B3_mf.wav
+grounds	Strings/Harp/KSHarp_C3_mf.wav
+grounds	Strings/Harp/KSHarp_C5_mf.wav
+grounds	Strings/Harp/KSHarp_D4_mf.wav
+grounds	Strings/Harp/KSHarp_E3_mf.wav
+grounds	Strings/Harp/KSHarp_F4_mf.wav
+grounds	Woodwinds/Flute/susNV/LDFlute_susNV_A4_v1_1.wav
+grounds	Woodwinds/Flute/susNV/LDFlute_susNV_C4_v1_1.wav
+grounds	Woodwinds/Flute/susNV/LDFlute_susNV_E4_v1_1.wav
+tower	Brass/F Horn/sus/MOHorn_sus_A2_v1_1.wav
+tower	Brass/F Horn/sus/MOHorn_sus_C3_v1_1.wav
+tower	Brass/F Horn/sus/MOHorn_sus_D2_v1_1.wav
+tower	Brass/F Horn/sus/MOHorn_sus_F2_v1_1.wav
+tower	Percussion/Glock/glock_medium_G4.wav
+tower	Percussion/Timpani/Timpani1_Hit_v1_rr1_Sum.wav
+tower	Strings/Cello Section/pizzT/pizzT_A2_v1_RR1.wav
+tower	Strings/Cello Section/pizzT/pizzT_B1_v1_RR1.wav
+tower	Strings/Cello Section/pizzT/pizzT_B3_v1_RR1.wav
+tower	Strings/Cello Section/pizzT/pizzT_C3_v1_RR1.wav
+tower	Strings/Cello Section/pizzT/pizzT_D2_v1_RR1.wav
+tower	Strings/Cello Section/pizzT/pizzT_E3_v1_RR1.wav
+tower	Strings/Cello Section/pizzT/pizzT_F2_v1_RR1.wav
+tower	Strings/Cello Section/pizzT/pizzT_G1_v1_RR1.wav
+tower	Strings/Cello Section/susvib/susvib_B1_v1_1.wav
+tower	Strings/Cello Section/susvib/susvib_D2_v1_1.wav
+tower	Strings/Cello Section/susvib/susvib_F2_v1_1.wav
+tower	Strings/Cello Section/susvib/susvib_G1_v1_1.wav
+tower	Strings/Viola Section/susvib/ViolaEns_susvib_A3_v1_1.wav
+tower	Strings/Viola Section/susvib/ViolaEns_susvib_B2_v1_1.wav
+tower	Strings/Viola Section/susvib/ViolaEns_susvib_D2_v1_1.wav
+tower	Strings/Viola Section/susvib/ViolaEns_susvib_D3_v1_1.wav
+tower	Strings/Viola Section/susvib/ViolaEns_susvib_E2_v1_1.wav
+tower	Strings/Viola Section/susvib/ViolaEns_susvib_F3_v1_1.wav
+tower	Strings/Viola Section/susvib/ViolaEns_susvib_G2_v1_1.wav
+tower	Woodwinds/Clarinet/susLong/DCClar_susLong_A#2_v1_rr1_sum.wav
+tower	Woodwinds/Clarinet/susLong/DCClar_susLong_A#3_v1_rr1_sum.wav
+tower	Woodwinds/Clarinet/susLong/DCClar_susLong_D3_v1_rr1_sum.wav
+tower	Woodwinds/Clarinet/susLong/DCClar_susLong_D4_v1_rr1_sum.wav
+tower	Woodwinds/Clarinet/susLong/DCClar_susLong_F3_v1_rr1_sum.wav

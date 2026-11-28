@@ -13,8 +13,9 @@ const GameData = preload("res://data/game_data.gd")
 const PlayerStats = preload("res://data/player_stats.gd")
 const FloorFeatures = preload("res://scripts/floor_features.gd")
 const WorldSettings = preload("res://data/complete_world.gd")
-const RetroScore = preload("res://scripts/retro_score.gd")
+const Sound = preload("res://scripts/sound_manager.gd")
 const RunController = preload("res://scripts/run_controller.gd")
+const Boons = preload("res://data/run_boons.gd")
 const LOCALES := ["zh_CN", "en_US"]
 const CATEGORIES := ["menu", "hud", "transition", "narrative", "equipment", "inventory", "codex", "settings", "result", "input"]
 const STRING_STATUSES := ["placeholder", "draft", "approved"]
@@ -57,8 +58,9 @@ func _run() -> void:
 	_test_floor_resources()
 	await _test_cover()
 	await _test_weapons_and_stats()
+	await _test_corruption_cards()
 	await _test_arrow_plate_and_pot()
-	_test_retro_score()
+	await _test_recorded_audio()
 	if failures.is_empty():
 		await _test_full_run("zh_CN", true)
 		await _test_full_run("en_US", false)
@@ -67,6 +69,8 @@ func _run() -> void:
 	for path in [temp_settings, temp_codex]:
 		if FileAccess.file_exists(path):
 			DirAccess.remove_absolute(path)
+	# Playback stop is consumed by the audio thread after the last scene exits.
+	await create_timer(0.15, true, false, true).timeout
 	if failures.is_empty():
 		print("PASS: %d checks (10 floors, 11 enemies, bilingual text, combat, world, crafting, corruption, saves and endings)" % checks)
 		quit(0)
@@ -221,6 +225,20 @@ func _test_cover() -> void:
 			if shots.count > 0:
 				break
 		check(shots.count > 0 and shots.clear, kind + " repositions to find a firing line")
+	goblin.position = Vector2(415, 300)
+	var rush_radius := 24.0
+	var stopped_reach: float = goblin.clear_reach(Vector2.RIGHT, 120.0, goblin.hit_radius) - ArenaLayout.MOTION_MARGIN
+	var outline: PackedVector2Array = goblin._rush_outline(Vector2.RIGHT, stopped_reach, rush_radius)
+	check(not Geometry2D.triangulate_polygon(outline).is_empty()
+		and Geometry2D.is_point_in_polygon(Vector2(stopped_reach + 5.0, 0), outline)
+		and not Geometry2D.is_point_in_polygon(Vector2(67, 0), outline),
+		"charge warning follows the hit area up to the wall and trims the blocked tip")
+	goblin.position = Vector2(449, 388)
+	outline = goblin._rush_outline(Vector2.RIGHT, 120.0, rush_radius)
+	check(not Geometry2D.triangulate_polygon(outline).is_empty()
+		and Geometry2D.is_point_in_polygon(Vector2(42, -15), outline)
+		and not Geometry2D.is_point_in_polygon(Vector2(42, -21), outline),
+		"charge warning clips the entire flank along cover and keeps open ground visible")
 	arena.queue_free()
 	await process_frame
 
@@ -315,6 +333,61 @@ func _test_weapons_and_stats() -> void:
 	player.queue_free()
 	await process_frame
 
+func _test_corruption_cards() -> void:
+	for weapon in ["START_SWORD", "START_STAFF"]:
+		for run_seed in range(24):
+			var inventory := RunInventory.new()
+			inventory.add(weapon)
+			for floor_number in range(2, 11):
+				var options := Boons.offer(run_seed, floor_number, inventory.owned, inventory.boon_history, PlayerStats.WEAPONS, weapon)
+				check(options.size() == 3 and options[0] != options[1] and options[1] != options[2] and options[2] != options[0],
+					"three unique corruption options at every stair")
+				check(options == Boons.offer(run_seed, floor_number, inventory.owned, inventory.boon_history, PlayerStats.WEAPONS, weapon),
+					"corruption options repeat on identical inputs")
+				var unavailable := "RUNE" if weapon == "START_SWORD" else "KEEN"
+				check(unavailable not in options, "a single weapon never offers unusable weapon damage")
+				check(options.any(func(id: String): return Boons._weapon_mode(id, false).is_empty()),
+					"all corruption offers include a benefit independent of loadout")
+				var tactical := options.filter(func(id: String): return not Boons.CARDS[id].has("stats"))
+				var numerical := options.filter(func(id: String): return Boons.CARDS[id].has("stats"))
+				check(not tactical.is_empty() and not numerical.is_empty(), "stacked mechanics retain both card families")
+				if not tactical.is_empty():
+					var choice: String = tactical[0]
+					check(inventory.choose_boon(floor_number, choice) and not inventory.choose_boon(floor_number, choice),
+						"each stair accepts one rank even with repeat input")
+	var player := PlayerScene.instantiate()
+	root.add_child(player)
+	player.set_physics_process(false)
+	player.position = Vector2(646, 325)
+	player.set_loadout({"weapon": "START_SWORD"}, {"max_hp": 1}, {"HIDE": 1, "WARD": 1, "RECOVERY": 1, "SURVIVOR": 1})
+	check(player.max_hp == 118.0, "corruption and blood bead enhancement share actual stat calculation")
+	player.take_damage(10.0, "trap")
+	check(player.hp == 90.0 and not player.boon_triggers.has("ward_used"), "traps do not consume the first-hit ward")
+	player.invulnerability = 0.0
+	player.take_damage(10.0, "enemy")
+	check(player.hp == 83.0 and player.boon_triggers.ward_used, "first direct hit receives the ward discount")
+	player.hp = 30.0
+	player.drink_potion()
+	check(player.hp == 72.0 and player.boon_triggers.recovery_used, "survivor and once-per-room dusk recovery combine")
+	player.hp = 30.0
+	player.drink_potion()
+	check(player.hp == 64.0, "dusk recovery only applies on the first eligible drink")
+	player.reset_floor_effects()
+	check(player.boon_triggers.is_empty(), "room-limited mechanisms reset on arrival")
+	for weapon: String in ["START_SWORD", "START_STAFF"]:
+		player.reset_floor_effects()
+		player.set_loadout({"weapon": weapon}, {}, {"AFTERSTEP": 1})
+		player.can_attack = true
+		player.attack()
+		var recovery: float = player.boon_triggers.get("step_delay", 0.0)
+		check(recovery > 0.0 and not player.boon_triggers.has("step_speed"), "Afterstep waits for weapon recovery")
+		player._physics_process(recovery * 0.5)
+		check(not player.boon_triggers.has("step_speed"), "no speed increase during the attack animation")
+		player._physics_process(recovery * 0.51)
+		check(player.boon_triggers.get("step_speed", 0.0) > 1.25, "Afterstep activates at the end of weapon recovery")
+	player.free()
+	await process_frame
+
 func _test_arrow_plate_and_pot() -> void:
 	var world := Node2D.new()
 	root.add_child(world)
@@ -339,15 +412,28 @@ func _test_arrow_plate_and_pot() -> void:
 	world.queue_free()
 	await process_frame
 
-func _test_retro_score() -> void:
-	var lengths: Array[int] = []
-	for track in ["grounds", "tower", "lord", "ending"]:
-		var score := RetroScore.render(track)
-		check(score.mix_rate == 22050 and not score.stereo and score.format == AudioStreamWAV.FORMAT_16_BITS, "PCM spec for " + track)
-		check(score.loop_mode == AudioStreamWAV.LOOP_FORWARD and score.loop_end == score.data.size() / 2, "the loop spans " + track)
-		check(score.loop_end > 2 * score.mix_rate and score.data.decode_s16(824) != 0, "score contains music for " + track)
-		check(score.loop_end not in lengths, "each track has its own tempo")
-		lengths.append(score.loop_end)
+func _test_recorded_audio() -> void:
+	var sound := Sound.new()
+	root.add_child(sound)
+	for key in ["grounds", "ending", "altar", "cadence"]:
+		var score := sound._read_ogg("music", key)
+		check(score != null and score.loop == (key in ["grounds", "ending"]), "music loop metadata for " + key)
+	for key in ["tower", "elite", "rift", "lord"]:
+		sound._start_score(key)
+		var stems := sound.music_player.stream as AudioStreamSynchronized
+		check(stems != null and stems.stream_count == 4, "four synchronized parts for " + key)
+		for i in stems.stream_count:
+			var clip := stems.get_sync_stream(i) as AudioStreamOggVorbis
+			check(clip != null and clip.loop and is_equal_approx(clip.get_length(), stems.get_length()), "aligned loop for %s part %d" % [key, i])
+	for key in ["sword", "footstep", "magic", "hit_bone", "hit_metal", "hit_flesh", "trap_warn"]:
+		var variants := sound._effect(key) as AudioStreamRandomizer
+		check(variants != null and variants.streams_count >= 3 and variants.playback_mode == AudioStreamRandomizer.PLAYBACK_RANDOM_NO_REPEATS, "distinct consecutive takes for " + key)
+		var take := variants.get_stream(0) as AudioStreamWAV
+		check(take.mix_rate == 44100 and not take.stereo and take.format == AudioStreamWAV.FORMAT_16_BITS, "uncompressed spatial Foley for " + key)
+	for bus in [Sound.AMBIENCE_BUS, Sound.ROOM_BUS, Sound.PRIORITY_BUS]:
+		check(AudioServer.get_bus_send(AudioServer.get_bus_index(bus)) == Sound.EFFECTS_BUS, "effects slider includes " + bus)
+	sound.queue_free()
+	await process_frame
 
 func _new_game(locale: String) -> Node:
 	var game = MainScene.instantiate()
@@ -375,6 +461,13 @@ func _restart_game(game: Node, locale: String) -> Node:
 
 func _finish_transition(game: Node) -> void:
 	game._process(game.TRANSITION_TIME)
+	if game.ui.boon_panel.visible:
+		check(game._stair_offer.size() == 3 and not game.player.can_move, "stair transition waits for three-way corruption")
+		var choice: String = game._stair_offer[0]
+		game.ui.boon_chosen.emit(choice)
+		game.ui.boon_chosen.emit(choice)
+		check(game.inventory.boon_history.get(game.floor_number) == choice, "a destination grants exactly one corruption")
+		game._process(game.TRANSITION_TIME)
 	await process_frame
 
 func _spawn_wave(game: Node) -> void:
@@ -392,7 +485,9 @@ func _collect_at(game: Node, id: String) -> bool:
 		if node.item_id == id:
 			game.player.position = node.position
 			game._update_world_interactions()
-			return true
+			check(node.get_parent() == game.pickups, "walking onto an item does not collect it")
+			game._interact()
+			return node.get_parent() != game.pickups
 	return false
 
 func _test_full_run(locale: String, checkpoints: bool) -> void:
@@ -408,9 +503,16 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 	check(game.camera.zoom.is_equal_approx(Vector2(1.35, 1.35)), "camera shows 20 percent more world on each axis")
 	game.player.position = game.entrance.position
 	game._update_world_interactions()
-	check(is_instance_valid(game.ghost), "approaching unarmed triggers the knight ghost")
-	game._process(4.0)
-	check(game.ghost_seen and not is_instance_valid(game.ghost), "ghost ends with a persistent weapon hint")
+	check(not is_instance_valid(game.ghost), "approaching the tower door leaves the player in control")
+	if checkpoints:
+		game._interact()
+		check(is_instance_valid(game.ghost), "interacting unarmed triggers the knight ghost")
+		game._process(1.4)
+		game = await _restart_game(game, locale)
+		check(is_instance_valid(game.ghost) and game.ghost.elapsed >= 1.4 and not game.player.can_move,
+			"resuming the knight scene restores the gesture and input lock")
+		game._process(RunController.Ghost.DURATION + 0.02)
+		check(game.ghost_seen and not is_instance_valid(game.ghost), "ghost ends with a persistent weapon hint")
 	var first_weapon := "START_SWORD" if checkpoints else "START_STAFF"
 	check(_collect_at(game, first_weapon) and game.inventory.current_weapon() == first_weapon, "one picked-up weapon activates immediately")
 	check(_collect_at(game, "LORE_KIT") and game.ui.top_overlay() == null, "manuscript pickup does not pause or open text")
@@ -422,27 +524,55 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 	game.player.position = game.entrance.position
 	game._interact()
 	check(game.state == RunController.State.TRANSITION and game.floor_number == 1, "equipping either starter permits entry")
+	check(not is_instance_valid(game.ghost) and game.ghost_seen == checkpoints, "having a weapon skips the ghost when the player goes straight to the gate")
 	var starting_seed: int = game.seed
 	if checkpoints:
+		var legacy: Dictionary = game.saves.load_latest().data
+		legacy.transition = 1.55
+		check(not RunSave.prepare_resume(legacy, game.floors).is_empty(), "version 2 saves from a 2.1 second transition are still accepted")
 		game = await _restart_game(game, locale)
 		check(game.state == RunController.State.TRANSITION and game.seed == starting_seed, "F1 entry resumes with the same seed")
 	for floor_number in range(1, 11):
 		await _finish_transition(game)
 		if floor_number == 10:
 			check(game.state == RunController.State.DIALOGUE and game.floor_manager.enemies.is_empty(), "the F10 opening dialogue precedes combat")
+			check(game.features.get_node_or_null("SummitCrystal") != null, "the summit crystal exists before combat")
 			check(is_instance_valid(game.lord_preview) and game.lord_preview.position == ArenaLayout.LORD_INTRO_POSITION, "lord is visible at the protected dialogue position")
 			game.ui._advance_dialogue()
 			if checkpoints:
 				game = await _restart_game(game, locale)
-				check(game.state == RunController.State.DIALOGUE and game.ui.dialogue_line == 0, "unfinished dialogue resumes at its first line")
+				check(game.state == RunController.State.DIALOGUE and game.ui.dialogue_line == 1, "unfinished dialogue resumes on the same line")
 			while game.state == RunController.State.DIALOGUE:
 				game.ui._advance_dialogue()
 			if checkpoints:
 				game = await _restart_game(game, locale)
 				check(game.state == RunController.State.COMBAT and game.lord_introduced, "completed dialogue does not replay on combat resume")
 		check(game.floor_number == floor_number and game.state == RunController.State.COMBAT, "transitions enter the expected floor exactly once")
+		if floor_number == 5:
+			check(game.current_floor.waves.size() == 1, "F5 has one miniboss encounter")
+			if checkpoints:
+				var former: Dictionary = game._snapshot()
+				former.next_wave = 1
+				former.wave_drops = ["WATER"]
+				var migrated := RunSave.prepare_resume(former, game.floors)
+				check(not migrated.is_empty() and migrated.data.next_wave == 0, "legacy second elite wave restores the single boss")
 		for wave_idx in range(game.current_floor.waves.size()):
 			_spawn_wave(game)
+			if floor_number == 5:
+				var boss: Node2D = game.floor_manager.boss()
+				boss.set_spawn_delay(0.0)
+				game._spawn_projectile(game.player.position, Vector2.RIGHT, 12.0, false)
+				game._spawn_projectile(game.player.position, Vector2.RIGHT, 12.0, true)
+				game._spawn_projectile(game.player.position, Vector2.RIGHT, 12.0, false)
+				var shots: Array[Node] = game.projectiles.get_children()
+				shots[2].trap_arrow = true
+				var hp: float = game.player.hp
+				boss.take_damage(boss.max_hp * 0.46)
+				shots[0]._physics_process(0.01)
+				check(boss.boss_stage == 2 and shots[0].consumed and not shots[0].visible and game.player.hp == hp,
+					"boss phase transition hides and disarms the previous phase shots immediately")
+				check(not shots[1].consumed and not shots[2].consumed,
+					"boss phase transition leaves player shots and trap arrows active")
 			if floor_number == 10:
 				check(game.floor_manager.enemies[0].position == ArenaLayout.LORD_INTRO_POSITION, "boss enters combat at its dialogue position")
 			if checkpoints and floor_number == 2 and wave_idx == 0:
@@ -454,6 +584,8 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 				var previous_water: int = game.inventory.count("WATER")
 				game._add_pickup("WATER", game.player.position)
 				game._update_world_interactions()
+				check(game.inventory.count("WATER") == previous_water, "live pickup needs interaction")
+				game._interact()
 				check(game.inventory.count("WATER") > previous_water, "pickup during a wave succeeds")
 				game = await _restart_game(game, locale)
 				check(game.player.position == live_position and game.features.snapshot() == world_state and game.player.hp == old_hp, "position, HP and props roll back to wave opening")
@@ -462,24 +594,47 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 			if floor_number == 10:
 				game.player.position = ArenaLayout.EXIT_POSITION
 			await _defeat_wave(game)
-			if checkpoints and floor_number == 5 and wave_idx == 0:
-				game = await _restart_game(game, locale)
-				check(game.state == RunController.State.COMBAT and game._next_wave == 1, "resume between elite waves starts the second wave")
-		check(game.state == RunController.State.SAFE and game.player.can_move, "clear unlocks exploration before any transition")
 		if floor_number == 10:
+			check(game.state == RunController.State.AFTERMATH and not game.player.can_move, "defeating the lord starts its last bubbles")
+			check(game.ui.speaker_keys == ["ENEMY_LORD_NAME", "ENEMY_LORD_NAME", "ENEMY_LORD_NAME"], "the protagonist is silent after the fight")
+			game.ui._advance_dialogue()
+			if checkpoints:
+				game = await _restart_game(game, locale)
+				check(game.state == RunController.State.AFTERMATH and game.ui.dialogue_line == 1,
+					"resuming after the lord's defeat continues the right bubble")
+			while game.state == RunController.State.AFTERMATH:
+				game.ui._advance_dialogue()
 			game._update_world_interactions()
-			check(game.state == RunController.State.SAFE, "killing the lord while standing on the exit requires a fresh approach")
+			check(game.state == RunController.State.SAFE and game.player.can_move, "the crystal awaits an explicit touch even when under the player")
 			if checkpoints:
 				game = await _restart_game(game, locale)
 				check(game.state == RunController.State.SAFE and game.lord_introduced, "defeated lord and open gate restore")
 			check(_collect_at(game, "LORE_F5") and game.state == RunController.State.SAFE, "summit manuscript is optional")
 			game.player.position = ArenaLayout.EXIT_POSITION
 			game._update_world_interactions()
-			check(game.state == RunController.State.ENDING, "walking into open exit begins final transition")
+			check(game.state == RunController.State.SAFE, "approaching the crystal does not trigger it")
+			var live_arrow := ProjectileScene.instantiate()
+			game.features.add_child(live_arrow)
+			live_arrow.trap_arrow = true
+			live_arrow.setup(game.player.position, Vector2.DOWN, 40.0, false, game.player)
+			game.features.arrows.append(live_arrow)
+			var before_touch: float = game.player.hp
+			game._interact()
+			check(game.state == RunController.State.ENDING, "interacting with the crystal begins the ending")
+			live_arrow._physics_process(0.05)
+			check(live_arrow.consumed and game.features.arrows.is_empty() and game.player.hp == before_touch,
+				"touching the crystal cancels in-flight trap arrows before the locked ending")
 			if checkpoints:
+				var defeated_at: Vector2 = game.lord_preview.position
+				game = await _restart_game(game, locale)
+				check(game.state == RunController.State.ENDING and is_instance_valid(game.lord_preview)
+					and game.lord_preview.position == defeated_at,
+					"resuming before the crystal impact keeps the defeated lord at the saved position")
+				game._process(1.7)
 				game = await _restart_game(game, locale)
 				check(game.state == RunController.State.ENDING, "final transition is resumable without replaying combat")
 			break
+		check(game.state == RunController.State.SAFE and game.player.can_move, "clear unlocks exploration before any transition")
 		check(game.pearl_available, "one bead forms after clearing a nonfinal floor")
 		if checkpoints and floor_number == 1:
 			game = await _restart_game(game, locale)
@@ -497,6 +652,9 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 			var material_counts: Dictionary = game.inventory.stacks.duplicate()
 			game.ui.show_inventory(game.inventory, game.player, game.codex)
 			game.ui.inventory_requested.emit("enhance", "max_hp")
+			game.ui.inventory_requested.emit("enhance", "max_hp")
+			check(game.inventory.corruption.max_hp == 1 and game.ui.magic_feedback_active(),
+				"successful bead purchase plays one enhancement sequence")
 			game.ui.inventory_requested.emit("craft", "")
 			game.ui.pop_overlay()
 			game = await _restart_game(game, locale)
@@ -528,7 +686,28 @@ func _test_full_run(locale: String, checkpoints: bool) -> void:
 		game.player.position = ArenaLayout.STAIRS_POSITION
 		game._update_world_interactions()
 		check(game.state == RunController.State.TRANSITION and game.floor_number == floor_number + 1, "walking up stairs advances one level")
+		if checkpoints and floor_number == 1:
+			game._process(0.36)
+			check(game.arena.floor_number == 1 and game.player.position.y < ArenaLayout.STAIRS_POSITION.y,
+				"the ordinary transition follows the hero through the departing arch")
+			game = await _restart_game(game, locale)
+			check(game.state == RunController.State.TRANSITION and game.arena.floor_number == 1,
+				"resuming partway through the climb restores the departing geometry")
+			game._process(3.0)
+			var offer: Array[String] = game._stair_offer.duplicate()
+			game = await _restart_game(game, locale)
+			check(game.ui.boon_panel.visible and game._stair_offer == offer, "three candidates and waiting step restore exactly")
+			var old_checkpoint: Dictionary = game.saves.load_latest().data.duplicate(true)
+			old_checkpoint.stair_offer = Boons.legacy_offer(game.seed, 2, game.inventory.owned,
+				game.inventory.boon_history, PlayerStats.WEAPONS)
+			check(not RunSave.prepare_resume(old_checkpoint, game.floors).is_empty(),
+				"saved offers from the first 0.4.0-dev build keep their exact cards")
+			game.ui.boon_chosen.emit(offer[0])
+			game = await _restart_game(game, locale)
+			check(game.inventory.boon_history.get(2) == offer[0] and not game.ui.boon_panel.visible,
+				"the selected corruption survives a restart before entering F2")
 	await _finish_transition(game)
+	check(game.inventory.boon_history.size() == 9, "exactly nine stair choices in a complete run")
 	check(game.state == RunController.State.VICTORY and game.ui.result.visible, "only the ending transition completes victory")
 	check(game.saves.load_latest().error == ERR_FILE_NOT_FOUND and game.saves.load_backup().error == ERR_FILE_NOT_FOUND, "victory retires the run and backup")
 	check(game.codex.enemies.size() == GameData.ENEMIES.size(), "all eleven enemy discoveries survive completion")

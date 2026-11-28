@@ -2,6 +2,9 @@ extends RefCounted
 
 enum Phase { MOVE, WINDUP, STRIKE, RECOVERY, HURT }
 
+const DIRECTIONS := ["e", "se", "s", "sw", "w", "nw", "n", "ne"]
+const PHASE_NAMES := ["idle", "windup", "strike", "recovery", "hurt"]
+
 var phase := Phase.MOVE
 var offset := Vector2.ZERO
 var stretch := Vector2.ONE
@@ -11,6 +14,25 @@ var foot_stride := 0.0
 var _step_cycle := 0.0
 var _breath_cycle := 0.0
 var _flip := false
+var walk_progress := 0.0
+var idle_progress := 0.0
+
+func advance_cycle(delta: float, velocity: Vector2, stride := 60.0) -> bool:
+	var speed := velocity.length()
+	if speed <= 5.0:
+		walk_progress = 0.0
+		idle_progress = fposmod(idle_progress + delta * 0.9, 1.0)
+		return false
+	var next := walk_progress + speed * delta / stride
+	var contact := floori(next * 2.0) != floori(walk_progress * 2.0)
+	walk_progress = fposmod(next, 1.0)
+	return contact
+
+static func direction_name(facing: Vector2) -> String:
+	return DIRECTIONS[posmod(roundi(facing.angle() / (TAU / 8.0)), DIRECTIONS.size())]
+
+static func frame_index(progress: float, count: int) -> int:
+	return clampi(floori(progress * count), 0, maxi(0, count - 1))
 
 ## Transforms affect the supplied art. Collision, aim and telegraphs stay on the actor.
 func advance(delta: float, velocity: Vector2, facing: Vector2, next_phase: Phase = Phase.MOVE, progress := 0.0) -> void:

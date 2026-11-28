@@ -42,4 +42,6 @@ static func effect_value(item: Dictionary) -> int:
 		"sword_cooldown", "magic_cooldown": return roundi((1.0 - item.value) * 100.0)
 		"critical": return roundi(item.value * 100.0)
 		"speed": return roundi((item.value - 1.0) * 100.0)
+		"magic_damage_scale": return roundi((1.0 - item.value) * 100.0)
+		"first_guard", "aftercast_speed", "low_health_attack": return roundi(item.value * 100.0)
 		_: return roundi(item.value)

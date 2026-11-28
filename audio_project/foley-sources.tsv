@@ -1,0 +1,263 @@
+output	layers (recipe order)
+footstep_01.wav	impact-sounds/Audio/footstep_concrete_000.ogg | rpg-audio/Audio/cloth1.ogg
+footstep_02.wav	impact-sounds/Audio/footstep_concrete_001.ogg | rpg-audio/Audio/cloth2.ogg
+footstep_03.wav	impact-sounds/Audio/footstep_concrete_002.ogg | rpg-audio/Audio/cloth3.ogg
+footstep_04.wav	impact-sounds/Audio/footstep_concrete_003.ogg | rpg-audio/Audio/cloth4.ogg
+footstep_05.wav	impact-sounds/Audio/footstep_concrete_004.ogg | rpg-audio/Audio/cloth1.ogg
+footstep_grass_01.wav	impact-sounds/Audio/footstep_grass_000.ogg | rpg-audio/Audio/cloth1.ogg
+footstep_grass_02.wav	impact-sounds/Audio/footstep_grass_001.ogg | rpg-audio/Audio/cloth2.ogg
+footstep_grass_03.wav	impact-sounds/Audio/footstep_grass_002.ogg | rpg-audio/Audio/cloth3.ogg
+footstep_grass_04.wav	impact-sounds/Audio/footstep_grass_003.ogg | rpg-audio/Audio/cloth4.ogg
+footstep_grass_05.wav	impact-sounds/Audio/footstep_grass_004.ogg | rpg-audio/Audio/cloth1.ogg
+sword_01.wav	rpg-audio/Audio/cloth1.ogg | rpg-audio/Audio/knifeSlice.ogg | synthesis/air
+sword_02.wav	rpg-audio/Audio/cloth2.ogg | rpg-audio/Audio/knifeSlice2.ogg | synthesis/air
+sword_03.wav	rpg-audio/Audio/cloth3.ogg | rpg-audio/Audio/knifeSlice.ogg | synthesis/air
+sword_04.wav	rpg-audio/Audio/cloth4.ogg | rpg-audio/Audio/knifeSlice2.ogg | synthesis/air
+sword_05.wav	rpg-audio/Audio/cloth1.ogg | rpg-audio/Audio/knifeSlice.ogg | synthesis/air
+hit_01.wav	impact-sounds/Audio/impactPunch_medium_000.ogg | impact-sounds/Audio/impactWood_light_000.ogg
+hit_02.wav	impact-sounds/Audio/impactPunch_medium_001.ogg | impact-sounds/Audio/impactWood_light_001.ogg
+hit_03.wav	impact-sounds/Audio/impactPunch_medium_002.ogg | impact-sounds/Audio/impactWood_light_002.ogg
+hit_04.wav	impact-sounds/Audio/impactPunch_medium_003.ogg | impact-sounds/Audio/impactWood_light_003.ogg
+hit_flesh_01.wav	impact-sounds/Audio/impactPunch_heavy_000.ogg | impact-sounds/Audio/impactSoft_medium_000.ogg
+hit_flesh_02.wav	impact-sounds/Audio/impactPunch_heavy_001.ogg | impact-sounds/Audio/impactSoft_medium_001.ogg
+hit_flesh_03.wav	impact-sounds/Audio/impactPunch_heavy_002.ogg | impact-sounds/Audio/impactSoft_medium_002.ogg
+hit_flesh_04.wav	impact-sounds/Audio/impactPunch_heavy_003.ogg | impact-sounds/Audio/impactSoft_medium_003.ogg
+hit_bone_01.wav	impact-sounds/Audio/impactPlank_medium_000.ogg | impact-sounds/Audio/impactWood_light_000.ogg
+hit_bone_02.wav	impact-sounds/Audio/impactPlank_medium_001.ogg | impact-sounds/Audio/impactWood_light_001.ogg
+hit_bone_03.wav	impact-sounds/Audio/impactPlank_medium_002.ogg | impact-sounds/Audio/impactWood_light_002.ogg
+hit_bone_04.wav	impact-sounds/Audio/impactPlank_medium_003.ogg | impact-sounds/Audio/impactWood_light_003.ogg
+hit_metal_01.wav	impact-sounds/Audio/impactPlate_medium_000.ogg | impact-sounds/Audio/impactMetal_light_000.ogg
+hit_metal_02.wav	impact-sounds/Audio/impactPlate_medium_001.ogg | impact-sounds/Audio/impactMetal_light_001.ogg
+hit_metal_03.wav	impact-sounds/Audio/impactPlate_medium_002.ogg | impact-sounds/Audio/impactMetal_light_002.ogg
+hit_metal_04.wav	impact-sounds/Audio/impactPlate_medium_003.ogg | impact-sounds/Audio/impactMetal_light_003.ogg
+hurt_01.wav	impact-sounds/Audio/impactSoft_heavy_000.ogg | impact-sounds/Audio/impactPunch_medium_000.ogg | rpg-audio/Audio/cloth2.ogg
+hurt_02.wav	impact-sounds/Audio/impactSoft_heavy_001.ogg | impact-sounds/Audio/impactPunch_medium_001.ogg | rpg-audio/Audio/cloth3.ogg
+hurt_03.wav	impact-sounds/Audio/impactSoft_heavy_002.ogg | impact-sounds/Audio/impactPunch_medium_002.ogg | rpg-audio/Audio/cloth4.ogg
+death_01.wav	rpg-audio/Audio/dropLeather.ogg | impact-sounds/Audio/impactSoft_heavy_000.ogg | synthesis/fall
+death_02.wav	rpg-audio/Audio/dropLeather.ogg | impact-sounds/Audio/impactSoft_heavy_001.ogg | synthesis/fall
+magic_01.wav	synthesis/air | synthesis/spell | impact-sounds/Audio/impactGlass_light_001.ogg
+magic_02.wav	synthesis/air | synthesis/spell | impact-sounds/Audio/impactGlass_light_002.ogg
+magic_03.wav	synthesis/air | synthesis/spell | impact-sounds/Audio/impactGlass_light_003.ogg
+magic_04.wav	synthesis/air | synthesis/spell | impact-sounds/Audio/impactGlass_light_004.ogg
+enemy_magic_01.wav	synthesis/air | synthesis/hex
+enemy_magic_02.wav	synthesis/air | synthesis/hex
+enemy_magic_03.wav	synthesis/air | synthesis/hex
+enemy_chant_01.wav	rpg-audio/Audio/creak1.ogg | synthesis/chant
+enemy_chant_02.wav	rpg-audio/Audio/creak2.ogg | synthesis/chant
+enemy_arrow_01.wav	rpg-audio/Audio/drawKnife1.ogg | synthesis/snap | synthesis/air
+enemy_arrow_02.wav	rpg-audio/Audio/drawKnife2.ogg | synthesis/snap | synthesis/air
+enemy_arrow_03.wav	rpg-audio/Audio/drawKnife3.ogg | synthesis/snap | synthesis/air
+enemy_arrow_04.wav	rpg-audio/Audio/drawKnife1.ogg | synthesis/snap | synthesis/air
+enemy_telegraph_01.wav	rpg-audio/Audio/metalLatch.ogg | synthesis/warning
+enemy_telegraph_02.wav	rpg-audio/Audio/metalLatch.ogg | synthesis/warning
+enemy_zone_warning_01.wav	synthesis/charge | impact-sounds/Audio/impactPlate_light_000.ogg
+enemy_zone_warning_02.wav	synthesis/charge | impact-sounds/Audio/impactPlate_light_001.ogg
+enemy_zone_burst_01.wav	impact-sounds/Audio/impactPunch_heavy_000.ogg | synthesis/rupture | impact-sounds/Audio/impactMining_001.ogg
+enemy_zone_burst_02.wav	impact-sounds/Audio/impactPunch_heavy_001.ogg | synthesis/rupture | impact-sounds/Audio/impactMining_002.ogg
+enemy_zone_burst_03.wav	impact-sounds/Audio/impactPunch_heavy_002.ogg | synthesis/rupture | impact-sounds/Audio/impactMining_003.ogg
+enemy_ghost_01.wav	synthesis/wraith | synthesis/air
+enemy_ghost_02.wav	synthesis/wraith | synthesis/air
+enemy_ghost_03.wav	synthesis/wraith | synthesis/air
+enemy_rush_01.wav	rpg-audio/Audio/cloth1.ogg | synthesis/air | impact-sounds/Audio/footstep_concrete_001.ogg
+enemy_rush_02.wav	rpg-audio/Audio/cloth2.ogg | synthesis/air | impact-sounds/Audio/footstep_concrete_002.ogg
+enemy_rush_03.wav	rpg-audio/Audio/cloth3.ogg | synthesis/air | impact-sounds/Audio/footstep_concrete_003.ogg
+enemy_rush_04.wav	rpg-audio/Audio/cloth4.ogg | synthesis/air | impact-sounds/Audio/footstep_concrete_004.ogg
+pot_break_01.wav	impact-sounds/Audio/impactGlass_heavy_000.ogg | impact-sounds/Audio/impactPlank_medium_000.ogg | impact-sounds/Audio/impactGlass_light_001.ogg | impact-sounds/Audio/impactGlass_light_001.ogg
+pot_break_02.wav	impact-sounds/Audio/impactGlass_heavy_001.ogg | impact-sounds/Audio/impactPlank_medium_001.ogg | impact-sounds/Audio/impactGlass_light_002.ogg | impact-sounds/Audio/impactGlass_light_002.ogg
+pot_break_03.wav	impact-sounds/Audio/impactGlass_heavy_002.ogg | impact-sounds/Audio/impactPlank_medium_002.ogg | impact-sounds/Audio/impactGlass_light_003.ogg | impact-sounds/Audio/impactGlass_light_003.ogg
+pot_break_04.wav	impact-sounds/Audio/impactGlass_heavy_003.ogg | impact-sounds/Audio/impactPlank_medium_003.ogg | impact-sounds/Audio/impactGlass_light_004.ogg | impact-sounds/Audio/impactGlass_light_004.ogg
+trap_warn_01.wav	synthesis/latch | rpg-audio/Audio/creak1.ogg | synthesis/charge
+trap_warn_02.wav	synthesis/latch | rpg-audio/Audio/creak2.ogg | synthesis/charge
+trap_warn_03.wav	synthesis/latch | rpg-audio/Audio/creak3.ogg | synthesis/charge
+trap_arrow_01.wav	synthesis/snap | impact-sounds/Audio/impactWood_light_000.ogg | synthesis/air
+trap_arrow_02.wav	synthesis/snap | impact-sounds/Audio/impactWood_light_001.ogg | synthesis/air
+trap_arrow_03.wav	synthesis/snap | impact-sounds/Audio/impactWood_light_002.ogg | synthesis/air
+arrow_impact_01.wav	impact-sounds/Audio/impactWood_medium_000.ogg | impact-sounds/Audio/impactMetal_light_000.ogg
+arrow_impact_02.wav	impact-sounds/Audio/impactWood_medium_001.ogg | impact-sounds/Audio/impactMetal_light_001.ogg
+arrow_impact_03.wav	impact-sounds/Audio/impactWood_medium_002.ogg | impact-sounds/Audio/impactMetal_light_002.ogg
+arrow_impact_04.wav	impact-sounds/Audio/impactWood_medium_003.ogg | impact-sounds/Audio/impactMetal_light_003.ogg
+pickup_01.wav	rpg-audio/Audio/handleCoins.ogg | synthesis/token
+pickup_02.wav	rpg-audio/Audio/handleCoins2.ogg | synthesis/token
+pickup_03.wav	rpg-audio/Audio/handleCoins.ogg | synthesis/token
+pickup_04.wav	rpg-audio/Audio/handleCoins2.ogg | synthesis/token
+craft_01.wav	impact-sounds/Audio/impactMetal_light_000.ogg | impact-sounds/Audio/impactMetal_light_000.ogg | synthesis/token
+craft_02.wav	impact-sounds/Audio/impactMetal_light_001.ogg | impact-sounds/Audio/impactMetal_light_001.ogg | synthesis/token
+potion_01.wav	rpg-audio/Audio/handleSmallLeather.ogg | synthesis/bubble | synthesis/bubble
+potion_02.wav	rpg-audio/Audio/handleSmallLeather2.ogg | synthesis/bubble | synthesis/bubble
+ghost_01.wav	synthesis/wraith | synthesis/aureole
+ghost_02.wav	synthesis/wraith | synthesis/aureole
+pearl_form_01.wav	synthesis/aureole | synthesis/bead
+pearl_form_02.wav	synthesis/aureole | synthesis/bead
+pearl_pickup_01.wav	synthesis/bead | rpg-audio/Audio/handleCoins.ogg
+pearl_pickup_02.wav	synthesis/bead | rpg-audio/Audio/handleCoins2.ogg
+pearl_pickup_03.wav	synthesis/bead | rpg-audio/Audio/handleCoins.ogg
+corrupt_01.wav	rpg-audio/Audio/creak1.ogg | synthesis/rupture | synthesis/hex
+corrupt_02.wav	rpg-audio/Audio/creak2.ogg | synthesis/rupture | synthesis/hex
+book_open_01.wav	rpg-audio/Audio/bookOpen.ogg | rpg-audio/Audio/cloth1.ogg
+book_open_02.wav	rpg-audio/Audio/bookOpen.ogg | rpg-audio/Audio/cloth2.ogg
+book_open_03.wav	rpg-audio/Audio/bookOpen.ogg | rpg-audio/Audio/cloth3.ogg
+book_page_01.wav	rpg-audio/Audio/bookFlip1.ogg
+book_page_02.wav	rpg-audio/Audio/bookFlip2.ogg
+book_page_03.wav	rpg-audio/Audio/bookFlip3.ogg
+book_close_01.wav	rpg-audio/Audio/bookClose.ogg | rpg-audio/Audio/bookPlace1.ogg
+book_close_02.wav	rpg-audio/Audio/bookClose.ogg | rpg-audio/Audio/bookPlace2.ogg
+book_close_03.wav	rpg-audio/Audio/bookClose.ogg | rpg-audio/Audio/bookPlace3.ogg
+ui_focus_01.wav	impact-sounds/Audio/impactWood_light_000.ogg | synthesis/ui
+ui_focus_02.wav	impact-sounds/Audio/impactWood_light_001.ogg | synthesis/ui
+ui_focus_03.wav	impact-sounds/Audio/impactWood_light_002.ogg | synthesis/ui
+ui_confirm_01.wav	rpg-audio/Audio/metalClick.ogg | synthesis/ui
+ui_confirm_02.wav	rpg-audio/Audio/metalClick.ogg | synthesis/ui
+ui_confirm_03.wav	rpg-audio/Audio/metalClick.ogg | synthesis/ui
+ui_open_01.wav	rpg-audio/Audio/beltHandle1.ogg | synthesis/ui
+ui_open_02.wav	rpg-audio/Audio/beltHandle2.ogg | synthesis/ui
+ui_close_01.wav	rpg-audio/Audio/dropLeather.ogg | synthesis/ui
+ui_close_02.wav	rpg-audio/Audio/dropLeather.ogg | synthesis/ui
+equip_01.wav	rpg-audio/Audio/clothBelt.ogg | rpg-audio/Audio/metalLatch.ogg
+equip_02.wav	rpg-audio/Audio/clothBelt2.ogg | rpg-audio/Audio/metalLatch.ogg
+equip_03.wav	rpg-audio/Audio/clothBelt.ogg | rpg-audio/Audio/metalLatch.ogg
+gate_open_01.wav	rpg-audio/Audio/creak1.ogg | impact-sounds/Audio/impactMining_000.ogg | impact-sounds/Audio/impactWood_heavy_001.ogg
+gate_open_02.wav	rpg-audio/Audio/creak2.ogg | impact-sounds/Audio/impactMining_001.ogg | impact-sounds/Audio/impactWood_heavy_002.ogg
+room_drip_01.wav	synthesis/bubble | synthesis/drip
+room_drip_02.wav	synthesis/bubble | synthesis/drip
+room_drip_03.wav	synthesis/bubble | synthesis/drip
+room_drip_04.wav	synthesis/bubble | synthesis/drip
+room_chain_01.wav	impact-sounds/Audio/impactMetal_light_000.ogg | rpg-audio/Audio/metalLatch.ogg
+room_chain_02.wav	impact-sounds/Audio/impactMetal_light_001.ogg | rpg-audio/Audio/metalLatch.ogg
+room_chain_03.wav	impact-sounds/Audio/impactMetal_light_002.ogg | rpg-audio/Audio/metalLatch.ogg
+room_rift_01.wav	synthesis/wraith | synthesis/hex
+room_rift_02.wav	synthesis/wraith | synthesis/hex
+room_rift_03.wav	synthesis/wraith | synthesis/hex
+room_gust_01.wav	synthesis/air | rpg-audio/Audio/cloth1.ogg
+room_gust_02.wav	synthesis/air | rpg-audio/Audio/cloth2.ogg
+room_gust_03.wav	synthesis/air | rpg-audio/Audio/cloth3.ogg
+crystal_touch_01.wav	game-foley/pearl_form_01.wav | game-foley/hit_metal_02.wav | synthesis/glass
+crystal_touch_02.wav	game-foley/pearl_form_02.wav | game-foley/hit_metal_03.wav | synthesis/glass
+crystal_touch_03.wav	game-foley/pearl_form_01.wav | game-foley/hit_metal_04.wav | synthesis/glass
+slime_coil_01.wav	game-foley/potion_01.wav | synthesis/swell
+slime_coil_02.wav	game-foley/potion_02.wav | synthesis/swell
+slime_coil_03.wav	game-foley/potion_01.wav | synthesis/swell
+slime_lunge_01.wav	game-foley/enemy_rush_01.wav | synthesis/rush
+slime_lunge_02.wav	game-foley/enemy_rush_02.wav | synthesis/rush
+slime_lunge_03.wav	game-foley/enemy_rush_03.wav | synthesis/rush
+slime_land_01.wav	game-foley/hit_flesh_01.wav | game-foley/potion_02.wav | synthesis/impact
+slime_land_02.wav	game-foley/hit_flesh_02.wav | game-foley/potion_01.wav | synthesis/impact
+slime_land_03.wav	game-foley/hit_flesh_03.wav | game-foley/potion_02.wav | synthesis/impact
+goblin_step_01.wav	game-foley/footstep_01.wav | game-foley/equip_02.wav
+goblin_step_02.wav	game-foley/footstep_02.wav | game-foley/equip_03.wav
+goblin_step_03.wav	game-foley/footstep_03.wav | game-foley/equip_01.wav
+goblin_windup_01.wav	game-foley/equip_01.wav | synthesis/swell
+goblin_windup_02.wav	game-foley/equip_02.wav | synthesis/swell
+goblin_windup_03.wav	game-foley/equip_03.wav | synthesis/swell
+goblin_swing_01.wav	game-foley/sword_01.wav | game-foley/enemy_rush_02.wav
+goblin_swing_02.wav	game-foley/sword_02.wav | game-foley/enemy_rush_03.wav
+goblin_swing_03.wav	game-foley/sword_03.wav | game-foley/enemy_rush_04.wav
+goblin_rush_warn_01.wav	game-foley/goblin_windup_01.wav | game-foley/enemy_telegraph_02.wav | synthesis/swell
+goblin_rush_warn_02.wav	game-foley/goblin_windup_02.wav | game-foley/enemy_telegraph_01.wav | synthesis/swell
+goblin_rush_warn_03.wav	game-foley/goblin_windup_03.wav | game-foley/enemy_telegraph_02.wav | synthesis/swell
+goblin_rush_01.wav	game-foley/enemy_rush_01.wav | game-foley/goblin_step_02.wav | synthesis/rush
+goblin_rush_02.wav	game-foley/enemy_rush_02.wav | game-foley/goblin_step_03.wav | synthesis/rush
+goblin_rush_03.wav	game-foley/enemy_rush_03.wav | game-foley/goblin_step_01.wav | synthesis/rush
+skeleton_step_01.wav	game-foley/footstep_01.wav | game-foley/hit_bone_02.wav
+skeleton_step_02.wav	game-foley/footstep_02.wav | game-foley/hit_bone_03.wav
+skeleton_step_03.wav	game-foley/footstep_03.wav | game-foley/hit_bone_04.wav
+skeleton_chant_01.wav	game-foley/hit_bone_01.wav | game-foley/enemy_chant_02.wav | synthesis/swell
+skeleton_chant_02.wav	game-foley/hit_bone_02.wav | game-foley/enemy_chant_01.wav | synthesis/swell
+skeleton_chant_03.wav	game-foley/hit_bone_03.wav | game-foley/enemy_chant_02.wav | synthesis/swell
+skeleton_release_01.wav	game-foley/enemy_magic_01.wav | synthesis/rush
+skeleton_release_02.wav	game-foley/enemy_magic_02.wav | synthesis/rush
+skeleton_release_03.wav	game-foley/enemy_magic_03.wav | synthesis/rush
+skeleton_zone_warn_01.wav	game-foley/enemy_zone_warning_01.wav | synthesis/glass
+skeleton_zone_warn_02.wav	game-foley/enemy_zone_warning_02.wav | synthesis/glass
+skeleton_zone_warn_03.wav	game-foley/enemy_zone_warning_01.wav | synthesis/glass
+skeleton_bone_impact_01.wav	game-foley/hit_bone_01.wav | game-foley/arrow_impact_02.wav
+skeleton_bone_impact_02.wav	game-foley/hit_bone_02.wav | game-foley/arrow_impact_03.wav
+skeleton_bone_impact_03.wav	game-foley/hit_bone_03.wav | game-foley/arrow_impact_04.wav
+archer_step_01.wav	game-foley/footstep_01.wav | game-foley/equip_02.wav
+archer_step_02.wav	game-foley/footstep_02.wav | game-foley/equip_03.wav
+archer_step_03.wav	game-foley/footstep_03.wav | game-foley/equip_01.wav
+archer_draw_01.wav	game-foley/enemy_chant_01.wav | game-foley/trap_warn_02.wav | synthesis/swell
+archer_draw_02.wav	game-foley/enemy_chant_02.wav | game-foley/trap_warn_03.wav | synthesis/swell
+archer_draw_03.wav	game-foley/enemy_chant_01.wav | game-foley/trap_warn_01.wav | synthesis/swell
+archer_release_01.wav	game-foley/enemy_arrow_01.wav | synthesis/rush
+archer_release_02.wav	game-foley/enemy_arrow_02.wav | synthesis/rush
+archer_release_03.wav	game-foley/enemy_arrow_03.wav | synthesis/rush
+archer_melee_warn_01.wav	game-foley/hit_bone_01.wav | game-foley/equip_02.wav | synthesis/swell
+archer_melee_warn_02.wav	game-foley/hit_bone_02.wav | game-foley/equip_03.wav | synthesis/swell
+archer_melee_warn_03.wav	game-foley/hit_bone_03.wav | game-foley/equip_01.wav | synthesis/swell
+archer_melee_01.wav	game-foley/sword_01.wav | game-foley/hit_bone_02.wav
+archer_melee_02.wav	game-foley/sword_02.wav | game-foley/hit_bone_03.wav
+archer_melee_03.wav	game-foley/sword_03.wav | game-foley/hit_bone_04.wav
+ghost_drift_01.wav	game-foley/room_gust_01.wav | synthesis/rush
+ghost_drift_02.wav	game-foley/room_gust_02.wav | synthesis/rush
+ghost_drift_03.wav	game-foley/room_gust_03.wav | synthesis/rush
+ghost_manifest_01.wav	game-foley/enemy_ghost_01.wav | synthesis/swell
+ghost_manifest_02.wav	game-foley/enemy_ghost_02.wav | synthesis/swell
+ghost_manifest_03.wav	game-foley/enemy_ghost_03.wav | synthesis/swell
+ghost_strike_01.wav	game-foley/enemy_magic_01.wav | synthesis/rush
+ghost_strike_02.wav	game-foley/enemy_magic_02.wav | synthesis/rush
+ghost_strike_03.wav	game-foley/enemy_magic_03.wav | synthesis/rush
+elite_entrance_01.wav	game-foley/hit_metal_01.wav | game-foley/room_chain_02.wav | synthesis/impact
+elite_entrance_02.wav	game-foley/hit_metal_02.wav | game-foley/room_chain_03.wav | synthesis/impact
+elite_entrance_03.wav	game-foley/hit_metal_03.wav | game-foley/room_chain_01.wav | synthesis/impact
+elite_phase_01.wav	game-foley/room_chain_01.wav | game-foley/hit_metal_02.wav | synthesis/swell
+elite_phase_02.wav	game-foley/room_chain_02.wav | game-foley/hit_metal_03.wav | synthesis/swell
+elite_phase_03.wav	game-foley/room_chain_03.wav | game-foley/hit_metal_04.wav | synthesis/swell
+elite_sweep_warn_01.wav	game-foley/equip_01.wav | game-foley/enemy_telegraph_02.wav | synthesis/swell
+elite_sweep_warn_02.wav	game-foley/equip_02.wav | game-foley/enemy_telegraph_01.wav | synthesis/swell
+elite_sweep_warn_03.wav	game-foley/equip_03.wav | game-foley/enemy_telegraph_02.wav | synthesis/swell
+elite_sweep_01.wav	game-foley/sword_01.wav | game-foley/hit_metal_02.wav | synthesis/rush
+elite_sweep_02.wav	game-foley/sword_02.wav | game-foley/hit_metal_03.wav | synthesis/rush
+elite_sweep_03.wav	game-foley/sword_03.wav | game-foley/hit_metal_04.wav | synthesis/rush
+elite_volley_warn_01.wav	game-foley/hit_bone_01.wav | game-foley/hit_bone_02.wav | synthesis/glass
+elite_volley_warn_02.wav	game-foley/hit_bone_02.wav | game-foley/hit_bone_03.wav | synthesis/glass
+elite_volley_warn_03.wav	game-foley/hit_bone_03.wav | game-foley/hit_bone_04.wav | synthesis/glass
+elite_volley_01.wav	game-foley/enemy_arrow_01.wav | game-foley/hit_bone_02.wav | synthesis/rush
+elite_volley_02.wav	game-foley/enemy_arrow_02.wav | game-foley/hit_bone_03.wav | synthesis/rush
+elite_volley_03.wav	game-foley/enemy_arrow_03.wav | game-foley/hit_bone_04.wav | synthesis/rush
+elite_charge_warn_01.wav	game-foley/trap_warn_01.wav | game-foley/goblin_step_02.wav | synthesis/swell
+elite_charge_warn_02.wav	game-foley/trap_warn_02.wav | game-foley/goblin_step_03.wav | synthesis/swell
+elite_charge_warn_03.wav	game-foley/trap_warn_03.wav | game-foley/goblin_step_01.wav | synthesis/swell
+elite_charge_01.wav	game-foley/enemy_rush_01.wav | game-foley/elite_sweep_02.wav | synthesis/rush
+elite_charge_02.wav	game-foley/enemy_rush_02.wav | game-foley/elite_sweep_03.wav | synthesis/rush
+elite_charge_03.wav	game-foley/enemy_rush_03.wav | game-foley/elite_sweep_01.wav | synthesis/rush
+elite_wall_01.wav	game-foley/gate_open_01.wav | game-foley/hit_metal_02.wav | synthesis/impact
+elite_wall_02.wav	game-foley/gate_open_02.wav | game-foley/hit_metal_03.wav | synthesis/impact
+elite_wall_03.wav	game-foley/gate_open_01.wav | game-foley/hit_metal_04.wav | synthesis/impact
+lord_phase_01.wav	game-foley/enemy_zone_burst_01.wav | synthesis/swell
+lord_phase_02.wav	game-foley/enemy_zone_burst_02.wav | synthesis/swell
+lord_phase_03.wav	game-foley/enemy_zone_burst_03.wav | synthesis/swell
+lord_final_phase_01.wav	game-foley/hit_metal_01.wav | game-foley/crystal_touch_02.wav | synthesis/swell
+lord_final_phase_02.wav	game-foley/hit_metal_02.wav | game-foley/crystal_touch_03.wav | synthesis/swell
+lord_final_phase_03.wav	game-foley/hit_metal_03.wav | game-foley/crystal_touch_01.wav | synthesis/swell
+lord_sweep_warn_01.wav	game-foley/equip_01.wav | game-foley/hit_metal_02.wav | synthesis/swell
+lord_sweep_warn_02.wav	game-foley/equip_02.wav | game-foley/hit_metal_03.wav | synthesis/swell
+lord_sweep_warn_03.wav	game-foley/equip_03.wav | game-foley/hit_metal_04.wav | synthesis/swell
+lord_sweep_01.wav	game-foley/sword_01.wav | game-foley/enemy_zone_burst_02.wav | synthesis/rush
+lord_sweep_02.wav	game-foley/sword_02.wav | game-foley/enemy_zone_burst_03.wav | synthesis/rush
+lord_sweep_03.wav	game-foley/sword_03.wav | game-foley/enemy_zone_burst_01.wav | synthesis/rush
+lord_volley_warn_01.wav	game-foley/enemy_chant_01.wav | synthesis/glass
+lord_volley_warn_02.wav	game-foley/enemy_chant_02.wav | synthesis/glass
+lord_volley_warn_03.wav	game-foley/enemy_chant_01.wav | synthesis/glass
+lord_volley_01.wav	game-foley/enemy_magic_01.wav | game-foley/enemy_arrow_02.wav | synthesis/rush
+lord_volley_02.wav	game-foley/enemy_magic_02.wav | game-foley/enemy_arrow_03.wav | synthesis/rush
+lord_volley_03.wav	game-foley/enemy_magic_03.wav | game-foley/enemy_arrow_04.wav | synthesis/rush
+lord_seal_warn_01.wav	game-foley/enemy_zone_warning_01.wav | game-foley/pearl_form_02.wav | synthesis/glass
+lord_seal_warn_02.wav	game-foley/enemy_zone_warning_02.wav | game-foley/pearl_form_01.wav | synthesis/glass
+lord_seal_warn_03.wav	game-foley/enemy_zone_warning_01.wav | game-foley/pearl_form_02.wav | synthesis/glass
+lord_lanes_warn_01.wav	game-foley/trap_warn_01.wav | game-foley/trap_warn_02.wav | synthesis/swell
+lord_lanes_warn_02.wav	game-foley/trap_warn_02.wav | game-foley/trap_warn_03.wav | synthesis/swell
+lord_lanes_warn_03.wav	game-foley/trap_warn_03.wav | game-foley/trap_warn_01.wav | synthesis/swell
+lord_lanes_01.wav	game-foley/enemy_zone_burst_01.wav | game-foley/enemy_zone_burst_02.wav | synthesis/impact
+lord_lanes_02.wav	game-foley/enemy_zone_burst_02.wav | game-foley/enemy_zone_burst_03.wav | synthesis/impact
+lord_lanes_03.wav	game-foley/enemy_zone_burst_03.wav | game-foley/enemy_zone_burst_01.wav | synthesis/impact
+corruption_enter_01.wav	game-foley/enemy_ghost_01.wav | synthesis/rush
+corruption_enter_02.wav	game-foley/enemy_ghost_02.wav | synthesis/rush
+corruption_enter_03.wav	game-foley/enemy_ghost_03.wav | synthesis/rush
+corruption_confirm_01.wav	game-foley/pearl_pickup_01.wav | synthesis/glass
+corruption_confirm_02.wav	game-foley/pearl_pickup_02.wav | synthesis/glass
+corruption_confirm_03.wav	game-foley/pearl_pickup_03.wav | synthesis/glass
+magic_enhance_01.wav	game-foley/corrupt_01.wav | game-foley/pearl_pickup_02.wav | synthesis/glass
+magic_enhance_02.wav	game-foley/corrupt_02.wav | game-foley/pearl_pickup_03.wav | synthesis/glass
+magic_enhance_03.wav	game-foley/corrupt_01.wav | game-foley/pearl_pickup_01.wav | synthesis/glass
+crystal_rumble_01.wav	game-foley/gate_open_01.wav | game-foley/enemy_zone_burst_02.wav | game-foley/gate_open_01.wav | synthesis/impact
+sky_darkening_01.wav	game-foley/room_gust_01.wav | game-foley/enemy_ghost_02.wav | synthesis/swell

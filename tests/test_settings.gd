@@ -30,6 +30,7 @@ func _run() -> void:
 		var file: String = profile_path + extension
 		if FileAccess.file_exists(file):
 			DirAccess.remove_absolute(file)
+	await create_timer(0.15, true, false, true).timeout
 	print("Settings and controls: %d/%d checks passed" % [checks - failures, checks])
 	quit(1 if failures > 0 else 0)
 
@@ -94,9 +95,13 @@ func _verify_gameplay_and_reset(game: Node2D) -> void:
 	game.player.position = game.entrance.position
 	await process_frame
 	await process_frame
-	_check(game.ghost != null and game.ghost.targets.size() == 2, "The introduction begins on approach")
+	_check(game.ghost == null and game.ui.near_label.text.contains("J"), "Approaching the gate suggests the remapped interaction")
+	await _send_input(_key(KEY_J))
+	_check(game.ghost != null and game.ghost.targets.size() == 2, "The introduction begins on the remapped interaction")
 	if game.ghost == null:
 		return
+	_check(absf(game.ghost.position.x - game.player.position.x) >= 68.0,
+		"The knight leaves room to read the player's reaction")
 	await _send_input(_key(KEY_ESCAPE))
 	_check(paused and ui.top_overlay() == ui.pause, "Pause opens while the introduction plays")
 	var elapsed: float = game.elapsed
@@ -107,12 +112,19 @@ func _verify_gameplay_and_reset(game: Node2D) -> void:
 	_check(paused and ui.top_overlay() == ui.settings, "Pause reuses settings without resuming gameplay")
 	await _send_input(_key(KEY_ESCAPE))
 	_check(paused and ui.top_overlay() == ui.pause, "Escape returns from settings to pause")
+	ui.pause.get_node("SaveMenu").pressed.emit()
+	_check(game.state == Controller.State.MENU and ui.menu_continue.visible, "Saving during the introduction offers a continue")
+	ui.menu_continue.pressed.emit()
+	_check(game.state == Controller.State.GROUNDS and game.ghost != null and is_equal_approx(game.ghost.elapsed, ghost_time),
+		"Continuing the saved introduction restores its progress")
+	await _send_input(_key(KEY_ESCAPE))
+	_check(paused and ui.top_overlay() == ui.pause, "Pause works after loading the introduction")
 	await _send_input(_key(KEY_ESCAPE))
 	_check(not paused and ui.top_overlay() == null, "Escape resumes gameplay")
-	game._process(4.0)
+	game._process(Controller.Ghost.DURATION + 0.02)
 	for pickup in game.pickups.get_children():
 		if pickup.item_id == "START_SWORD":
-			var interaction_range := (Controller.AUTO_PICKUP_DISTANCE + Controller.PICKUP_DISTANCE) * 0.5
+			var interaction_range := Controller.PICKUP_DISTANCE * 0.70
 			game.player.position = pickup.position + Vector2.DOWN * interaction_range
 			break
 	await _send_input(_key(KEY_E))
@@ -123,6 +135,7 @@ func _verify_gameplay_and_reset(game: Node2D) -> void:
 	_check(game.player.weapon_timers.is_empty(), "Old mouse button cannot attack")
 	await _send_input(_mouse(MOUSE_BUTTON_MIDDLE))
 	_check(game.player.attack_ready_in() > 0.0, "Remapped attack performs the equipped weapon's attack")
+	_verify_book(game)
 
 	await _send_input(_key(KEY_ESCAPE))
 	ui.pause.get_node("Settings").pressed.emit()
@@ -130,6 +143,25 @@ func _verify_gameplay_and_reset(game: Node2D) -> void:
 	_check(game.loc.binding("interact") == "E" and InputMap.action_has_event("attack", _mouse(MOUSE_BUTTON_LEFT)), "Reset restores both default input types")
 	await _send_input(_key(KEY_ESCAPE))
 	await _send_input(_key(KEY_ESCAPE))
+
+func _verify_book(game: Node2D) -> void:
+	var ui: CanvasLayer = game.ui
+	game.inventory.add("U06")
+	ui.show_inventory(game.inventory, game.player, game.codex)
+	var book: Control = ui.bag
+	book.selected = "U06"
+	book.refresh()
+	var life_row := book.comparison.get_child(18) as Label
+	var life_delta := book.comparison.get_child(20) as Label
+	_check(book.comparison.visible and life_row.text == game.loc.text("UI_STAT_LIFESTEAL") and life_delta.text == "+5 HP",
+		"The equipment comparison shows sword-kill healing in HP")
+	book.action.pressed.emit()
+	_check(game.player.weapon == "U06" and game.player.stats.lifesteal == 5.0,
+		"Applying the preview feeds the same kill-healing value into combat")
+	book.tab_buttons[book.Page.CRAFT].pressed.emit()
+	_check(book.recipe_materials.visible and book.recipe_materials.get_child_count() == 3 and book.action.disabled,
+		"Crafting separates its ingredients and disables the action when they are missing")
+	ui.pop_overlay()
 
 func _send_input(event: InputEvent) -> void:
 	event.pressed = true

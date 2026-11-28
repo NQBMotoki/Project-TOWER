@@ -1,5 +1,7 @@
 extends Node2D
 
+signal impact_sound(kind: String, position: Vector2)
+
 var direction := Vector2.RIGHT
 var damage := 0.0
 var friendly := true
@@ -8,8 +10,11 @@ var target: Node2D
 var speed := 400.0
 var lifetime := 2.3
 var remaining_distance := INF
+var travelled_distance := 0.0
 var consumed := false
 var layout: ArenaLayout
+var weapon_id := ""
+var attack_token := 0
 
 func setup(origin: Vector2, heading: Vector2, amount: float, is_friendly: bool, player: Node2D, shot_speed := -1.0, max_travel := -1.0) -> void:
 	global_position = origin
@@ -24,6 +29,11 @@ func setup(origin: Vector2, heading: Vector2, amount: float, is_friendly: bool, 
 		speed = 400.0 if friendly else 230.0
 	remaining_distance = max_travel if max_travel >= 0.0 else INF
 	lifetime = maxf(2.3, max_travel / speed + 0.02)
+
+func cancel() -> void:
+	consumed = true
+	hide()
+	queue_free()
 
 func _physics_process(delta: float) -> void:
 	if consumed:
@@ -54,14 +64,21 @@ func _physics_process(delta: float) -> void:
 	if impact < INF:
 		consumed = true
 		global_position = old_position.lerp(next_position, impact)
+		if trap_arrow or (not friendly and speed > 400.0):
+			impact_sound.emit("arrow_impact", global_position)
+		elif not friendly and victim == null:
+			impact_sound.emit("skeleton_bone_impact", global_position)
 		queue_free()
 		if victim != null:
 			if victim == target:
-				victim.take_damage(damage)
+				victim.take_damage(damage, "trap" if trap_arrow else "enemy")
+			elif friendly and not weapon_id.is_empty() and is_instance_valid(target):
+				target.apply_attack_hit(victim, damage, direction * 100.0, weapon_id, attack_token)
 			else:
 				victim.take_damage(damage, direction * 100.0)
 		return
 	global_position = next_position
+	travelled_distance += step
 	if lifetime <= 0.0 or remaining_distance <= 0.0:
 		consumed = true
 		queue_free()
@@ -78,10 +95,21 @@ func _draw() -> void:
 	if trap_arrow or (not friendly and speed > 400.0):
 		var shaft := Color("ffc270") if trap_arrow else Color("f2e6c2")
 		var head := Color("fff0ab") if trap_arrow else Color("bd8a50")
-		draw_line(-direction * 16.0, direction * 9.0, shaft, 2.0)
-		draw_line(direction * 9.0, direction * 3.0, head, 3.0)
+		var history := minf(travelled_distance, 19.0)
+		var tail := -direction * history
+		var fin := direction.orthogonal() * minf(3.0, history * 0.35)
+		draw_line(tail, direction * 5.0, Color(shaft, 0.81), 2.2)
+		if history >= 6.0:
+			draw_line(tail + fin, tail + direction * 7.0, Color(shaft, 0.58), 1.5)
+			draw_line(tail - fin, tail + direction * 7.0, Color(shaft, 0.58), 1.5)
+		draw_line(direction * 5.0, Vector2.ZERO, head, 3.0)
 		return
-	var color := Color(0.49, 0.85, 1.0) if friendly else Color(1.0, 0.42, 0.41)
-	draw_circle(Vector2.ZERO, 10, Color(color.r, color.g, color.b, 0.18))
-	draw_rect(Rect2(-5, -5, 10, 10), color)
-	draw_rect(Rect2(-2, -2, 4, 4), Color(1.0, 0.96, 0.81))
+	var color := Color("8ddcfa") if friendly else Color("ea92c5")
+	var side := direction.orthogonal()
+	var trail := minf(travelled_distance, 25.0)
+	if trail > 0.5:
+		draw_colored_polygon(PackedVector2Array([side * 4.0, -direction * trail, -side * 4.0]), Color(color, 0.30))
+	var center := -direction * minf(trail * 0.55, 13.0)
+	draw_line(center, Vector2.ZERO, Color(color, 0.77), 2.0)
+	draw_colored_polygon(PackedVector2Array([direction * 6.0, side * 4.0, -direction * 5.0, -side * 4.0]), color)
+	draw_rect(Rect2(-1.5, -1.5, 3.0, 3.0), Color("fff0d9"))

@@ -4,14 +4,29 @@ signal died(enemy: Node)
 @warning_ignore("unused_signal")
 signal projectile_requested(origin: Vector2, direction: Vector2, damage: float)
 signal sound_requested(kind: String)
+@warning_ignore("unused_signal")
+signal boss_phase_changed(phase: int)
 
 const CompleteEnemies = preload("res://data/complete_enemies.gd")
+const UpgradeArt = preload("res://data/upgrade_art.gd")
 const EditionArt = preload("res://data/edition_art.gd")
 const EnemyHazard = preload("res://scripts/enemy_ground_hazard.gd")
 const ActorMotion = preload("res://scripts/actor_motion.gd")
 const HIT_FLASH_TIME := 0.14
 const RELEASE_POSE_TIME := 0.13
 const RECOVERY_POSE_TIME := 0.25
+const TRAIL_TIME := 0.24
+const TRAIL_COLORS := {
+	"slime": Color("b6d583"), "corrupted_slime": Color("da91f5"),
+	"corrupted_goblin": Color("e48a77"), "ghost": Color("8dbacb"),
+	"elite": Color("e3bf86"),
+}
+const STEP_SOUNDS := {
+	"goblin": "goblin_step", "skeleton": "skeleton_step",
+	"archer": "archer_step", "ghost": "ghost_drift",
+	"elite": "skeleton_step",
+}
+static var _unshaded: CanvasItemMaterial
 var kind := "slime"
 var config: Dictionary = {}
 var player: Node2D
@@ -34,17 +49,28 @@ var alive := true
 var active := true
 var drop_id := ""
 var hazard_sound: Callable
+var attack_permitted: Callable
 var layout: ArenaLayout
+var boss_stage := 0
+var boss_stage_total := 0
 var _route := PackedVector2Array()
 var _route_target := Vector2.INF
 var _route_remaining := 0.0
 var _sight_position := Vector2.ZERO
 var _sight_remaining := 0.0
 var _art_scale := 1.0
+var _fallback_art: Texture2D
+var _sprite_frames := false
+var _attack_art := ""
 var _motion := ActorMotion.new()
 var _pose_phase := ActorMotion.Phase.MOVE
 var _pose_progress := 0.0
 var _release_pose_age := INF
+var _warning: Node2D
+var _trail: Array[Dictionary] = []
+var _hazards: Array[Node2D] = []
+var _rush_outline_key: Array = []
+var _rush_outline_points := PackedVector2Array()
 
 @onready var art: Sprite2D = get_node_or_null("Sprite2D")
 
@@ -69,13 +95,22 @@ func set_spawn_delay(value: float) -> void:
 
 func _ready() -> void:
 	add_to_group("enemies")
+	_warning = Node2D.new()
+	_warning.name = "WorldTelegraph"
+	_warning.show_behind_parent = true
+	_warning.material = unshaded_material()
+	_warning.draw.connect(_draw_warning)
+	add_child(_warning)
 	if art != null and art.texture == null:
 		art.texture = EditionArt.icon(kind)
 	if art != null and art.texture != null:
+		_fallback_art = art.texture
 		var texture_size := art.texture.get_size()
 		_art_scale = hit_radius * 2.7 / maxf(texture_size.x, texture_size.y)
 		art.scale = Vector2.ONE * _art_scale
 		art.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if art != null:
+		_animate_body(0.0, Vector2.ZERO)
 
 func _physics_process(delta: float) -> void:
 	if not active or not alive or not is_instance_valid(player) or not player.alive:
@@ -90,11 +125,14 @@ func _physics_process(delta: float) -> void:
 	# A spawning enemy holds still so staggered waves read as separate arrivals.
 	if spawn_delay <= 0.0:
 		_behavior(delta)
-	move_by(knockback * delta)
+	if not holding_attack_slot():
+		move_by(knockback * delta)
 	knockback = knockback.move_toward(Vector2.ZERO, 500.0 * delta)
-	if art != null and art.texture != null:
+	_update_trail(delta, previous_position)
+	if art != null:
 		_animate_body(delta, (global_position - previous_position) / maxf(delta, 0.001))
 	queue_redraw()
+	_warning.queue_redraw()
 
 func _animate_body(delta: float, movement_velocity: Vector2) -> void:
 	_pose_phase = ActorMotion.Phase.MOVE
@@ -108,16 +146,95 @@ func _animate_body(delta: float, movement_velocity: Vector2) -> void:
 		if recovery_age < RECOVERY_POSE_TIME:
 			_pose_phase = ActorMotion.Phase.RECOVERY
 			_pose_progress = recovery_age / RECOVERY_POSE_TIME
-	if hit_flash > 0.0:
+	var force_frame := _special_frame()
+	if hit_flash > 0.0 and force_frame == null and _pose_phase == ActorMotion.Phase.MOVE:
 		set_action_pose(ActorMotion.Phase.HURT, hit_flash, HIT_FLASH_TIME)
-	_motion.advance(delta, movement_velocity, facing, _pose_phase, _pose_progress)
-	_motion.apply(art, Vector2.ZERO, body_scale * _art_scale)
+	if _motion.advance_cycle(delta, movement_velocity, 58.0) and _pose_phase == ActorMotion.Phase.MOVE:
+		var step: String = STEP_SOUNDS.get(kind.trim_prefix("corrupted_"), "")
+		if not step.is_empty():
+			sound_requested.emit(step)
+	var moving := movement_velocity.length_squared() > 25.0
+	var progress := _pose_progress
+	var action: String = ActorMotion.PHASE_NAMES[_pose_phase]
+	var direction := facing
+	if _pose_phase == ActorMotion.Phase.MOVE:
+		progress = _motion.walk_progress if moving else _motion.idle_progress
+		if moving:
+			action = "walk"
+			direction = movement_facing(movement_velocity)
+		elif boss_stage > 1:
+			action = "final" if boss_stage == 3 else "stance"
+	elif _pose_phase != ActorMotion.Phase.HURT and not _attack_art.is_empty():
+		action += "_" + _attack_art
+	var facing_name := ActorMotion.direction_name(direction)
+	var frame_index := ActorMotion.frame_index(progress, UpgradeArt.frame_count(kind, facing_name, action))
+	var frame := force_frame if force_frame != null else UpgradeArt.frame(kind, facing_name, action, frame_index)
+	_sprite_frames = frame != null
+	if _sprite_frames:
+		var body_size := hit_radius / 17.0
+		art.texture = frame
+		art.position = Vector2(0, -24) * body_size
+		art.scale = Vector2.ONE * body_size
+		art.flip_h = false
+		art.rotation = 0.0
+	else:
+		art.texture = _fallback_art
+		_motion.advance(delta, movement_velocity, facing, _pose_phase, _pose_progress)
+		_motion.apply(art, Vector2.ZERO, body_scale * _art_scale)
 	var hit_age := HIT_FLASH_TIME - hit_flash
 	var tint := 1.7 if hit_flash > 0.0 and fmod(hit_age, 0.065) < 0.043 else 1.0
 	art.modulate = Color(tint, tint, tint, body_alpha)
 
 func _prepare_action_pose() -> void:
 	pass
+
+func _special_frame() -> Texture2D:
+	return null
+
+func holding_attack_slot() -> bool:
+	return false
+
+func can_begin_attack() -> bool:
+	return not attack_permitted.is_valid() or attack_permitted.call()
+
+func leaves_trail() -> bool:
+	return false
+
+func movement_facing(velocity: Vector2) -> Vector2:
+	return velocity.normalized()
+
+static func unshaded_material() -> CanvasItemMaterial:
+	if _unshaded == null:
+		_unshaded = CanvasItemMaterial.new()
+		_unshaded.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
+	return _unshaded
+
+func _update_trail(delta: float, previous_position: Vector2) -> void:
+	for index in range(_trail.size() - 1, -1, -1):
+		_trail[index].remaining -= delta
+		if _trail[index].remaining <= 0.0:
+			_trail.remove_at(index)
+	if not leaves_trail() or previous_position.distance_squared_to(global_position) < 0.25:
+		return
+	if _trail.is_empty() or Vector2(_trail.back().point).distance_squared_to(previous_position) >= 22.0:
+		var texture: Texture2D = art.texture if kind == "ghost" and art != null else null
+		_trail.append({"point": previous_position, "remaining": TRAIL_TIME, "texture": texture})
+
+func _draw_warning() -> void:
+	var color: Color = TRAIL_COLORS.get(kind, Color.WHITE)
+	for entry in _trail:
+		var age: float = entry.remaining / TRAIL_TIME
+		var at: Vector2 = to_local(entry.point)
+		var texture: Texture2D = entry.texture
+		if texture != null:
+			_warning.draw_texture(texture, at - Vector2(32, 56), Color(color, age * 0.20))
+		else:
+			var size := Vector2(6.0 + 11.0 * age, 2.0 + 3.0 * age)
+			_warning.draw_rect(Rect2(at - size * 0.5, size), Color(color, age * 0.36))
+	if spawn_delay > 0.0:
+		var progress := clampf(1.0 - spawn_delay / spawn_delay_total, 0.0, 1.0)
+		_warning.draw_arc(Vector2.ZERO, hit_radius + 16.0 - 9.0 * progress, 0.0, TAU, 24, Color(0.98, 0.82, 0.51, 0.25 + 0.35 * progress), 2.0)
+		_warning.draw_arc(Vector2.ZERO, hit_radius + 7.0, 0.0, TAU, 24, Color(0.98, 0.82, 0.51, 0.55), 2.0)
 
 func set_action_pose(phase: ActorMotion.Phase, remaining: float, duration: float) -> void:
 	_pose_phase = phase
@@ -160,10 +277,17 @@ func move_to_sight(preferred: float, distance: float) -> void:
 func take_damage(amount: float, impulse: Vector2 = Vector2.ZERO) -> bool:
 	if not alive:
 		return false
-	hp -= amount
-	knockback = impulse
+	hp = maxf(0.0, hp - amount)
+	knockback = Vector2.ZERO if holding_attack_slot() or boss_stage_total > 0 else impulse
 	hit_flash = HIT_FLASH_TIME
-	sound_requested.emit("hit")
+	var hit := "hit_flesh"
+	if kind in ["skeleton", "corrupted_skeleton", "archer", "corrupted_archer", "elite"]:
+		hit = "hit_bone"
+	elif kind == "lord":
+		hit = "hit_metal"
+	elif kind == "ghost":
+		hit = "hit"
+	sound_requested.emit(hit)
 	if hp <= 0.0:
 		alive = false
 		died.emit(self)
@@ -186,9 +310,21 @@ func clear_reach(heading: Vector2, reach: float, clearance := 0.0) -> float:
 	var fraction := layout.first_block(global_position, global_position + heading * reach, clearance)
 	return reach if fraction == INF else reach * fraction
 
-func move_straight(heading: Vector2, distance: float) -> void:
+func move_straight(heading: Vector2, distance: float) -> bool:
 	var available := clear_reach(heading, distance, hit_radius)
-	global_position += heading * maxf(0.0, minf(distance, available - ArenaLayout.MOTION_MARGIN))
+	var blocked := available < distance
+	global_position += heading * maxf(0.0, available - ArenaLayout.MOTION_MARGIN if blocked else available)
+	return blocked
+
+func swept_attack(from: Vector2, radius: float, amount: float) -> bool:
+	var closest := global_position
+	if not from.is_equal_approx(global_position):
+		closest = Geometry2D.get_closest_point_to_segment(player.global_position, from, global_position)
+	if closest.distance_squared_to(player.global_position) > radius * radius \
+			or not layout.has_clear_line(closest, player.global_position):
+		return false
+	player.take_damage(amount, "enemy")
+	return true
 
 func draw_sector(heading: Vector2, reach: float, half_angle: float, progress: float, color: Color) -> void:
 	var rim := PackedVector2Array()
@@ -197,25 +333,113 @@ func draw_sector(heading: Vector2, reach: float, half_angle: float, progress: fl
 		rim.append(ray * clear_reach(ray, reach))
 	var area := PackedVector2Array([Vector2.ZERO])
 	area.append_array(rim)
-	draw_colored_polygon(area, Color(color, 0.10 + 0.20 * progress))
-	draw_polyline(rim, Color(color, 0.45 + 0.45 * progress), 2.5)
-	draw_line(Vector2.ZERO, heading * clear_reach(heading, reach), Color(color, 0.30 + 0.40 * progress), 2.0)
+	_warning.draw_colored_polygon(area, Color(color, 0.07 + 0.15 * progress))
+	_warning.draw_polyline(rim, Color(color, 0.50 + 0.43 * progress), 2.5)
+	_warning.draw_line(Vector2.ZERO, rim[0], Color(color, 0.34 + 0.35 * progress), 1.5)
+	_warning.draw_line(Vector2.ZERO, rim[-1], Color(color, 0.34 + 0.35 * progress), 1.5)
 
-func draw_magic_guides(heading: Vector2, reach: float, shots: int, spread: float, progress: float) -> void:
-	var color := Color(1.0, 0.46, 0.37, 0.38 + 0.48 * progress)
+func draw_rush_path(heading: Vector2, distance: float, radius: float, progress: float, color: Color) -> void:
+	var reach := clear_reach(heading, distance, hit_radius)
+	if reach < distance:
+		reach = maxf(0.0, reach - ArenaLayout.MOTION_MARGIN)
+	var edge := heading.orthogonal() * radius
+	var fill := Color(color, 0.07 + 0.14 * progress)
+	var line := Color(color, 0.56 + 0.38 * progress)
+	var outline_key := [layout, global_position, heading, reach, radius]
+	if _rush_outline_key != outline_key:
+		_rush_outline_key = outline_key
+		_rush_outline_points = _rush_outline(heading, reach, radius)
+	_warning.draw_colored_polygon(_rush_outline_points, fill)
+	_warning.draw_polyline(_rush_outline_points, line, 1.5)
+	_warning.draw_line(_rush_outline_points[-1], _rush_outline_points[0], line, 1.5)
+	for mark in range(1, floori(reach / 23.0) + 1):
+		var center := heading * (mark * 23.0)
+		_warning.draw_polyline(PackedVector2Array([center - heading * 5.0 + edge * 0.30,
+			center + heading * 3.0, center - heading * 5.0 - edge * 0.30]), line, 1.8)
+
+func _rush_outline(heading: Vector2, reach: float, radius: float) -> PackedVector2Array:
+	var vertices := PackedVector2Array(ArenaLayout.VERTICES)
+	for entry in layout.obstacles:
+		var rect: Rect2 = entry.rect
+		vertices.append_array(PackedVector2Array([rect.position, rect.end,
+			Vector2(rect.position.x, rect.end.y), Vector2(rect.end.x, rect.position.y)]))
+	var angle := heading.angle()
+	var near := _rush_cap(Vector2.ZERO, angle + PI / 2.0, radius, vertices)
+	var far := _rush_cap(heading * reach, angle - PI / 2.0, radius, vertices)
+	if is_zero_approx(reach):
+		# With no travel the two semicircles share their endpoints.
+		near.resize(near.size() - 1)
+		far.resize(far.size() - 1)
+		near.append_array(far)
+		return near
+	var cuts := PackedFloat64Array()
+	var sections := ceili(reach / 8.0)
+	for index in range(1, sections):
+		cuts.append(reach * index / sections)
+	for vertex in vertices:
+		var along := heading.dot(vertex - global_position)
+		if along > 0.02 and along < reach - 0.02:
+			# Sample both sides of corners, where an edge can change abruptly.
+			cuts.append(along - 0.02)
+			cuts.append(along + 0.02)
+	cuts.sort()
+	var flank := heading.rotated(PI / 2.0)
+	var other_edge := PackedVector2Array()
+	var previous := -1.0
+	for along in cuts:
+		if is_equal_approx(along, previous):
+			continue
+		var center := heading * along
+		near.append(_rush_rim_point(center, -flank, radius))
+		other_edge.append(_rush_rim_point(center, flank, radius))
+		previous = along
+	near.append_array(far)
+	other_edge.reverse()
+	near.append_array(other_edge)
+	return near
+
+func _rush_cap(center: Vector2, start_angle: float, radius: float, vertices: PackedVector2Array) -> PackedVector2Array:
+	var angles := PackedFloat64Array()
+	for index in range(17):
+		angles.append(PI * index / 16.0)
+	for vertex in vertices:
+		var offset := vertex - (global_position + center)
+		if offset.length_squared() > radius * radius:
+			continue
+		var angle := fposmod(offset.angle() - start_angle, TAU)
+		if angle > 0.001 and angle < PI - 0.001:
+			angles.append(angle - 0.001)
+			angles.append(angle + 0.001)
+	angles.sort()
+	var cap := PackedVector2Array()
+	for angle in angles:
+		var point := _rush_rim_point(center, Vector2.from_angle(start_angle + angle), radius)
+		if cap.is_empty() or not cap[-1].is_equal_approx(point):
+			cap.append(point)
+	return cap
+
+func _rush_rim_point(center: Vector2, ray: Vector2, radius: float) -> Vector2:
+	# Like swept_attack, measure sight from the closest point on the path.
+	var source := global_position + center
+	var block := layout.first_block(source, source + ray * radius)
+	return center + ray * radius * (block if block < INF else 1.0)
+
+func draw_magic_guides(heading: Vector2, reach: float, shots: int, spread: float, progress: float,
+		tint := Color("ed9fc9")) -> void:
+	var color := Color(tint, 0.38 + 0.48 * progress)
 	for i in range(shots):
 		var ray := heading.rotated((i - (shots - 1) * 0.5) * spread)
 		var extent := clear_reach(ray, reach, ArenaLayout.PROJECTILE_RADIUS)
-		draw_line(Vector2.ZERO, ray * extent, color, 2.0)
-		draw_line(ray * minf(24.0, extent), ray * minf(46.0, extent), Color(color, 0.9), 4.0)
-	draw_arc(Vector2.ZERO, hit_radius + 8.0, -PI * 0.5, -PI * 0.5 + TAU * progress, 24, color, 2.5)
+		_warning.draw_dashed_line(Vector2.ZERO, ray * extent, color, 2.0, 7.0)
+		_warning.draw_line(ray * minf(24.0, extent), ray * minf(46.0, extent), Color(color, 0.9), 3.5)
+	_warning.draw_arc(Vector2.ZERO, hit_radius + 8.0, -PI * 0.5, -PI * 0.5 + TAU * progress, 24, color, 2.5)
 
-func fire_fan(heading: Vector2, shots: int, spread: float) -> void:
+func fire_fan(heading: Vector2, shots: int, spread: float, cue := "skeleton_release") -> void:
 	show_attack_release()
 	for i in range(shots):
 		var ray := heading.rotated((i - (shots - 1) * 0.5) * spread)
 		projectile_requested.emit(global_position, ray, damage)
-	sound_requested.emit("enemy_magic")
+	sound_requested.emit(cue)
 
 func add_hazard(origin: Vector2, end: Vector2, radius: float, delay: float, duration: float, amount: float) -> void:
 	var hazard := EnemyHazard.new()
@@ -224,21 +448,28 @@ func add_hazard(origin: Vector2, end: Vector2, radius: float, delay: float, dura
 		hazard.sound_requested.connect(hazard_sound)
 	get_parent().add_child(hazard)
 	hazard.global_position = origin
+	_hazards.append(hazard)
+	hazard.tree_exiting.connect(func(): _hazards.erase(hazard), CONNECT_ONE_SHOT)
+
+func clear_owned_hazards() -> void:
+	for hazard in _hazards:
+		if is_instance_valid(hazard):
+			hazard.process_mode = Node.PROCESS_MODE_DISABLED
+			hazard.hide()
+			hazard.queue_free()
+	_hazards.clear()
 
 func _draw() -> void:
 	var scale_factor := hit_radius / 17.0
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2(scale_factor, scale_factor) * body_scale)
-	draw_circle(Vector2(0, 13), 15, Color(0.02, 0.02, 0.04, 0.30))
+	draw_circle(Vector2(0, 1 if _sprite_frames else 13), 15, Color(0.02, 0.02, 0.04, 0.30))
 	if art == null or art.texture == null:
 		_draw_placeholder()
 	draw_set_transform(Vector2.ZERO)
-	if hp < max_hp and alive:
-		draw_rect(Rect2(-18, -31 * scale_factor, 36, 4), Color(0.12, 0.10, 0.15, 0.9))
-		draw_rect(Rect2(-18, -31 * scale_factor, 36 * maxf(0.0, hp / max_hp), 4), Color(0.92, 0.42, 0.35))
-	if spawn_delay > 0.0:
-		var progress := clampf(1.0 - spawn_delay / spawn_delay_total, 0.0, 1.0)
-		draw_arc(Vector2.ZERO, hit_radius + 16.0 - 9.0 * progress, 0.0, TAU, 24, Color(0.98, 0.82, 0.51, 0.25 + 0.35 * progress), 2.0)
-		draw_arc(Vector2.ZERO, hit_radius + 7.0, 0.0, TAU, 24, Color(0.98, 0.82, 0.51, 0.55), 2.0)
+	if hp < max_hp and alive and boss_stage_total == 0:
+		var meter_y := (-51.0 if _sprite_frames else -31.0) * scale_factor
+		draw_rect(Rect2(-18, meter_y, 36, 4), Color(0.12, 0.10, 0.15, 0.9))
+		draw_rect(Rect2(-18, meter_y, 36 * maxf(0.0, hp / max_hp), 4), Color(0.92, 0.42, 0.35))
 
 func _draw_placeholder() -> void:
 	var flash := Color.WHITE if hit_flash <= 0.0 else Color(2.2, 2.2, 2.2)

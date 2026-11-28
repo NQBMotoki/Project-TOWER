@@ -1,6 +1,6 @@
 # Project TOWER 本地化规范
 
-[双语 CSV](../localization/game.csv)是文案主表。简体中文是源文，美式英语是译文。Engineer 接入字符串及变量，双语负责人确认用词和两列正文，QA 在对应构建中验证显示和交互。
+[场景文本工作簿](../data/design/Project-TOWER-游戏文本-按场景.xlsx)是可编辑原表，[双语 CSV](../localization/game.csv)是游戏运行用的导出表。简体中文是源文，美式英语是译文。Engineer 接入字符串及变量，双语负责人确认用词和两列正文，QA 在对应构建中验证显示和交互。项目同级的 `Project-TOWER-OnlineDocsCandidates/11-24/` 保留本次交付副本。
 
 ## CSV 六列
 
@@ -37,9 +37,12 @@ ID 使用大写英文、数字和下划线。变量名使用小写英文、数�
 4. QA 在所测构建中切换双语，检查塔前互动、暂停与设置、重绑、背包四页、清场与领珠、F10 对话和终点。逐屏检查按钮、字体、动态数字、长文滚动和关闭提示。问题记录附构建号、语言、ID、触发步骤和截图。 [在线 QA 验收表](https://docs.qq.com/sheet/DT2piZmt4T3VIbUFZ?tab=fmlbif)
 
 ```sh
+python3 tools/import_localization.py 'data/design/Project-TOWER-游戏文本-按场景.xlsx' --candidate
 godot --headless --path . --import
 godot --headless --path . --script res://tests/test_mvp.gd -- --candidate
 ```
+
+已有导出时可在本地化命令后加 `--check` 检查一致性。保留稳定 ID，按工作簿中的导出顺序生成 CSV。导入器校验重复 ID、双语变量和分类。
 
 首次启动时英文系统使用美式英语，其余回退简体中文。已保存设置优先。缺译时运行时尝试简体中文并记日志，两种语言都缺失时显示可读兜底文字。
 

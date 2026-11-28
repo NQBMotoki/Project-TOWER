@@ -48,11 +48,11 @@ func _behavior(delta: float) -> void:
 	if phase == PHASE_CREEP:
 		var breath := sin(clock * 5.0) * 0.05
 		body_scale = Vector2(1.0 + breath, 1.0 - breath)
-		if lunge_timer <= 0.0 and distance <= lunge_reach and sees_player():
+		if lunge_timer <= 0.0 and can_begin_attack() and distance <= lunge_reach and sees_player():
 			lunge_dir = aim_at_player()
 			phase = PHASE_COIL
 			phase_timer = coil_time
-			sound_requested.emit("enemy_telegraph")
+			sound_requested.emit("slime_coil")
 		elif distance > contact_range * 0.7 or not sees_player():
 			move_towards(player.global_position, creep_speed * delta)
 	elif phase == PHASE_COIL:
@@ -62,16 +62,17 @@ func _behavior(delta: float) -> void:
 			phase = PHASE_LUNGE
 			phase_timer = lunge_time
 			lunge_origin = global_position
-			sound_requested.emit("enemy_rush")
+			sound_requested.emit("slime_lunge")
 	elif phase == PHASE_LUNGE:
 		body_scale = Vector2(0.82, 1.22)
 		var previous := global_position
-		move_straight(lunge_dir, lunge_speed * minf(delta, phase_timer))
+		var struck_wall := move_straight(lunge_dir, lunge_speed * minf(delta, phase_timer))
 		_check_lunge_hit(previous)
 		phase_timer -= delta
-		if phase_timer <= 0.0:
+		if phase_timer <= 0.0 or struck_wall:
 			phase = PHASE_RECOVER
 			phase_timer = recover_time
+			sound_requested.emit("slime_land")
 			if config.has("trail_radius"):
 				add_hazard(lunge_origin, global_position, config.trail_radius, 0.0, config.trail_time, config.trail_damage)
 				sound_requested.emit("enemy_zone_burst")
@@ -79,12 +80,14 @@ func _behavior(delta: float) -> void:
 func _check_lunge_hit(previous: Vector2) -> void:
 	if attack_timer > 0.0:
 		return
-	var closest := global_position
-	if not previous.is_equal_approx(global_position):
-		closest = Geometry2D.get_closest_point_to_segment(player.global_position, previous, global_position)
-	if closest.distance_to(player.global_position) <= contact_range and layout.has_clear_line(closest, player.global_position):
-		player.take_damage(damage)
+	if swept_attack(previous, contact_range, damage):
 		attack_timer = cooldown
+
+func holding_attack_slot() -> bool:
+	return phase == PHASE_COIL or phase == PHASE_LUNGE
+
+func leaves_trail() -> bool:
+	return phase == PHASE_LUNGE or phase == PHASE_RECOVER
 
 func _prepare_action_pose() -> void:
 	match phase:
@@ -95,17 +98,11 @@ func _prepare_action_pose() -> void:
 		PHASE_RECOVER:
 			set_action_pose(ActorMotion.Phase.RECOVERY, phase_timer, recover_time)
 
-func _draw() -> void:
-	super._draw()
+func _draw_warning() -> void:
+	super._draw_warning()
 	if phase != PHASE_COIL:
 		return
 	var progress := 1.0 - phase_timer / maxf(0.01, coil_time)
-	var travel := clear_reach(lunge_dir, lunge_reach - contact_range, hit_radius)
-	var endpoint := lunge_dir * travel
-	var color := Color("abf39a") if config.has("trail_radius") else Color("dcf89d")
-	draw_line(Vector2.ZERO, endpoint, Color(color, 0.12 + 0.18 * progress), contact_range * 2.0)
-	draw_circle(Vector2.ZERO, contact_range, Color(color, 0.12 + 0.18 * progress))
-	draw_circle(endpoint, contact_range, Color(color, 0.12 + 0.18 * progress))
-	draw_arc(endpoint, contact_range, 0.0, TAU, 22, Color(color, 0.46 + 0.44 * progress), 2.0)
-	draw_line(lunge_dir * 14.0, endpoint, Color(color, 0.53 + 0.42 * progress), 2.0)
-	draw_arc(Vector2.ZERO, 10.0 + 6.0 * progress, 0.0, TAU, 18, Color(color, 0.56 + 0.44 * progress), 2.0)
+	var color := Color("d794ec") if config.has("trail_radius") else Color("d4e8a2")
+	draw_rush_path(lunge_dir, lunge_reach - contact_range, contact_range, progress, color)
+	_warning.draw_arc(Vector2.ZERO, 10.0 + 6.0 * progress, 0.0, TAU, 18, Color(color, 0.56 + 0.44 * progress), 2.0)

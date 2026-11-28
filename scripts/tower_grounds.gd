@@ -37,6 +37,9 @@ func pickups() -> Dictionary:
 		"LORE_KIT": $KitList.position, "LORE_ORDER": $GarrisonOrder.position,
 	}
 
+func fire_positions() -> Array:
+	return [FIRE_POSITION, Vector2(568, 104), Vector2(712, 104)]
+
 func _process(delta: float) -> void:
 	if visible and high_quality:
 		clock += delta
@@ -126,8 +129,6 @@ func _draw_camp() -> void:
 			Vector2(259, 318), Vector2(286, 388), Vector2(313, 332),
 		]), Color("72684e"))
 		draw_line(Vector2(223, 392), Vector2(258, 318), Color("d2bd84"), 2.0)
-	draw_rect(Rect2(353, 338, 52, 20), Color("6c5240"))
-	draw_rect(Rect2(353, 337, 52, 4), Color("9a7755"))
 	_draw_fire()
 
 func _draw_fire() -> void:
